@@ -424,19 +424,13 @@ VITE_API_URL=http://localhost:3333
 
 Crie `web/.env.example` com o mesmo conteúdo. Variável que começa com `VITE_` é a única que o Vite entrega ao navegador. Não coloque senha aí.
 
-No `web/.gitignore` gerado, confira se `.env` está ignorado. O `.env.example` não deve estar.
+No `web/.gitignore` gerado, `.env` já está ignorado. O `.env.example` não deve estar.
 
-Abra `web/src/vite-env.d.ts` e acrescente o tipo da variável, para o TypeScript conhecer `import.meta.env.VITE_API_URL`:
+Este Vite não cria `web/src/vite-env.d.ts`. O `web/tsconfig.app.json` já tem `"types": ["vite/client"]`, e o `include` é a pasta `src`. Crie o arquivo `web/src/vite-env.d.ts` com só o nome da variável. A interface se junta à do Vite. Não declare `ImportMeta` de novo.
 
 ```ts
-/// <reference types="vite/client" />
-
 interface ImportMetaEnv {
   readonly VITE_API_URL: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
 }
 ```
 
@@ -469,7 +463,7 @@ Crie `web/src/pages/HomePage.tsx`:
 
 ```tsx
 import { useEffect, useState } from 'react'
-import { getHealth } from '../lib/api'
+import { getHealth } from '../lib/api.ts'
 
 type ApiStatus = 'carregando' | 'ok' | 'erro'
 
@@ -506,7 +500,7 @@ Substitua `web/src/App.tsx` por:
 
 ```tsx
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { HomePage } from './pages/HomePage'
+import { HomePage } from './pages/HomePage.tsx'
 
 export default function App() {
   return (
@@ -554,7 +548,9 @@ h1 {
 }
 ```
 
-Abra `web/src/main.tsx` e confira se ele importa `./index.css` e renderiza `<App />`. O Vite já gera isso. Apague o `App.css` da importação se o arquivo antigo ainda for importado em `main.tsx` ou `App.tsx`. Pode apagar `web/src/App.css` se ninguém importar.
+Não mexa em `web/src/main.tsx`. Ele já importa `./index.css` e `./App.tsx`. O `import './App.css'` está no `App.tsx` antigo. Ao substituir esse arquivo pelo código acima, o CSS do template deixa de ser usado. Apague `web/src/App.css`.
+
+O `tsconfig.app.json` tem `allowImportingTsExtensions`. Por isso os imports locais levam o sufixo `.ts` ou `.tsx`, como o `main.tsx` já faz com `./App.tsx`. Sem o sufixo, o `npm run build` do Vite falha.
 
 ---
 

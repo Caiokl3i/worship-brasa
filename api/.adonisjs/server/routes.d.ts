@@ -8,12 +8,15 @@ export type ScannedRoutes = {
     'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
     'profile.profile.show': { paramsTuple?: []; params?: {} }
     'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
+    'health.show': { paramsTuple?: []; params?: {} }
   }
   GET: {
     'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'health.show': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
     'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'health.show': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'auth.new_account.store': { paramsTuple?: []; params?: {} }

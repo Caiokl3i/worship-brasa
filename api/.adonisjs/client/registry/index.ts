@@ -30,6 +30,12 @@ const routes = {
     tokens: [{"old":"/api/v1/account/logout","type":0,"val":"api","end":""},{"old":"/api/v1/account/logout","type":0,"val":"v1","end":""},{"old":"/api/v1/account/logout","type":0,"val":"account","end":""},{"old":"/api/v1/account/logout","type":0,"val":"logout","end":""}],
     types: placeholder as Registry['profile.access_tokens.destroy']['types'],
   },
+  'health.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/health',
+    tokens: [{"old":"/health","type":0,"val":"health","end":""}],
+    types: placeholder as Registry['health.show']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

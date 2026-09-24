@@ -1,0 +1,13 @@
+{
+    "name": "worship-brasa",
+    "private": true,
+    "scripts": {
+      "dev": "concurrently -n api,web -c blue,green \"npm run dev --prefix api\" \"npm run dev --prefix web\"",
+      "test": "npm test --prefix api",
+      "lint": "npm run lint --prefix api && npm run lint --prefix web",
+      "migrate": "npm exec --prefix api ace migration:run"
+    },
+    "devDependencies": {
+      "concurrently": "^9.2.1"
+    }
+  }
