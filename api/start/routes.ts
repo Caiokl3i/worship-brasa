@@ -13,6 +13,7 @@ const MinistryFunctionsController = () => import('#controllers/ministry_function
 const SongsController = () => import('#controllers/songs_controller')
 const FoldersController = () => import('#controllers/folders_controller')
 const ClassificationsController = () => import('#controllers/classifications_controller')
+const SchedulesController = () => import('#controllers/schedules_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -106,6 +107,26 @@ router
             ])
           })
           .use(middleware.repertoire())
+
+        router.get('/ministerios/:ministryId/escalas', [SchedulesController, 'index'])
+        router.post('/ministerios/:ministryId/escalas', [SchedulesController, 'store'])
+        router.get('/ministerios/:ministryId/escalas/:scheduleId', [SchedulesController, 'show'])
+        router.patch('/ministerios/:ministryId/escalas/:scheduleId', [
+          SchedulesController,
+          'update',
+        ])
+        router.delete('/ministerios/:ministryId/escalas/:scheduleId', [
+          SchedulesController,
+          'destroy',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/publicar', [
+          SchedulesController,
+          'publish',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/rascunho', [
+          SchedulesController,
+          'unpublish',
+        ])
       })
       .use(middleware.ministry())
   })

@@ -4,7 +4,9 @@ import { MinistryLayout } from './layouts/MinistryLayout.tsx'
 import { CadastrarPage } from './pages/CadastrarPage.tsx'
 import { ConviteAdminPage } from './pages/ConviteAdminPage.tsx'
 import { ConvitePage } from './pages/ConvitePage.tsx'
-import { EmptySectionPage } from './pages/EmptySectionPage.tsx'
+import { EscalaEditorPage } from './pages/EscalaEditorPage.tsx'
+import { EscalasPage } from './pages/EscalasPage.tsx'
+import { NovaEscalaPage } from './pages/NovaEscalaPage.tsx'
 import { EntrarPage } from './pages/EntrarPage.tsx'
 import { HomeGate } from './pages/HomeGate.tsx'
 import { MembrosPage } from './pages/MembrosPage.tsx'
@@ -44,15 +46,9 @@ export default function App() {
                 <Route path="repertorio" element={<RepertorioPage />} />
                 <Route path="repertorio/nova" element={<RepertorioFormPage />} />
                 <Route path="repertorio/:songId" element={<RepertorioFormPage />} />
-                <Route
-                  path="escalas"
-                  element={
-                    <EmptySectionPage
-                      title="Escalas"
-                      message="Ainda não há escalas neste ministério."
-                    />
-                  }
-                />
+                <Route path="escalas" element={<EscalasPage />} />
+                <Route path="escalas/nova" element={<NovaEscalaPage />} />
+                <Route path="escalas/:scheduleId" element={<EscalaEditorPage />} />
               </Route>
             </Route>
           </Route>

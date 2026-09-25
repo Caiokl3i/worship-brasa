@@ -499,4 +499,88 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['archive']>>>
     }
   }
+  'schedules.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/escalas'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['index']>>>
+    }
+  }
+  'schedules.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').createScheduleValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').createScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['show']>>>
+    }
+  }
+  'schedules.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['destroy']>>>
+    }
+  }
+  'schedules.publish': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/publicar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['publish']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['publish']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.unpublish': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/rascunho'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').saveScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['unpublish']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['unpublish']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
 }

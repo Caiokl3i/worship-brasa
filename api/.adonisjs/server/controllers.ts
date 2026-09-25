@@ -14,6 +14,7 @@ export const controllers = {
   MinistryFunctions: () => import('#controllers/ministry_functions_controller'),
   PasswordReset: () => import('#controllers/password_reset_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  Schedules: () => import('#controllers/schedules_controller'),
   Session: () => import('#controllers/session_controller'),
   Songs: () => import('#controllers/songs_controller'),
 }

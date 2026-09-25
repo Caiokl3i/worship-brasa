@@ -195,6 +195,125 @@ export class PasswordResetSchema extends BaseModel {
   declare userId: string
 }
 
+export class ScheduleAssignmentSchema extends BaseModel {
+  static $columns = ['createdAt', 'functionId', 'id', 'participantId', 'updatedAt'] as const
+  $columns = ScheduleAssignmentSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare functionId: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare participantId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ScheduleParticipantSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'membershipId', 'scheduleId', 'updatedAt'] as const
+  $columns = ScheduleParticipantSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare membershipId: string
+  @column()
+  declare scheduleId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ScheduleSongHighlightSchema extends BaseModel {
+  static $columns = ['functionId', 'participantId', 'scheduleSongId'] as const
+  $columns = ScheduleSongHighlightSchema.$columns
+  @column()
+  declare functionId: string
+  @column()
+  declare participantId: string
+  @column({ isPrimary: true })
+  declare scheduleSongId: string
+}
+
+export class ScheduleSongSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'durationSeconds',
+    'id',
+    'keyOverride',
+    'notes',
+    'position',
+    'scheduleId',
+    'songId',
+    'updatedAt',
+    'versionId',
+  ] as const
+  $columns = ScheduleSongSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durationSeconds: number | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare keyOverride: string | null
+  @column()
+  declare notes: string
+  @column()
+  declare position: number
+  @column()
+  declare scheduleId: string
+  @column()
+  declare songId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare versionId: string | null
+}
+
+export class ScheduleSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'deletedAt',
+    'dressCode',
+    'endsAt',
+    'id',
+    'ministryId',
+    'notes',
+    'startsAt',
+    'status',
+    'title',
+    'updatedAt',
+    'version',
+  ] as const
+  $columns = ScheduleSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime()
+  declare deletedAt: DateTime | null
+  @column()
+  declare dressCode: string
+  @column.dateTime()
+  declare endsAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare notes: string
+  @column.dateTime()
+  declare startsAt: DateTime
+  @column()
+  declare status: string
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare version: number
+}
+
 export class SongLinkSchema extends BaseModel {
   static $columns = [
     'createdAt',

@@ -48,6 +48,20 @@ export default class MembershipAccessService {
     }
   }
 
+  managesSchedules(membership: Membership) {
+    return membership.isAdmin || membership.canManageSchedules
+  }
+
+  editsScheduleSongs(membership: Membership) {
+    return this.managesSchedules(membership) || membership.canEditScheduleSongs
+  }
+
+  assertCanManageSchedules(membership: Membership) {
+    if (!this.managesSchedules(membership)) {
+      throw new ForbiddenActionException()
+    }
+  }
+
   async lockAdmins(ministryId: string, trx: TransactionClientContract) {
     return Membership.query({ client: trx })
       .where('ministryId', ministryId)

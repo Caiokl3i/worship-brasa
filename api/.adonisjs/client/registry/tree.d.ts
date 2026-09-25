@@ -67,4 +67,13 @@ export interface ApiDefinition {
     store: typeof routes['classifications.store']
     archive: typeof routes['classifications.archive']
   }
+  schedules: {
+    index: typeof routes['schedules.index']
+    store: typeof routes['schedules.store']
+    show: typeof routes['schedules.show']
+    update: typeof routes['schedules.update']
+    destroy: typeof routes['schedules.destroy']
+    publish: typeof routes['schedules.publish']
+    unpublish: typeof routes['schedules.unpublish']
+  }
 }

@@ -39,7 +39,8 @@
     "#constants/*": "./app/constants/*.js",
     "#types/*": "./app/types/*.js",
     "#users/*": "./app/users/*.js",
-    "#ministries/*": "./app/ministries/*.js"
+    "#ministries/*": "./app/ministries/*.js",
+    "#schedules/*": "./app/schedules/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.5.0",

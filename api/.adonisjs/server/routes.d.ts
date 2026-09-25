@@ -45,6 +45,13 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
+    'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
@@ -59,6 +66,8 @@ export type ScannedRoutes = {
     'songs.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
@@ -73,6 +82,8 @@ export type ScannedRoutes = {
     'songs.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   POST: {
     'account.store': { paramsTuple?: []; params?: {} }
@@ -94,6 +105,9 @@ export type ScannedRoutes = {
     'folders.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
+    'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   PATCH: {
     'profile.update': { paramsTuple?: []; params?: {} }
@@ -102,11 +116,13 @@ export type ScannedRoutes = {
     'ministry_functions.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
     'songs.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
+    'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   DELETE: {
     'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
     'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
+    'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
   PUT: {
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }

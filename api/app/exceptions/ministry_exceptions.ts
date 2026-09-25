@@ -37,6 +37,24 @@ export class ClassificationNotFoundException extends Exception {
   }
 }
 
+export class ScheduleNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_SCHEDULE_NOT_FOUND'
+
+  constructor() {
+    super('Escala não encontrada.', { status: 404, code: 'E_SCHEDULE_NOT_FOUND' })
+  }
+}
+
+export class ScheduleConflictException extends Exception {
+  static status = 409
+  static code = 'E_SCHEDULE_CONFLICT'
+
+  constructor() {
+    super('Esta escala foi alterada, reabra.', { status: 409, code: 'E_SCHEDULE_CONFLICT' })
+  }
+}
+
 export class RequestNotFoundException extends Exception {
   static status = 404
   static code = 'E_REQUEST_NOT_FOUND'

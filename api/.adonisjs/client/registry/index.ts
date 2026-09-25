@@ -252,6 +252,48 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"classificacoes","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"classificationId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"arquivar","end":""}],
     types: placeholder as Registry['classifications.archive']['types'],
   },
+  'schedules.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/escalas',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"escalas","end":""}],
+    types: placeholder as Registry['schedules.index']['types'],
+  },
+  'schedules.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas","type":0,"val":"escalas","end":""}],
+    types: placeholder as Registry['schedules.store']['types'],
+  },
+  'schedules.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"scheduleId","end":""}],
+    types: placeholder as Registry['schedules.show']['types'],
+  },
+  'schedules.update': {
+    methods: ["PATCH"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"scheduleId","end":""}],
+    types: placeholder as Registry['schedules.update']['types'],
+  },
+  'schedules.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"scheduleId","end":""}],
+    types: placeholder as Registry['schedules.destroy']['types'],
+  },
+  'schedules.publish': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/publicar',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/publicar","type":0,"val":"publicar","end":""}],
+    types: placeholder as Registry['schedules.publish']['types'],
+  },
+  'schedules.unpublish': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/rascunho',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"rascunho","end":""}],
+    types: placeholder as Registry['schedules.unpublish']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }
