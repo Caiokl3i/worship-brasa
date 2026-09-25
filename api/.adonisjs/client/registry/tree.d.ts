@@ -49,4 +49,22 @@ export interface ApiDefinition {
     update: typeof routes['ministry_functions.update']
     archive: typeof routes['ministry_functions.archive']
   }
+  songs: {
+    index: typeof routes['songs.index']
+    store: typeof routes['songs.store']
+    show: typeof routes['songs.show']
+    update: typeof routes['songs.update']
+    destroy: typeof routes['songs.destroy']
+  }
+  folders: {
+    index: typeof routes['folders.index']
+    store: typeof routes['folders.store']
+    update: typeof routes['folders.update']
+    destroy: typeof routes['folders.destroy']
+  }
+  classifications: {
+    index: typeof routes['classifications.index']
+    store: typeof routes['classifications.store']
+    archive: typeof routes['classifications.archive']
+  }
 }

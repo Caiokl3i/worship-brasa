@@ -7,6 +7,48 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class ClassificationSchema extends BaseModel {
+  static $columns = [
+    'archivedAt',
+    'createdAt',
+    'description',
+    'id',
+    'ministryId',
+    'name',
+    'updatedAt',
+  ] as const
+  $columns = ClassificationSchema.$columns
+  @column.dateTime()
+  declare archivedAt: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare description: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class FolderSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'ministryId', 'name', 'updatedAt'] as const
+  $columns = FolderSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class InviteSchema extends BaseModel {
   static $columns = [
     'code',
@@ -151,6 +193,95 @@ export class PasswordResetSchema extends BaseModel {
   declare usedAt: DateTime | null
   @column()
   declare userId: string
+}
+
+export class SongLinkSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'id',
+    'kind',
+    'label',
+    'songId',
+    'updatedAt',
+    'url',
+    'versionId',
+  ] as const
+  $columns = SongLinkSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare kind: string
+  @column()
+  declare label: string
+  @column()
+  declare songId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare url: string
+  @column()
+  declare versionId: string | null
+}
+
+export class SongVersionSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'key', 'name', 'songId', 'updatedAt'] as const
+  $columns = SongVersionSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare key: string | null
+  @column()
+  declare name: string
+  @column()
+  declare songId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class SongSchema extends BaseModel {
+  static $columns = [
+    'artist',
+    'bpm',
+    'classificationId',
+    'createdAt',
+    'defaultKey',
+    'deletedAt',
+    'durationSeconds',
+    'folderId',
+    'id',
+    'ministryId',
+    'title',
+    'updatedAt',
+  ] as const
+  $columns = SongSchema.$columns
+  @column()
+  declare artist: string | null
+  @column()
+  declare bpm: number | null
+  @column()
+  declare classificationId: string | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare defaultKey: string | null
+  @column.dateTime()
+  declare deletedAt: DateTime | null
+  @column()
+  declare durationSeconds: number | null
+  @column()
+  declare folderId: string | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
 }
 
 export class UserSchema extends BaseModel {

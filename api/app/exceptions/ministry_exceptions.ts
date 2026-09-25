@@ -10,6 +10,33 @@ export class MinistryNotFoundException extends Exception {
   }
 }
 
+export class SongNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_SONG_NOT_FOUND'
+
+  constructor() {
+    super('Música não encontrada.', { status: 404, code: 'E_SONG_NOT_FOUND' })
+  }
+}
+
+export class FolderNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_FOLDER_NOT_FOUND'
+
+  constructor() {
+    super('Pasta não encontrada.', { status: 404, code: 'E_FOLDER_NOT_FOUND' })
+  }
+}
+
+export class ClassificationNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_CLASSIFICATION_NOT_FOUND'
+
+  constructor() {
+    super('Classificação não encontrada.', { status: 404, code: 'E_CLASSIFICATION_NOT_FOUND' })
+  }
+}
+
 export class RequestNotFoundException extends Exception {
   static status = 404
   static code = 'E_REQUEST_NOT_FOUND'

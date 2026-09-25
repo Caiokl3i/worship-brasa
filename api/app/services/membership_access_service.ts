@@ -42,6 +42,12 @@ export default class MembershipAccessService {
     }
   }
 
+  assertCanManageRepertoire(membership: Membership) {
+    if (!membership.isAdmin && !membership.canManageRepertoire) {
+      throw new ForbiddenActionException()
+    }
+  }
+
   async lockAdmins(ministryId: string, trx: TransactionClientContract) {
     return Membership.query({ client: trx })
       .where('ministryId', ministryId)

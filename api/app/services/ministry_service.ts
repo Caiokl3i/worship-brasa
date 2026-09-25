@@ -2,7 +2,9 @@ import db from '@adonisjs/lucid/services/db'
 import { DEFAULT_TIMEZONE } from '#constants/timezone'
 import Membership from '#models/membership'
 import Ministry from '#models/ministry'
+import Classification from '#models/classification'
 import MinistryFunction from '#models/ministry_function'
+import { DEFAULT_CLASSIFICATIONS } from '#ministries/repertoire'
 import { DEFAULT_MINISTRY_COLOR, WORSHIP_FUNCTIONS } from '#ministries/worship_functions'
 import MembershipAccessService from '#services/membership_access_service'
 import { FieldException } from '#exceptions/ministry_exceptions'
@@ -88,6 +90,18 @@ export default class MinistryService {
           },
           { client: trx }
         )
+      }
+
+      for (const [index, item] of DEFAULT_CLASSIFICATIONS.entries()) {
+        const classification = new Classification()
+        classification.fill({
+          ministryId: ministry.id,
+          name: item.name,
+          description: item.description,
+        })
+        classification.createdAt = ministry.createdAt.plus({ milliseconds: index })
+        classification.useTransaction(trx)
+        await classification.save()
       }
 
       return ministry

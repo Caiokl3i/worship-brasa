@@ -5,6 +5,8 @@
 
 export const controllers = {
   Account: () => import('#controllers/account_controller'),
+  Classifications: () => import('#controllers/classifications_controller'),
+  Folders: () => import('#controllers/folders_controller'),
   Health: () => import('#controllers/health_controller'),
   Invites: () => import('#controllers/invites_controller'),
   Members: () => import('#controllers/members_controller'),
@@ -13,4 +15,5 @@ export const controllers = {
   PasswordReset: () => import('#controllers/password_reset_controller'),
   Profile: () => import('#controllers/profile_controller'),
   Session: () => import('#controllers/session_controller'),
+  Songs: () => import('#controllers/songs_controller'),
 }

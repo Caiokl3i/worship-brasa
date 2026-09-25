@@ -12,6 +12,8 @@ import { MinisteriosPage } from './pages/MinisteriosPage.tsx'
 import { MinistryHomePage } from './pages/MinistryHomePage.tsx'
 import { NovoMinisterioPage } from './pages/NovoMinisterioPage.tsx'
 import { PerfilPage } from './pages/PerfilPage.tsx'
+import { RepertorioFormPage } from './pages/RepertorioFormPage.tsx'
+import { RepertorioPage } from './pages/RepertorioPage.tsx'
 import { RecuperarSenhaPage } from './pages/RecuperarSenhaPage.tsx'
 import { GuestOnly, RequireAuth } from './routes.tsx'
 import { SessionProvider } from './session.tsx'
@@ -39,15 +41,9 @@ export default function App() {
                 <Route index element={<MinistryHomePage />} />
                 <Route path="membros" element={<MembrosPage />} />
                 <Route path="convite" element={<ConviteAdminPage />} />
-                <Route
-                  path="repertorio"
-                  element={
-                    <EmptySectionPage
-                      title="Repertório"
-                      message="Ainda não há repertório neste ministério."
-                    />
-                  }
-                />
+                <Route path="repertorio" element={<RepertorioPage />} />
+                <Route path="repertorio/nova" element={<RepertorioFormPage />} />
+                <Route path="repertorio/:songId" element={<RepertorioFormPage />} />
                 <Route
                   path="escalas"
                   element={

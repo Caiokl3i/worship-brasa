@@ -10,6 +10,9 @@ const MinistriesController = () => import('#controllers/ministries_controller')
 const InvitesController = () => import('#controllers/invites_controller')
 const MembersController = () => import('#controllers/members_controller')
 const MinistryFunctionsController = () => import('#controllers/ministry_functions_controller')
+const SongsController = () => import('#controllers/songs_controller')
+const FoldersController = () => import('#controllers/folders_controller')
+const ClassificationsController = () => import('#controllers/classifications_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -72,6 +75,37 @@ router
           MinistryFunctionsController,
           'archive',
         ])
+
+        router
+          .group(() => {
+            router.get('/ministerios/:ministryId/musicas', [SongsController, 'index'])
+            router.post('/ministerios/:ministryId/musicas', [SongsController, 'store'])
+            router.get('/ministerios/:ministryId/musicas/:songId', [SongsController, 'show'])
+            router.patch('/ministerios/:ministryId/musicas/:songId', [SongsController, 'update'])
+            router.delete('/ministerios/:ministryId/musicas/:songId', [SongsController, 'destroy'])
+
+            router.get('/ministerios/:ministryId/pastas', [FoldersController, 'index'])
+            router.post('/ministerios/:ministryId/pastas', [FoldersController, 'store'])
+            router.patch('/ministerios/:ministryId/pastas/:folderId', [FoldersController, 'update'])
+            router.delete('/ministerios/:ministryId/pastas/:folderId', [
+              FoldersController,
+              'destroy',
+            ])
+
+            router.get('/ministerios/:ministryId/classificacoes', [
+              ClassificationsController,
+              'index',
+            ])
+            router.post('/ministerios/:ministryId/classificacoes', [
+              ClassificationsController,
+              'store',
+            ])
+            router.post('/ministerios/:ministryId/classificacoes/:classificationId/arquivar', [
+              ClassificationsController,
+              'archive',
+            ])
+          })
+          .use(middleware.repertoire())
       })
       .use(middleware.ministry())
   })

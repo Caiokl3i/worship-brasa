@@ -180,6 +180,78 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":0,"val":"funcoes","end":""},{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":1,"val":"functionId","end":""},{"old":"/api/ministerios/:ministryId/funcoes/:functionId/arquivar","type":0,"val":"arquivar","end":""}],
     types: placeholder as Registry['ministry_functions.archive']['types'],
   },
+  'songs.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/musicas',
+    tokens: [{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"musicas","end":""}],
+    types: placeholder as Registry['songs.index']['types'],
+  },
+  'songs.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/musicas',
+    tokens: [{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas","type":0,"val":"musicas","end":""}],
+    types: placeholder as Registry['songs.store']['types'],
+  },
+  'songs.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/musicas/:songId',
+    tokens: [{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"musicas","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"songId","end":""}],
+    types: placeholder as Registry['songs.show']['types'],
+  },
+  'songs.update': {
+    methods: ["PATCH"],
+    pattern: '/api/ministerios/:ministryId/musicas/:songId',
+    tokens: [{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"musicas","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"songId","end":""}],
+    types: placeholder as Registry['songs.update']['types'],
+  },
+  'songs.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/ministerios/:ministryId/musicas/:songId',
+    tokens: [{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"musicas","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"songId","end":""}],
+    types: placeholder as Registry['songs.destroy']['types'],
+  },
+  'folders.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/pastas',
+    tokens: [{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"pastas","end":""}],
+    types: placeholder as Registry['folders.index']['types'],
+  },
+  'folders.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/pastas',
+    tokens: [{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/pastas","type":0,"val":"pastas","end":""}],
+    types: placeholder as Registry['folders.store']['types'],
+  },
+  'folders.update': {
+    methods: ["PATCH"],
+    pattern: '/api/ministerios/:ministryId/pastas/:folderId',
+    tokens: [{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"pastas","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":1,"val":"folderId","end":""}],
+    types: placeholder as Registry['folders.update']['types'],
+  },
+  'folders.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/ministerios/:ministryId/pastas/:folderId',
+    tokens: [{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":0,"val":"pastas","end":""},{"old":"/api/ministerios/:ministryId/pastas/:folderId","type":1,"val":"folderId","end":""}],
+    types: placeholder as Registry['folders.destroy']['types'],
+  },
+  'classifications.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/classificacoes',
+    tokens: [{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"classificacoes","end":""}],
+    types: placeholder as Registry['classifications.index']['types'],
+  },
+  'classifications.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/classificacoes',
+    tokens: [{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes","type":0,"val":"classificacoes","end":""}],
+    types: placeholder as Registry['classifications.store']['types'],
+  },
+  'classifications.archive': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar',
+    tokens: [{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"classificacoes","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"classificationId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"arquivar","end":""}],
+    types: placeholder as Registry['classifications.archive']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

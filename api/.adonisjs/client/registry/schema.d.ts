@@ -355,4 +355,148 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['archive']>>>
     }
   }
+  'songs.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/musicas'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['index']>>>
+    }
+  }
+  'songs.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/musicas'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/repertoire').saveSongValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/repertoire').saveSongValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'songs.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/musicas/:songId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; songId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['show']>>>
+    }
+  }
+  'songs.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/musicas/:songId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/repertoire').saveSongValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; songId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/repertoire').saveSongValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'songs.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/ministerios/:ministryId/musicas/:songId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; songId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['destroy']>>>
+    }
+  }
+  'folders.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/pastas'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['index']>>>
+    }
+  }
+  'folders.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/pastas'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/repertoire').createFolderValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/repertoire').createFolderValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'folders.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/pastas/:folderId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/repertoire').renameFolderValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; folderId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/repertoire').renameFolderValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'folders.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/ministerios/:ministryId/pastas/:folderId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; folderId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/folders_controller').default['destroy']>>>
+    }
+  }
+  'classifications.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/classificacoes'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['index']>>>
+    }
+  }
+  'classifications.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/classificacoes'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/repertoire').createClassificationValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/repertoire').createClassificationValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'classifications.archive': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; classificationId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['archive']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['archive']>>>
+    }
+  }
 }
