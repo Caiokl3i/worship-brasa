@@ -13,14 +13,46 @@ export type ScannedRoutes = {
     'profile.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'ministries.index': { paramsTuple?: []; params?: {} }
+    'ministries.store': { paramsTuple?: []; params?: {} }
+    'invites.enter': { paramsTuple?: []; params?: {} }
+    'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
+    'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministries.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministries.leave': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.approve': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.reject': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.reorder': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
+    'ministry_functions.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'ministries.index': { paramsTuple?: []; params?: {} }
+    'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'ministries.index': { paramsTuple?: []; params?: {} }
+    'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   POST: {
     'account.store': { paramsTuple?: []; params?: {} }
@@ -29,9 +61,27 @@ export type ScannedRoutes = {
     'password_reset.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'ministries.store': { paramsTuple?: []; params?: {} }
+    'invites.enter': { paramsTuple?: []; params?: {} }
+    'ministries.leave': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.approve': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.reject': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'ministry_functions.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.reorder': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'ministry_functions.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
   }
   PATCH: {
     'profile.update': { paramsTuple?: []; params?: {} }
+    'ministries.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'members.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'ministry_functions.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
+  }
+  DELETE: {
+    'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
+  }
+  PUT: {
+    'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

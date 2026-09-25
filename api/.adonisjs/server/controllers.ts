@@ -6,6 +6,10 @@
 export const controllers = {
   Account: () => import('#controllers/account_controller'),
   Health: () => import('#controllers/health_controller'),
+  Invites: () => import('#controllers/invites_controller'),
+  Members: () => import('#controllers/members_controller'),
+  Ministries: () => import('#controllers/ministries_controller'),
+  MinistryFunctions: () => import('#controllers/ministry_functions_controller'),
   PasswordReset: () => import('#controllers/password_reset_controller'),
   Profile: () => import('#controllers/profile_controller'),
   Session: () => import('#controllers/session_controller'),

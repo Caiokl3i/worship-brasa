@@ -48,7 +48,8 @@ h1 {
   font-size: 0.9rem;
 }
 
-.field input {
+.field input,
+.field select {
   font: inherit;
   padding: 0.5rem 0.6rem;
   border: 1px solid #d6d3d1;
@@ -82,4 +83,44 @@ h2 {
   font-weight: 500;
   font-size: 1.4rem;
   margin: 2rem 0 0;
+}
+
+.list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.25rem;
+  font-family: system-ui, sans-serif;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.checks {
+  display: grid;
+  gap: 0.35rem;
+  font-family: system-ui, sans-serif;
+}
+
+.notice {
+  font-family: system-ui, sans-serif;
+}
+
+.topbar select {
+  font: inherit;
+  max-width: 14rem;
+  padding: 0.35rem 0.4rem;
 }

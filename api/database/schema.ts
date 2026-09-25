@@ -7,6 +7,135 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class InviteSchema extends BaseModel {
+  static $columns = [
+    'code',
+    'createdAt',
+    'createdByUserId',
+    'expiresAt',
+    'id',
+    'ministryId',
+    'revokedAt',
+  ] as const
+  $columns = InviteSchema.$columns
+  @column()
+  declare code: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare createdByUserId: string
+  @column.dateTime()
+  declare expiresAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column.dateTime()
+  declare revokedAt: DateTime | null
+}
+
+export class MemberFunctionSchema extends BaseModel {
+  static $columns = ['functionId', 'membershipId'] as const
+  $columns = MemberFunctionSchema.$columns
+  @column()
+  declare functionId: string
+  @column({ isPrimary: true })
+  declare membershipId: string
+}
+
+export class MembershipSchema extends BaseModel {
+  static $columns = [
+    'canEditScheduleSongs',
+    'canManageFunctions',
+    'canManageRepertoire',
+    'canManageSchedules',
+    'createdAt',
+    'id',
+    'isAdmin',
+    'ministryId',
+    'status',
+    'updatedAt',
+    'userId',
+  ] as const
+  $columns = MembershipSchema.$columns
+  @column()
+  declare canEditScheduleSongs: boolean
+  @column()
+  declare canManageFunctions: boolean
+  @column()
+  declare canManageRepertoire: boolean
+  @column()
+  declare canManageSchedules: boolean
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare isAdmin: boolean
+  @column()
+  declare ministryId: string
+  @column()
+  declare status: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: string
+}
+
+export class MinistrySchema extends BaseModel {
+  static $columns = [
+    'color',
+    'createdAt',
+    'id',
+    'musicModuleEnabled',
+    'name',
+    'timezone',
+    'updatedAt',
+  ] as const
+  $columns = MinistrySchema.$columns
+  @column()
+  declare color: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare musicModuleEnabled: boolean
+  @column()
+  declare name: string
+  @column()
+  declare timezone: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class MinistryFunctionSchema extends BaseModel {
+  static $columns = [
+    'archivedAt',
+    'createdAt',
+    'id',
+    'ministryId',
+    'name',
+    'sortOrder',
+    'updatedAt',
+  ] as const
+  $columns = MinistryFunctionSchema.$columns
+  @column.dateTime()
+  declare archivedAt: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare name: string
+  @column()
+  declare sortOrder: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class PasswordResetSchema extends BaseModel {
   static $columns = ['codeHash', 'createdAt', 'expiresAt', 'id', 'usedAt', 'userId'] as const
   $columns = PasswordResetSchema.$columns

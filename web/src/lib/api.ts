@@ -55,11 +55,15 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   const body = (await response.json().catch(() => null)) as
-    | (T & { errors?: FieldError[] })
+    | (T & { errors?: FieldError[]; message?: string })
     | null
 
   if (!response.ok) {
-    throw new ApiError(response.status, body?.errors ?? [])
+    const errors = [...(body?.errors ?? [])]
+    if (errors.length === 0 && body?.message) {
+      errors.push({ field: 'form', message: body.message })
+    }
+    throw new ApiError(response.status, errors)
   }
 
   return body as T

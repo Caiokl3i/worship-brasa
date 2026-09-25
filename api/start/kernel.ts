@@ -47,4 +47,5 @@ router.use([
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
   authVersion: () => import('#middleware/auth_version_middleware'),
+  ministry: () => import('#middleware/ministry_access_middleware'),
 })

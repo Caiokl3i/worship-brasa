@@ -115,4 +115,244 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
     }
   }
+  'ministries.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['index']>>>
+    }
+  }
+  'ministries.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').createMinistryValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').createMinistryValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'invites.enter': {
+    methods: ["POST"]
+    pattern: '/api/convites/entrar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').enterInviteValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').enterInviteValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['enter']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['enter']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'members.cancel': {
+    methods: ["DELETE"]
+    pattern: '/api/pedidos/:membershipId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { membershipId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['cancel']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['cancel']>>>
+    }
+  }
+  'ministries.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['show']>>>
+    }
+  }
+  'ministries.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').updateMinistryValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').updateMinistryValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'ministries.leave': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/sair'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['leave']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministries_controller').default['leave']>>>
+    }
+  }
+  'invites.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/convite'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['show']>>>
+    }
+  }
+  'invites.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/convite'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['store']>>>
+    }
+  }
+  'members.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/membros'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['index']>>>
+    }
+  }
+  'members.pending': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/pedidos'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['pending']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['pending']>>>
+    }
+  }
+  'members.approve': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/pedidos/:membershipId/aprovar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; membershipId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['approve']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['approve']>>>
+    }
+  }
+  'members.reject': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/pedidos/:membershipId/rejeitar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; membershipId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['reject']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['reject']>>>
+    }
+  }
+  'members.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/membros/:membershipId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').updateMemberValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; membershipId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').updateMemberValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'members.assign_functions': {
+    methods: ["PUT"]
+    pattern: '/api/ministerios/:ministryId/membros/:membershipId/funcoes'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').assignFunctionsValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; membershipId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').assignFunctionsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['assignFunctions']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['assignFunctions']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'ministry_functions.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/funcoes'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['index']>>>
+    }
+  }
+  'ministry_functions.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/funcoes'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').createFunctionValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').createFunctionValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'ministry_functions.reorder': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/funcoes/ordem'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').reorderFunctionsValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').reorderFunctionsValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['reorder']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['reorder']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'ministry_functions.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/funcoes/:functionId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/ministry').renameFunctionValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; functionId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/ministry').renameFunctionValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'ministry_functions.archive': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/funcoes/:functionId/arquivar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; functionId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['archive']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/ministry_functions_controller').default['archive']>>>
+    }
+  }
 }
