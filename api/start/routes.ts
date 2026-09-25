@@ -1,47 +1,25 @@
-/*
-|--------------------------------------------------------------------------
-| Routes file
-|--------------------------------------------------------------------------
-|
-| The routes file is used for defining the HTTP routes.
-|
-*/
-
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
-import { controllers } from '#generated/controllers'
-import HealthController from '#controllers/health_controller'
 
-router.get('/', () => {
-  return { hello: 'world' }
-})
+const HealthController = () => import('#controllers/health_controller')
+const AccountController = () => import('#controllers/account_controller')
+const SessionController = () => import('#controllers/session_controller')
+const PasswordResetController = () => import('#controllers/password_reset_controller')
+const ProfileController = () => import('#controllers/profile_controller')
+
+router.get('/health', [HealthController, 'show'])
+
+router.post('/api/cadastrar', [AccountController, 'store'])
+router.post('/api/entrar', [SessionController, 'store'])
+router.post('/api/recuperar-senha', [PasswordResetController, 'store'])
+router.post('/api/recuperar-senha/confirmar', [PasswordResetController, 'update'])
 
 router
   .group(() => {
-    router
-      .group(() => {
-        router.post('signup', [controllers.NewAccount, 'store'])
-        router.post('login', [controllers.AccessTokens, 'store'])
-      })
-      .prefix('auth')
-      .as('auth')
-
-    router
-      .group(() => {
-        router.get('profile', [controllers.Profile, 'show'])
-        router.post('logout', [controllers.AccessTokens, 'destroy'])
-      })
-      .prefix('account')
-      .as('profile')
-      .use(middleware.auth())
+    router.get('/eu', [ProfileController, 'show'])
+    router.patch('/perfil', [ProfileController, 'update'])
+    router.post('/perfil/senha', [ProfileController, 'updatePassword'])
+    router.post('/sair', [SessionController, 'destroy'])
   })
-  .prefix('/api/v1')
-
-  router.get('/health', [HealthController, 'show'])
-
-  router
-    .group(() => {})
-    .prefix('/api')
-    .use(middleware.auth())
-  
-  
+  .prefix('/api')
+  .use([middleware.auth(), middleware.authVersion()])

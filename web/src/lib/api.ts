@@ -5,6 +5,29 @@ export type HealthResponse = {
   timezone: string
 }
 
+export type PublicUser = {
+  id: string
+  name: string
+  email: string
+  birthDate: string | null
+}
+
+export type FieldError = {
+  field: string
+  message: string
+}
+
+export class ApiError extends Error {
+  status: number
+  errors: FieldError[]
+
+  constructor(status: number, errors: FieldError[]) {
+    super(errors[0]?.message ?? 'Não foi possível concluir.')
+    this.status = status
+    this.errors = errors
+  }
+}
+
 export async function getHealth(): Promise<HealthResponse> {
   const response = await fetch(`${apiUrl}/health`, {
     credentials: 'include',
@@ -17,3 +40,27 @@ export async function getHealth(): Promise<HealthResponse> {
   return response.json() as Promise<HealthResponse>
 }
 
+export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${apiUrl}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  })
+
+  if (response.status === 204) {
+    return undefined as T
+  }
+
+  const body = (await response.json().catch(() => null)) as
+    | (T & { errors?: FieldError[] })
+    | null
+
+  if (!response.ok) {
+    throw new ApiError(response.status, body?.errors ?? [])
+  }
+
+  return body as T
+}

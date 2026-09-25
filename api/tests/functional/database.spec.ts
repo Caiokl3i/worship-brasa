@@ -7,4 +7,11 @@ test.group('Banco', () => {
 
     assert.equal(Number(result.rows[0].ok), 1)
   })
+
+  test('health continua público', async ({ client }) => {
+    const response = await client.get('/health')
+
+    response.assertStatus(200)
+    response.assertBodyContains({ status: 'ok', timezone: 'America/Sao_Paulo' })
+  })
 })

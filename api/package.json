@@ -37,7 +37,8 @@
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js",
     "#constants/*": "./app/constants/*.js",
-    "#types/*": "./app/types/*.js"
+    "#types/*": "./app/types/*.js",
+    "#users/*": "./app/users/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.5.0",
