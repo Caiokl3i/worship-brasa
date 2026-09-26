@@ -607,6 +607,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['apply']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'generations.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/geracao'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['show']>>>
+    }
+  }
+  'generations.update': {
+    methods: ["PUT"]
+    pattern: '/api/ministerios/:ministryId/geracao'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/generation').saveGenerationDefaultValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/generation').saveGenerationDefaultValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'generations.suggest': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/sugerir'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/generation').suggestValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/generation').suggestValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['suggest']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['suggest']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'reports.overview': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios/:ministryId/relatorios/visao'

@@ -8,6 +8,7 @@ export const controllers = {
   Chats: () => import('#controllers/chats_controller'),
   Classifications: () => import('#controllers/classifications_controller'),
   Folders: () => import('#controllers/folders_controller'),
+  Generations: () => import('#controllers/generations_controller'),
   Health: () => import('#controllers/health_controller'),
   Invites: () => import('#controllers/invites_controller'),
   Members: () => import('#controllers/members_controller'),

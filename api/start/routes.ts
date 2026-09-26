@@ -20,6 +20,7 @@ const ChatsController = () => import('#controllers/chats_controller')
 const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
 const ReportsController = () => import('#controllers/reports_controller')
+const GenerationsController = () => import('#controllers/generations_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -130,6 +131,13 @@ router
           ScriptsController,
           'apply',
         ])
+        router.get('/ministerios/:ministryId/geracao', [GenerationsController, 'show'])
+        router.put('/ministerios/:ministryId/geracao', [GenerationsController, 'update'])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/sugerir', [
+          GenerationsController,
+          'suggest',
+        ])
+
         router.get('/ministerios/:ministryId/relatorios/visao', [ReportsController, 'overview'])
         router.get('/ministerios/:ministryId/relatorios', [ReportsController, 'show'])
         router.get('/ministerios/:ministryId/relatorios/panorama', [ReportsController, 'panorama'])

@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChatPanel } from '../components/ChatPanel.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { ScriptEditor } from '../components/ScriptEditor.tsx'
+import { SuggestPanel } from '../components/SuggestPanel.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
+import type { Proposal } from '../lib/generation.ts'
 import type { MemberItem, MinistryFunctionItem } from '../lib/ministry.ts'
 import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire.ts'
 import { manualsForSave } from '../lib/script.ts'
@@ -152,14 +154,24 @@ export function EscalaEditorPage() {
   const [ready, setReady] = useState(false)
   const [seriesInfo, setSeriesInfo] = useState<ScheduleSeries | null>(null)
   const [baseline, setBaseline] = useState<Baseline | null>(null)
-  const [scopePrompt, setScopePrompt] = useState<'save' | 'delete' | 'script' | 'apply' | null>(null)
+  const [scopePrompt, setScopePrompt] = useState<'save' | 'delete' | 'script' | 'apply' | null>(
+    null
+  )
   const [scriptItems, setScriptItems] = useState<ScriptItemView[]>([])
   const [templates, setTemplates] = useState<ScriptTemplateView[]>([])
   const [templateId, setTemplateId] = useState('')
   const [scopeChoice, setScopeChoice] = useState<ScopeChoice>('only_this')
   const [replaceFilled, setReplaceFilled] = useState(false)
-  const [pending, setPending] = useState<{ path: string; method: string } | null>(null)
+  const [pending, setPending] = useState<{
+    path: string
+    method: string
+  } | null>(null)
   const [revision, setRevision] = useState(0)
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const suggestionDraft = useRef<{
+    team: TeamMember[]
+    songs: SongDraft[]
+  } | null>(null)
 
   function apply(detail: ScheduleDetail, catalog: Map<string, SongDetail>) {
     setStatus(detail.status)
@@ -187,7 +199,10 @@ export function EscalaEditorPage() {
       detail.participants.map((participant) => ({
         membershipId: participant.membershipId,
         name: participant.name,
-        functions: participant.functions.map((item) => ({ id: item.id, name: item.name })),
+        functions: participant.functions.map((item) => ({
+          id: item.id,
+          name: item.name,
+        })),
         confirmation: participant.confirmation,
         absent: participant.absent,
         conflicts: participant.conflicts,
@@ -204,7 +219,13 @@ export function EscalaEditorPage() {
           versions:
             full?.versions ??
             (song.versionId
-              ? [{ id: song.versionId, name: song.versionName ?? 'Versão', key: null }]
+              ? [
+                  {
+                    id: song.versionId,
+                    name: song.versionName ?? 'Versão',
+                    key: null,
+                  },
+                ]
               : []),
           versionId: song.versionId,
           keyOverride: song.keyOverride ?? '',
@@ -309,7 +330,12 @@ export function EscalaEditorPage() {
     )
   }
 
-  function payload(scope?: { scope: ScopeChoice; replaceFilled: boolean }) {
+  function payload(
+    scope?: { scope: ScopeChoice; replaceFilled: boolean },
+    draft?: { team: TeamMember[]; songs: SongDraft[] } | null
+  ) {
+    const people = draft?.team ?? team
+    const list = draft?.songs ?? songs
     return {
       version,
       title,
@@ -318,19 +344,19 @@ export function EscalaEditorPage() {
       notes,
       dressCode,
       ...(canManage ? { confirmationRequired } : {}),
-      participants: team.map((member) => ({
+      participants: people.map((member) => ({
         membershipId: member.membershipId,
         functionIds: member.functions.map((item) => item.id),
       })),
       ...(scope ?? {}),
-      songs: songs.map((song) => ({
+      songs: list.map((song) => ({
         songId: song.songId,
         versionId: song.versionId,
         keyOverride: song.keyOverride || null,
         notes: song.notes,
         durationSeconds: song.durationSeconds ? Number(song.durationSeconds) : null,
         highlights: song.highlights.filter((highlight) =>
-          team.some(
+          people.some(
             (member) =>
               member.membershipId === highlight.membershipId &&
               member.functions.some((item) => item.id === highlight.functionId)
@@ -434,7 +460,69 @@ export function EscalaEditorPage() {
     }
   }
 
+  function teamFromProposal(proposal: Proposal) {
+    const byId = new Map<string, TeamMember>()
+    for (const vacancy of proposal.vacancies) {
+      for (const person of vacancy.people) {
+        const existing = team.find((member) => member.membershipId === person.membershipId)
+        const current = byId.get(person.membershipId) ?? {
+          membershipId: person.membershipId,
+          name: person.name,
+          functions: [],
+          confirmation: existing?.confirmation ?? null,
+          absent: existing?.absent ?? null,
+          conflicts: existing?.conflicts ?? [],
+        }
+        if (!current.functions.some((item) => item.id === vacancy.functionId)) {
+          current.functions.push({
+            id: vacancy.functionId,
+            name: vacancy.functionName,
+          })
+        }
+        byId.set(person.membershipId, current)
+      }
+    }
+    return [...byId.values()]
+  }
+
+  function songsFromProposal(proposal: Proposal): SongDraft[] {
+    return proposal.songs.map((song) => ({
+      songId: song.songId,
+      title: song.title,
+      artist: song.artist,
+      defaultKey: song.defaultKey,
+      versions: song.versionId
+        ? [{ id: song.versionId, name: 'Versão', key: song.defaultKey }]
+        : [],
+      versionId: song.versionId,
+      keyOverride: '',
+      notes: '',
+      durationSeconds: '',
+      highlights: [],
+      links: [],
+      effectiveKey: song.defaultKey ?? '',
+    }))
+  }
+
+  function acceptSuggestion(proposal: Proposal) {
+    suggestionDraft.current = {
+      team: teamFromProposal(proposal),
+      songs: songsFromProposal(proposal),
+    }
+    setSuggestOpen(false)
+    const path = `/api/ministerios/${ministry.id}/escalas/${scheduleId}`
+    if (patternDirty()) {
+      setScopeChoice('only_this')
+      setReplaceFilled(false)
+      setPending({ path, method: 'PATCH' })
+      setScopePrompt('save')
+      return
+    }
+    void send(path, 'PATCH')
+  }
+
   function requestSave(path: string, method: string) {
+    suggestionDraft.current = null
     if (patternDirty()) {
       setScopeChoice('only_this')
       setReplaceFilled(false)
@@ -452,13 +540,15 @@ export function EscalaEditorPage() {
   ) {
     setErrors([])
     setNotice('')
+    const draft = suggestionDraft.current
+    suggestionDraft.current = null
     try {
       const detail = await api<ScheduleDetail>(path, {
         method,
-        body: JSON.stringify(payload(scope)),
+        body: JSON.stringify(payload(scope, draft)),
       })
       const catalog = new Map<string, SongDetail>()
-      for (const song of songs) {
+      for (const song of draft?.songs ?? songs) {
         catalog.set(song.songId, {
           id: song.songId,
           title: song.title,
@@ -473,7 +563,9 @@ export function EscalaEditorPage() {
         })
       }
       apply(detail, catalog)
-      setNotice(method === 'POST' && path.endsWith('/publicar') ? 'Escala publicada.' : 'Escala salva.')
+      setNotice(
+        method === 'POST' && path.endsWith('/publicar') ? 'Escala publicada.' : 'Escala salva.'
+      )
       if (path.endsWith('/rascunho')) {
         setNotice('Escala em rascunho.')
       }
@@ -568,7 +660,10 @@ export function EscalaEditorPage() {
         `/api/ministerios/${ministry.id}/escalas/${scheduleId}/falta`,
         {
           method: 'POST',
-          body: JSON.stringify({ membershipId: member.membershipId, absent: !member.absent }),
+          body: JSON.stringify({
+            membershipId: member.membershipId,
+            absent: !member.absent,
+          }),
         }
       )
       apply(detail, currentCatalog())
@@ -640,7 +735,9 @@ export function EscalaEditorPage() {
       params.set('q', songQuery.trim())
     }
     const suffix = params.toString() ? `?${params.toString()}` : ''
-    const body = await api<{ songs: SongSummary[] }>(`/api/ministerios/${ministry.id}/musicas${suffix}`)
+    const body = await api<{ songs: SongSummary[] }>(
+      `/api/ministerios/${ministry.id}/musicas${suffix}`
+    )
     setSongHits(body.songs)
   }
 
@@ -660,8 +757,15 @@ export function EscalaEditorPage() {
         durationSeconds: '',
         highlights: [],
         links: detail.links
-          .filter((link) => link.versionId === null || link.versionId === (detail.versions[0]?.id ?? null))
-          .map((link) => ({ id: link.id, kind: link.kind, label: link.label, url: link.url })),
+          .filter(
+            (link) => link.versionId === null || link.versionId === (detail.versions[0]?.id ?? null)
+          )
+          .map((link) => ({
+            id: link.id,
+            kind: link.kind,
+            label: link.label,
+            url: link.url,
+          })),
         effectiveKey: detail.versions[0]?.key || detail.defaultKey || '',
       },
     ])
@@ -695,7 +799,8 @@ export function EscalaEditorPage() {
           highlights: exists
             ? song.highlights.filter(
                 (item) =>
-                  item.membershipId !== highlight.membershipId || item.functionId !== highlight.functionId
+                  item.membershipId !== highlight.membershipId ||
+                  item.functionId !== highlight.functionId
               )
             : [...song.highlights, highlight],
         }
@@ -719,7 +824,8 @@ export function EscalaEditorPage() {
   }
 
   const availableFunctions = functions.filter(
-    (item) => !item.archived || team.some((member) => member.functions.some((fn) => fn.id === item.id))
+    (item) =>
+      !item.archived || team.some((member) => member.functions.some((fn) => fn.id === item.id))
   )
   const deadline = new Date(endsAtIso ?? startsAtIso ?? 0).getTime()
   const ended = Boolean(startsAtIso) && Date.now() >= deadline
@@ -735,9 +841,7 @@ export function EscalaEditorPage() {
       <p className="badge">{status === 'draft' ? 'Rascunho' : 'Publicada'}</p>
       {seriesInfo ? (
         <p className="notice">
-          {seriesInfo.detached
-            ? 'Esta data não acompanha mais a série.'
-            : seriesPhrase(seriesInfo)}
+          {seriesInfo.detached ? 'Esta data não acompanha mais a série.' : seriesPhrase(seriesInfo)}
         </p>
       ) : null}
       {mine && status === 'published' && confirmationRequired ? (
@@ -835,8 +939,8 @@ export function EscalaEditorPage() {
         <div className="form">
           {teamWarnings.length > 0 ? (
             <p className="notice">
-              Há avisos na equipe. Você ainda pode mantê-los nesta escala.{' '}
-              {teamWarnings.join('. ')}.
+              Há avisos na equipe. Você ainda pode mantê-los nesta escala. {teamWarnings.join('. ')}
+              .
             </p>
           ) : null}
           {team.length === 0 ? <p>Ninguém na equipe.</p> : null}
@@ -1043,7 +1147,9 @@ export function EscalaEditorPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          setSongs((current) => current.filter((_, itemIndex) => itemIndex !== index))
+                          setSongs((current) =>
+                            current.filter((_, itemIndex) => itemIndex !== index)
+                          )
                         }
                       >
                         Remover
@@ -1122,7 +1228,9 @@ export function EscalaEditorPage() {
                 <Link to={`/m/${ministry.id}/escalas/${item.id}`}>
                   {item.title} — {formatInZone(item.startsAt, ministry.timezone)}
                 </Link>
-                {item.detachedFromSeries ? <span>Esta data não acompanha mais a série.</span> : null}
+                {item.detachedFromSeries ? (
+                  <span>Esta data não acompanha mais a série.</span>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -1190,7 +1298,10 @@ export function EscalaEditorPage() {
           }}
         >
           <fieldset className="checks">
-            <legend>{scopePrompt === 'delete' ? 'Excluir' : 'Salvar'} — {writtenDate(startsAtIso, ministry.timezone)}</legend>
+            <legend>
+              {scopePrompt === 'delete' ? 'Excluir' : 'Salvar'} —{' '}
+              {writtenDate(startsAtIso, ministry.timezone)}
+            </legend>
             <label>
               <input
                 type="radio"
@@ -1231,14 +1342,35 @@ export function EscalaEditorPage() {
           </fieldset>
           <div className="row">
             <button type="submit">Confirmar</button>
-            <button type="button" onClick={() => setScopePrompt(null)}>
+            <button
+              type="button"
+              onClick={() => {
+                suggestionDraft.current = null
+                setScopePrompt(null)
+              }}
+            >
               Cancelar
             </button>
           </div>
         </form>
       ) : null}
 
+      {canManage && suggestOpen ? (
+        <SuggestPanel
+          ministryId={ministry.id}
+          scheduleId={scheduleId}
+          functions={functions}
+          team={team}
+          onAccept={acceptSuggestion}
+        />
+      ) : null}
+
       <div className="row">
+        {canManage ? (
+          <button type="button" onClick={() => setSuggestOpen((open) => !open)}>
+            Sugerir equipe e músicas
+          </button>
+        ) : null}
         {canEditSongs ? (
           <button
             type="button"

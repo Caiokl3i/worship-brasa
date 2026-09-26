@@ -54,6 +54,9 @@ export type ScannedRoutes = {
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'generations.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'generations.suggest': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -101,6 +104,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -127,6 +131,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -159,6 +164,7 @@ export type ScannedRoutes = {
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'generations.suggest': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
@@ -191,6 +197,7 @@ export type ScannedRoutes = {
     'notifications.update_preferences': { paramsTuple?: []; params?: {} }
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'generations.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   DELETE: {
     'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }

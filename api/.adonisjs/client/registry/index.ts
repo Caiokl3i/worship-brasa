@@ -306,6 +306,24 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"roteiro","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"aplicar","end":""}],
     types: placeholder as Registry['scripts.apply']['types'],
   },
+  'generations.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/geracao',
+    tokens: [{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"geracao","end":""}],
+    types: placeholder as Registry['generations.show']['types'],
+  },
+  'generations.update': {
+    methods: ["PUT"],
+    pattern: '/api/ministerios/:ministryId/geracao',
+    tokens: [{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/geracao","type":0,"val":"geracao","end":""}],
+    types: placeholder as Registry['generations.update']['types'],
+  },
+  'generations.suggest': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/sugerir',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"sugerir","end":""}],
+    types: placeholder as Registry['generations.suggest']['types'],
+  },
   'reports.overview': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios/:ministryId/relatorios/visao',

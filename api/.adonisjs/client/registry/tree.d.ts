@@ -95,6 +95,11 @@ export interface ApiDefinition {
     store: typeof routes['scripts.store']
     update: typeof routes['scripts.update']
   }
+  generations: {
+    show: typeof routes['generations.show']
+    update: typeof routes['generations.update']
+    suggest: typeof routes['generations.suggest']
+  }
   reports: {
     overview: typeof routes['reports.overview']
     show: typeof routes['reports.show']

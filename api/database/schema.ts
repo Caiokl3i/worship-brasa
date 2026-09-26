@@ -210,6 +210,60 @@ export class MinistryFunctionSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class MinistryGenerationDefaultSchema extends BaseModel {
+  static $columns = [
+    'allowMultipleFunctions',
+    'conflictMode',
+    'createdAt',
+    'historyMonths',
+    'id',
+    'includeUnplayed',
+    'minGapDays',
+    'minSongGapDays',
+    'ministryId',
+    'peopleStrategy',
+    'preferFewerAbsences',
+    'songCount',
+    'songStrategy',
+    'unavailabilityMode',
+    'updatedAt',
+    'vacancies',
+  ] as const
+  $columns = MinistryGenerationDefaultSchema.$columns
+  @column()
+  declare allowMultipleFunctions: boolean
+  @column()
+  declare conflictMode: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare historyMonths: number
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare includeUnplayed: boolean
+  @column()
+  declare minGapDays: number | null
+  @column()
+  declare minSongGapDays: number | null
+  @column()
+  declare ministryId: string
+  @column()
+  declare peopleStrategy: string
+  @column()
+  declare preferFewerAbsences: boolean
+  @column()
+  declare songCount: number
+  @column()
+  declare songStrategy: string
+  @column()
+  declare unavailabilityMode: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare vacancies: string
+}
+
 export class NoticeSchema extends BaseModel {
   static $columns = [
     'archivedAt',
