@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout.tsx'
 import { MinistryLayout } from './layouts/MinistryLayout.tsx'
+import { AtivarPage } from './pages/AtivarPage.tsx'
 import { AvisosPage } from './pages/AvisosPage.tsx'
 import { ChatPage } from './pages/ChatPage.tsx'
 import { CadastrarPage } from './pages/CadastrarPage.tsx'
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/entrar" element={<EntrarPage />} />
             <Route path="/cadastrar" element={<CadastrarPage />} />
             <Route path="/recuperar-senha" element={<RecuperarSenhaPage />} />
+            <Route path="/ativar" element={<AtivarPage />} />
           </Route>
 
           <Route element={<RequireAuth />}>

@@ -30,6 +30,7 @@ router.post('/api/cadastrar', [AccountController, 'store'])
 router.post('/api/entrar', [SessionController, 'store'])
 router.post('/api/recuperar-senha', [PasswordResetController, 'store'])
 router.post('/api/recuperar-senha/confirmar', [PasswordResetController, 'update'])
+router.post('/api/ativar/confirmar', [InvitesController, 'activate'])
 
 router
   .group(() => {
@@ -60,6 +61,7 @@ router
 
         router.get('/ministerios/:ministryId/convite', [InvitesController, 'show'])
         router.post('/ministerios/:ministryId/convite', [InvitesController, 'store'])
+        router.post('/ministerios/:ministryId/convite/email', [InvitesController, 'email'])
 
         router.get('/ministerios/:ministryId/membros', [MembersController, 'index'])
         router.get('/ministerios/:ministryId/pedidos', [MembersController, 'pending'])

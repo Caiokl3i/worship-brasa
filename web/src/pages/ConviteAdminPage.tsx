@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { TextField } from '../components/TextField.tsx'
 import { api, ApiError } from '../lib/api.ts'
 import type { InviteInfo } from '../lib/ministry.ts'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
@@ -16,6 +17,7 @@ export function ConviteAdminPage() {
   const [requests, setRequests] = useState<RequestItem[]>([])
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const [inviteEmail, setInviteEmail] = useState('')
 
   async function load() {
     const [inviteBody, requestBody] = await Promise.all([
@@ -44,6 +46,27 @@ export function ConviteAdminPage() {
     })
     setInvite(body.invite)
     setNotice('Código novo gerado. O anterior deixou de valer.')
+  }
+
+  async function sendEmail(event: React.FormEvent) {
+    event.preventDefault()
+    setError('')
+    try {
+      const body = await api<{ sent: 'code' | 'activation' }>(
+        `/api/ministerios/${ministry.id}/convite/email`,
+        { method: 'POST', body: JSON.stringify({ email: inviteEmail }) }
+      )
+      setNotice(
+        body.sent === 'code'
+          ? 'Enviamos o código para esta conta.'
+          : 'Enviamos um link para criar a senha.'
+      )
+      setInviteEmail('')
+    } catch (caught: unknown) {
+      if (caught instanceof ApiError) {
+        setError(caught.message)
+      }
+    }
   }
 
   async function copy() {
@@ -98,6 +121,18 @@ export function ConviteAdminPage() {
           Gerar código
         </button>
       )}
+
+      <form className="form" onSubmit={(event) => void sendEmail(event)}>
+        <h2>Enviar por e-mail</h2>
+        <TextField
+          label="E-mail"
+          name="inviteEmail"
+          type="email"
+          value={inviteEmail}
+          onChange={setInviteEmail}
+        />
+        <button type="submit">Enviar convite</button>
+      </form>
 
       <h2>Pedidos</h2>
       {requests.length === 0 ? <p>Nenhum pedido pendente.</p> : null}
