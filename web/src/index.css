@@ -1,7 +1,33 @@
 :root {
+  color-scheme: light;
+  --ink: #1c1917;
+  --paper: #faf7f2;
+  --line: #d6d3d1;
+  --card: #e7e5e4;
+  --field: #fff;
   font-family: Georgia, 'Times New Roman', serif;
-  color: #1c1917;
-  background: #faf7f2;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ink: #faf7f2;
+  --paper: #1c1917;
+  --line: #44403c;
+  --card: #292524;
+  --field: #292524;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] {
+    color-scheme: dark;
+    --ink: #faf7f2;
+    --paper: #1c1917;
+    --line: #44403c;
+    --card: #292524;
+    --field: #292524;
+  }
 }
 
 body {
@@ -53,9 +79,10 @@ h1 {
 .field textarea {
   font: inherit;
   padding: 0.5rem 0.6rem;
-  border: 1px solid #d6d3d1;
+  border: 1px solid var(--line);
   border-radius: 0.25rem;
-  background: white;
+  background: var(--field);
+  color: inherit;
 }
 
 .errors {
@@ -71,8 +98,8 @@ button {
   padding: 0.5rem 0.9rem;
   border: 0;
   border-radius: 0.25rem;
-  background: #1c1917;
-  color: #faf7f2;
+  background: var(--ink);
+  color: var(--paper);
   cursor: pointer;
 }
 
@@ -98,7 +125,7 @@ h2 {
   display: grid;
   gap: 0.35rem;
   padding: 0.9rem 1rem;
-  border: 1px solid #e7e5e4;
+  border: 1px solid var(--card);
   border-radius: 0.25rem;
   font-family: system-ui, sans-serif;
 }
@@ -134,13 +161,13 @@ h2 {
 
 .tabs button {
   background: transparent;
-  color: #1c1917;
-  border: 1px solid #d6d3d1;
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 
 .tabs button[aria-selected='true'] {
-  background: #1c1917;
-  color: #faf7f2;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .panorama {
@@ -152,7 +179,7 @@ h2 {
 
 .panorama th,
 .panorama td {
-  border: 1px solid #e7e5e4;
+  border: 1px solid var(--card);
   padding: 0.4rem 0.6rem;
   text-align: left;
   vertical-align: top;
@@ -164,7 +191,7 @@ h2 {
   margin: 0;
   padding: 0.15rem 0.45rem;
   border-radius: 0.25rem;
-  background: #e7e5e4;
+  background: var(--card);
   font-family: system-ui, sans-serif;
   font-size: 0.8rem;
 }

@@ -4,6 +4,7 @@ import { api } from '../lib/api.ts'
 import type { MinistryList } from '../lib/ministry.ts'
 import type { NotificationList } from '../lib/notification.ts'
 import { useSession } from '../session.tsx'
+import { ThemeSelect } from '../components/ThemeSelect.tsx'
 
 export function AppLayout() {
   const { user, setUser } = useSession()
@@ -72,9 +73,8 @@ export function AppLayout() {
             ))}
           </select>
         ) : null}
-        <Link to="/notificacoes">
-          Notificações{unread > 0 ? ` (${unread})` : ''}
-        </Link>
+        <ThemeSelect />
+        <Link to="/notificacoes">Notificações{unread > 0 ? ` (${unread})` : ''}</Link>
         <button type="button" onClick={() => void logout()}>
           Sair
         </button>
