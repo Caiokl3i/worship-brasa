@@ -25,19 +25,23 @@ export default class SchedulesController {
     const payload = await request.validateUsing(createScheduleValidator)
     const view = await new ScheduleService().create(membership, payload)
     return response.created(
-      toScheduleDetail(view.schedule, membership, view.conflicts, view.series)
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
     )
   }
 
   async show({ membership, params, response }: HttpContext) {
     const view = await new ScheduleService().show(membership, params.scheduleId)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async update({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().update(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async destroy({ membership, params, response }: HttpContext) {
@@ -52,7 +56,9 @@ export default class SchedulesController {
 
   async restore({ membership, params, response }: HttpContext) {
     const view = await new ScheduleService().restore(membership, params.scheduleId)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async destroyScoped({ membership, params, request, response }: HttpContext) {
@@ -74,25 +80,33 @@ export default class SchedulesController {
   async publish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().publish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async unpublish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().unpublish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async confirm({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(confirmScheduleValidator)
     const view = await new ScheduleService().confirm(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async absence({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(absenceValidator)
     const view = await new ScheduleService().markAbsent(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 
   async conflicts({ membership, request, response }: HttpContext) {
@@ -108,6 +122,8 @@ export default class SchedulesController {
       params.scheduleId,
       payload.version
     )
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+    return response.ok(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
+    )
   }
 }

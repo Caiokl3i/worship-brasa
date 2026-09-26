@@ -155,6 +155,48 @@ function intent(
   }
 }
 
+export function scheduleChangeSummary(effect: SeriesEffect, zone: string) {
+  if (effect.kind === 'deleted') {
+    return 'Excluída'
+  }
+  if (effect.kind === 'team_trimmed') {
+    return 'Equipe'
+  }
+
+  const parts: string[] = []
+  if (effect.before.status !== 'published' && effect.after.status === 'published') {
+    parts.push('Publicada')
+  }
+  if (effect.before.status === 'published' && effect.after.status === 'draft') {
+    parts.push('Rascunho')
+  }
+  if (
+    calendarChanged(effect.before, effect.after, zone) ||
+    clockChanged(effect.before, effect.after, zone)
+  ) {
+    parts.push('Horário')
+  }
+  if (teamChanged(effect.before, effect.after)) {
+    parts.push('Equipe')
+  }
+  if (songsChanged(effect.before, effect.after)) {
+    parts.push('Músicas')
+  }
+  return parts.length === 0 ? 'Salva' : parts.join(', ')
+}
+
+function teamChanged(before: ScheduleSnap, after: ScheduleSnap) {
+  const key = (snap: ScheduleSnap) =>
+    snap.participants
+      .map(
+        (participant) =>
+          `${participant.membershipId}:${[...participant.functionIds].sort().join(',')}`
+      )
+      .sort()
+      .join('|')
+  return key(before) !== key(after)
+}
+
 function changeLine(before: ScheduleSnap, after: ScheduleSnap, zone: string) {
   const parts: string[] = []
   if (calendarChanged(before, after, zone)) {

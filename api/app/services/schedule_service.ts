@@ -35,6 +35,8 @@ import { intentsFromEffects, type SeriesEffect } from '#notifications/effects'
 import { snapshotSchedule } from '#schedules/snapshot'
 import NotificationService from '#services/notification_service'
 import { syncCalendarEffects } from '#services/calendar_sync'
+import { recordScheduleChanges } from '#services/schedule_history'
+import ScheduleChange from '#models/schedule_change'
 import { trashSince } from '#constants/trash'
 
 type HighlightInput = {
@@ -84,6 +86,7 @@ export type ScheduleView = {
   schedule: Schedule
   conflicts: Map<string, Conflict[]>
   series: ScheduleSeriesSummary | null
+  changes: ScheduleChange[]
 }
 
 type PreparedWrite = {
@@ -234,7 +237,9 @@ export default class ScheduleService {
     const zone = await this.#zone(actor.ministryId)
     const effects = await db.transaction(async (trx) => {
       const schedule = await this.#lock(actor, scheduleId, trx)
-      return deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
+      const collected = await deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
+      await recordScheduleChanges(trx, actor.userId, collected, zone)
+      return collected
     })
     await this.#afterCommit(effects, zone)
   }
@@ -426,7 +431,9 @@ export default class ScheduleService {
       const removedMembershipIds = participants
         .filter((participant) => removing.includes(participant.id))
         .map((participant) => participant.membershipId)
-      return [{ kind: 'team_trimmed' as const, before, removedMembershipIds }]
+      const collected = [{ kind: 'team_trimmed' as const, before, removedMembershipIds }]
+      await recordScheduleChanges(trx, actor.userId, collected, zone)
+      return collected
     })
     await this.#afterCommit(effects, zone)
 
@@ -560,6 +567,7 @@ export default class ScheduleService {
           }))
         )
       }
+      await recordScheduleChanges(trx, actor.userId, collected, zone)
       return collected
     })
 
@@ -920,7 +928,18 @@ export default class ScheduleService {
       )
     }
 
-    return { schedule, conflicts, series: await this.#seriesSummary(schedule, includeDrafts) }
+    const changes = await ScheduleChange.query()
+      .where('scheduleId', schedule.id)
+      .preload('user')
+      .orderBy('createdAt', 'desc')
+      .orderBy('id', 'desc')
+
+    return {
+      schedule,
+      conflicts,
+      series: await this.#seriesSummary(schedule, includeDrafts),
+      changes,
+    }
   }
 
   async #seriesSummary(

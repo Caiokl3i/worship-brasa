@@ -507,6 +507,21 @@ export class ScheduleAssignmentSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class ScheduleChangeSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'scheduleId', 'summary', 'userId'] as const
+  $columns = ScheduleChangeSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare scheduleId: string
+  @column()
+  declare summary: string
+  @column()
+  declare userId: string
+}
+
 export class ScheduleParticipantSchema extends BaseModel {
   static $columns = [
     'absent',

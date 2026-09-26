@@ -170,6 +170,7 @@ export function EscalaEditorPage() {
   const [revision, setRevision] = useState(0)
   const [suggestOpen, setSuggestOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
+  const [changes, setChanges] = useState<ScheduleDetail['changes']>([])
   const suggestionDraft = useRef<{
     team: TeamMember[]
     songs: SongDraft[]
@@ -177,6 +178,7 @@ export function EscalaEditorPage() {
 
   function apply(detail: ScheduleDetail, catalog: Map<string, SongDetail>) {
     setStatus(detail.status)
+    setChanges(detail.changes ?? [])
     setVersion(detail.version)
     const localStart = toLocalInput(detail.startsAt, ministry.timezone)
     const localEnd = toLocalInput(detail.endsAt, ministry.timezone)
@@ -841,6 +843,18 @@ export function EscalaEditorPage() {
       <p className="eyebrow">Escalas</p>
       <h1>{title || 'Escala'}</h1>
       <p className="badge">{status === 'draft' ? 'Rascunho' : 'Publicada'}</p>
+      {changes.length > 0 ? (
+        <div>
+          <h2>Alterações</h2>
+          <ul className="list">
+            {changes.map((change) => (
+              <li key={change.id}>
+                {change.name}: {change.summary}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       {seriesInfo ? (
         <p className="notice">
           {seriesInfo.detached ? 'Esta data não acompanha mais a série.' : seriesPhrase(seriesInfo)}

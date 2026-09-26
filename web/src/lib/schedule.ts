@@ -118,6 +118,12 @@ export type ScheduleDetail = ScheduleSummary & {
   script: ScheduleScript
   participants: ScheduleParticipant[]
   songs: ScheduleSong[]
+  changes: Array<{
+    id: string
+    summary: string
+    createdAt: string
+    name: string
+  }>
 }
 
 export function formatInZone(iso: string | null, timeZone: string) {

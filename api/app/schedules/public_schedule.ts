@@ -1,4 +1,5 @@
 import type Schedule from '#models/schedule'
+import type ScheduleChange from '#models/schedule_change'
 import type Membership from '#models/membership'
 import { effectiveKey } from '#schedules/effective_key'
 import type { Conflict } from '#schedules/conflicts'
@@ -33,7 +34,8 @@ export function toScheduleDetail(
   schedule: Schedule,
   actor: Membership,
   conflicts: Map<string, Conflict[]>,
-  series: ScheduleSeriesSummary | null
+  series: ScheduleSeriesSummary | null,
+  changes: ScheduleChange[]
 ) {
   const manages = new MembershipAccessService().managesSchedules(actor)
   return {
@@ -102,6 +104,12 @@ export function toScheduleDetail(
         }),
       }
     }),
+    changes: changes.map((change) => ({
+      id: change.id,
+      summary: change.summary,
+      createdAt: change.createdAt.toUTC().toISO(),
+      name: change.user.name,
+    })),
   }
 }
 

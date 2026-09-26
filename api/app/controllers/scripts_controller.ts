@@ -47,5 +47,5 @@ export default class ScriptsController {
 
 async function detail(membership: HttpContext['membership'], scheduleId: string) {
   const view = await new ScheduleService().show(membership, scheduleId)
-  return toScheduleDetail(view.schedule, membership, view.conflicts, view.series)
+  return toScheduleDetail(view.schedule, membership, view.conflicts, view.series, view.changes)
 }
