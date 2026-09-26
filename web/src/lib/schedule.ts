@@ -65,11 +65,26 @@ export type ScheduleSong = {
   highlights: ScheduleHighlight[]
 }
 
+export type ScheduleSeries = {
+  id: string
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  interval: number
+  weekdays: number[]
+  detached: boolean
+  upcoming: Array<{
+    id: string
+    title: string
+    startsAt: string
+    detachedFromSeries: boolean
+  }>
+}
+
 export type ScheduleDetail = ScheduleSummary & {
   notes: string
   dressCode: string
   confirmationRequired: boolean
   version: number
+  series: ScheduleSeries | null
   participants: ScheduleParticipant[]
   songs: ScheduleSong[]
 }

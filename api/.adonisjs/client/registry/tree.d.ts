@@ -73,6 +73,8 @@ export interface ApiDefinition {
     show: typeof routes['schedules.show']
     update: typeof routes['schedules.update']
     destroy: typeof routes['schedules.destroy']
+    destroyScoped: typeof routes['schedules.destroy_scoped']
+    materialize: typeof routes['schedules.materialize']
     publish: typeof routes['schedules.publish']
     unpublish: typeof routes['schedules.unpublish']
     confirm: typeof routes['schedules.confirm']

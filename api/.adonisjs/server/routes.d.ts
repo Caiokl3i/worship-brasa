@@ -50,6 +50,8 @@ export type ScannedRoutes = {
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.materialize': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'seriesId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.confirm': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
@@ -116,6 +118,8 @@ export type ScannedRoutes = {
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.materialize': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'seriesId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.confirm': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }

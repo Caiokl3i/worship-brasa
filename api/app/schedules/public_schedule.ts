@@ -14,10 +14,25 @@ export function toScheduleSummary(schedule: Schedule) {
   }
 }
 
+export type ScheduleSeriesSummary = {
+  id: string
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  interval: number
+  weekdays: number[]
+  detached: boolean
+  upcoming: Array<{
+    id: string
+    title: string
+    startsAt: string
+    detachedFromSeries: boolean
+  }>
+}
+
 export function toScheduleDetail(
   schedule: Schedule,
   actor: Membership,
-  conflicts: Map<string, Conflict[]>
+  conflicts: Map<string, Conflict[]>,
+  series: ScheduleSeriesSummary | null
 ) {
   const manages = new MembershipAccessService().managesSchedules(actor)
   return {
@@ -26,6 +41,7 @@ export function toScheduleDetail(
     dressCode: schedule.dressCode,
     confirmationRequired: schedule.confirmationRequired,
     version: schedule.version,
+    series,
     participants: schedule.participants.map((participant) => ({
       id: participant.id,
       membershipId: participant.membershipId,

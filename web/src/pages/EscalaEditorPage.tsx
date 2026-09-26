@@ -8,11 +8,13 @@ import type { MemberItem, MinistryFunctionItem } from '../lib/ministry.ts'
 import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire.ts'
 import {
   SONG_KEYS,
+  formatInZone,
   toLocalInput,
   type ScheduleConflict,
   type ScheduleDetail,
   type ScheduleHighlight,
   type ScheduleLink,
+  type ScheduleSeries,
 } from '../lib/schedule.ts'
 
 type Tab = 'dados' | 'equipe' | 'musicas'
@@ -63,6 +65,44 @@ function confirmationLabel(confirmation: TeamMember['confirmation']) {
   return ''
 }
 
+const WEEKDAY_NAMES = ['', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo']
+
+type Baseline = {
+  title: string
+  startsAt: string
+  endsAt: string
+  notes: string
+  dressCode: string
+  confirmationRequired: boolean
+}
+
+type ScopeChoice = 'only_this' | 'this_and_following' | 'all'
+
+function seriesPhrase(series: ScheduleSeries) {
+  if (series.frequency === 'weekly' && series.weekdays.length > 0) {
+    const names = series.weekdays.map((day) => WEEKDAY_NAMES[day]).filter(Boolean)
+    return `Faz parte da série de ${names.join(' e ')}.`
+  }
+  if (series.frequency === 'monthly') {
+    return 'Faz parte da série mensal.'
+  }
+  if (series.frequency === 'yearly') {
+    return 'Faz parte da série anual.'
+  }
+  return 'Faz parte da série diária.'
+}
+
+function writtenDate(iso: string | null, timeZone: string) {
+  if (!iso) {
+    return 'esta data'
+  }
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    timeZone,
+  }).format(new Date(iso))
+}
+
 function conflictLabels(conflicts: ScheduleConflict[]) {
   const labels: string[] = []
   if (conflicts.some((item) => item.kind === 'unavailability')) {
@@ -105,16 +145,34 @@ export function EscalaEditorPage() {
   const [errors, setErrors] = useState<FieldError[]>([])
   const [notice, setNotice] = useState('')
   const [ready, setReady] = useState(false)
+  const [seriesInfo, setSeriesInfo] = useState<ScheduleSeries | null>(null)
+  const [baseline, setBaseline] = useState<Baseline | null>(null)
+  const [scopePrompt, setScopePrompt] = useState<'save' | 'delete' | null>(null)
+  const [scopeChoice, setScopeChoice] = useState<ScopeChoice>('only_this')
+  const [replaceFilled, setReplaceFilled] = useState(false)
+  const [pending, setPending] = useState<{ path: string; method: string } | null>(null)
+  const [revision, setRevision] = useState(0)
 
   function apply(detail: ScheduleDetail, catalog: Map<string, SongDetail>) {
     setStatus(detail.status)
     setVersion(detail.version)
+    const localStart = toLocalInput(detail.startsAt, ministry.timezone)
+    const localEnd = toLocalInput(detail.endsAt, ministry.timezone)
     setTitle(detail.title)
-    setStartsAt(toLocalInput(detail.startsAt, ministry.timezone))
-    setEndsAt(toLocalInput(detail.endsAt, ministry.timezone))
+    setStartsAt(localStart)
+    setEndsAt(localEnd)
     setNotes(detail.notes)
     setDressCode(detail.dressCode)
     setConfirmationRequired(detail.confirmationRequired)
+    setSeriesInfo(detail.series)
+    setBaseline({
+      title: detail.title,
+      startsAt: localStart,
+      endsAt: localEnd,
+      notes: detail.notes,
+      dressCode: detail.dressCode,
+      confirmationRequired: detail.confirmationRequired,
+    })
     setStartsAtIso(detail.startsAt)
     setEndsAtIso(detail.endsAt)
     setTeam(
@@ -156,6 +214,9 @@ export function EscalaEditorPage() {
 
   useEffect(() => {
     let cancelled = false
+    setNotice('')
+    setErrors([])
+    setScopePrompt(null)
 
     async function load() {
       try {
@@ -206,9 +267,23 @@ export function EscalaEditorPage() {
     return () => {
       cancelled = true
     }
-  }, [ministry.id, ministry.membership.canEditScheduleSongs, scheduleId, canManage])
+  }, [ministry.id, ministry.membership.canEditScheduleSongs, scheduleId, canManage, revision])
 
-  function payload() {
+  function patternDirty() {
+    if (!canManage || !seriesInfo || seriesInfo.detached || !baseline) {
+      return false
+    }
+    return (
+      title !== baseline.title ||
+      startsAt !== baseline.startsAt ||
+      endsAt !== baseline.endsAt ||
+      notes !== baseline.notes ||
+      dressCode !== baseline.dressCode ||
+      confirmationRequired !== baseline.confirmationRequired
+    )
+  }
+
+  function payload(scope?: { scope: ScopeChoice; replaceFilled: boolean }) {
     return {
       version,
       title,
@@ -221,6 +296,7 @@ export function EscalaEditorPage() {
         membershipId: member.membershipId,
         functionIds: member.functions.map((item) => item.id),
       })),
+      ...(scope ?? {}),
       songs: songs.map((song) => ({
         songId: song.songId,
         versionId: song.versionId,
@@ -238,13 +314,28 @@ export function EscalaEditorPage() {
     }
   }
 
-  async function send(path: string, method: string) {
+  function requestSave(path: string, method: string) {
+    if (patternDirty()) {
+      setScopeChoice('only_this')
+      setReplaceFilled(false)
+      setPending({ path, method })
+      setScopePrompt('save')
+      return
+    }
+    void send(path, method)
+  }
+
+  async function send(
+    path: string,
+    method: string,
+    scope?: { scope: ScopeChoice; replaceFilled: boolean }
+  ) {
     setErrors([])
     setNotice('')
     try {
       const detail = await api<ScheduleDetail>(path, {
         method,
-        body: JSON.stringify(payload()),
+        body: JSON.stringify(payload(scope)),
       })
       const catalog = new Map<string, SongDetail>()
       for (const song of songs) {
@@ -522,6 +613,13 @@ export function EscalaEditorPage() {
       <p className="eyebrow">Escalas</p>
       <h1>{title || 'Escala'}</h1>
       <p className="badge">{status === 'draft' ? 'Rascunho' : 'Publicada'}</p>
+      {seriesInfo ? (
+        <p className="notice">
+          {seriesInfo.detached
+            ? 'Esta data não acompanha mais a série.'
+            : seriesPhrase(seriesInfo)}
+        </p>
+      ) : null}
       {mine && status === 'published' && confirmationRequired ? (
         <div className="row">
           <span>{confirmationLabel(mine.confirmation) || 'Pendente'}</span>
@@ -868,11 +966,130 @@ export function EscalaEditorPage() {
         </div>
       ) : null}
 
+      {seriesInfo ? (
+        <div>
+          <h2>Próximas datas</h2>
+          <ul className="list">
+            {seriesInfo.upcoming.map((item) => (
+              <li key={item.id} className="card">
+                <Link to={`/m/${ministry.id}/escalas/${item.id}`}>
+                  {item.title} — {formatInZone(item.startsAt, ministry.timezone)}
+                </Link>
+                {item.detachedFromSeries ? <span>Esta data não acompanha mais a série.</span> : null}
+              </li>
+            ))}
+          </ul>
+          {canManage ? (
+            <button
+              type="button"
+              onClick={() => {
+                void api(`/api/ministerios/${ministry.id}/series/${seriesInfo.id}/materializar`, {
+                  method: 'POST',
+                  body: '{}',
+                })
+                  .then(() => setRevision((current) => current + 1))
+                  .catch((error: unknown) => {
+                    if (error instanceof ApiError) {
+                      setErrors(error.errors)
+                      setNotice(error.message)
+                      return
+                    }
+                    throw error
+                  })
+              }}
+            >
+              Atualizar próximas datas
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {scopePrompt ? (
+        <form
+          className="form"
+          onSubmit={(event) => {
+            event.preventDefault()
+            const choice = {
+              scope: scopeChoice,
+              replaceFilled: scopeChoice === 'only_this' ? false : replaceFilled,
+            }
+            setScopePrompt(null)
+            if (scopePrompt === 'delete') {
+              void api(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/excluir`, {
+                method: 'POST',
+                body: JSON.stringify(choice),
+              })
+                .then(() => navigate(`/m/${ministry.id}/escalas`))
+                .catch((error: unknown) => {
+                  if (error instanceof ApiError) {
+                    setErrors(error.errors)
+                    return
+                  }
+                  throw error
+                })
+              return
+            }
+            if (pending) {
+              void send(pending.path, pending.method, choice)
+            }
+          }}
+        >
+          <fieldset className="checks">
+            <legend>{scopePrompt === 'delete' ? 'Excluir' : 'Salvar'} — {writtenDate(startsAtIso, ministry.timezone)}</legend>
+            <label>
+              <input
+                type="radio"
+                name="scope"
+                checked={scopeChoice === 'only_this'}
+                onChange={() => setScopeChoice('only_this')}
+              />{' '}
+              somente {writtenDate(startsAtIso, ministry.timezone)}
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="scope"
+                checked={scopeChoice === 'this_and_following'}
+                onChange={() => setScopeChoice('this_and_following')}
+              />{' '}
+              esta e as seguintes
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="scope"
+                checked={scopeChoice === 'all'}
+                onChange={() => setScopeChoice('all')}
+              />{' '}
+              todas
+            </label>
+            {scopeChoice !== 'only_this' ? (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={replaceFilled}
+                  onChange={(event) => setReplaceFilled(event.target.checked)}
+                />{' '}
+                Substituir ocorrências que já têm equipe
+              </label>
+            ) : null}
+          </fieldset>
+          <div className="row">
+            <button type="submit">Confirmar</button>
+            <button type="button" onClick={() => setScopePrompt(null)}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      ) : null}
+
       <div className="row">
         {canEditSongs ? (
           <button
             type="button"
-            onClick={() => void send(`/api/ministerios/${ministry.id}/escalas/${scheduleId}`, 'PATCH')}
+            onClick={() =>
+              requestSave(`/api/ministerios/${ministry.id}/escalas/${scheduleId}`, 'PATCH')
+            }
           >
             Salvar
           </button>
@@ -881,7 +1098,7 @@ export function EscalaEditorPage() {
           <button
             type="button"
             onClick={() =>
-              void send(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/publicar`, 'POST')
+              requestSave(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/publicar`, 'POST')
             }
           >
             Publicar
@@ -891,7 +1108,7 @@ export function EscalaEditorPage() {
           <button
             type="button"
             onClick={() =>
-              void send(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/rascunho`, 'POST')
+              requestSave(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/rascunho`, 'POST')
             }
           >
             Voltar a rascunho
@@ -901,6 +1118,12 @@ export function EscalaEditorPage() {
           <button
             type="button"
             onClick={() => {
+              if (seriesInfo && !seriesInfo.detached) {
+                setScopeChoice('only_this')
+                setReplaceFilled(false)
+                setScopePrompt('delete')
+                return
+              }
               if (!window.confirm('Excluir esta escala?')) {
                 return
               }

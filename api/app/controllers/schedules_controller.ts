@@ -5,9 +5,11 @@ import {
   confirmScheduleValidator,
   conflictCheckValidator,
   createScheduleValidator,
+  deleteScheduleValidator,
   removeUnavailableValidator,
   saveScheduleValidator,
 } from '#validators/schedule'
+import { materializeForMinistry } from '#services/series_service'
 import { toScheduleDetail, toScheduleSummary } from '#schedules/public_schedule'
 
 export default class SchedulesController {
@@ -22,18 +24,20 @@ export default class SchedulesController {
   async store({ membership, request, response }: HttpContext) {
     const payload = await request.validateUsing(createScheduleValidator)
     const view = await new ScheduleService().create(membership, payload)
-    return response.created(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.created(
+      toScheduleDetail(view.schedule, membership, view.conflicts, view.series)
+    )
   }
 
   async show({ membership, params, response }: HttpContext) {
     const view = await new ScheduleService().show(membership, params.scheduleId)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async update({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().update(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async destroy({ membership, params, response }: HttpContext) {
@@ -41,28 +45,44 @@ export default class SchedulesController {
     return response.noContent()
   }
 
+  async destroyScoped({ membership, params, request, response }: HttpContext) {
+    const payload = await request.validateUsing(deleteScheduleValidator)
+    await new ScheduleService().delete(
+      membership,
+      params.scheduleId,
+      payload.scope,
+      payload.replaceFilled === true
+    )
+    return response.noContent()
+  }
+
+  async materialize({ membership, params, response }: HttpContext) {
+    await materializeForMinistry(membership, params.seriesId)
+    return response.noContent()
+  }
+
   async publish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().publish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async unpublish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
     const view = await new ScheduleService().unpublish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async confirm({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(confirmScheduleValidator)
     const view = await new ScheduleService().confirm(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async absence({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(absenceValidator)
     const view = await new ScheduleService().markAbsent(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 
   async conflicts({ membership, request, response }: HttpContext) {
@@ -78,6 +98,6 @@ export default class SchedulesController {
       params.scheduleId,
       payload.version
     )
-    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
   }
 }

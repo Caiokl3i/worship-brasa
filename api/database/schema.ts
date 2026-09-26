@@ -295,11 +295,14 @@ export class ScheduleSchema extends BaseModel {
     'confirmationRequired',
     'createdAt',
     'deletedAt',
+    'detachedFromSeries',
     'dressCode',
     'endsAt',
     'id',
     'ministryId',
     'notes',
+    'originalStartsAt',
+    'seriesId',
     'startsAt',
     'status',
     'title',
@@ -314,6 +317,8 @@ export class ScheduleSchema extends BaseModel {
   @column.dateTime()
   declare deletedAt: DateTime | null
   @column()
+  declare detachedFromSeries: boolean
+  @column()
   declare dressCode: string
   @column.dateTime()
   declare endsAt: DateTime | null
@@ -324,6 +329,10 @@ export class ScheduleSchema extends BaseModel {
   @column()
   declare notes: string
   @column.dateTime()
+  declare originalStartsAt: DateTime | null
+  @column()
+  declare seriesId: string | null
+  @column.dateTime()
   declare startsAt: DateTime
   @column()
   declare status: string
@@ -333,6 +342,60 @@ export class ScheduleSchema extends BaseModel {
   declare updatedAt: DateTime | null
   @column()
   declare version: number
+}
+
+export class SeriesSchema extends BaseModel {
+  static $columns = [
+    'confirmationRequired',
+    'createdAt',
+    'dressCode',
+    'durationMinutes',
+    'endsMode',
+    'endsOn',
+    'frequency',
+    'id',
+    'interval',
+    'ministryId',
+    'notes',
+    'occurrenceCount',
+    'startsAt',
+    'title',
+    'updatedAt',
+    'weekdays',
+  ] as const
+  $columns = SeriesSchema.$columns
+  @column()
+  declare confirmationRequired: boolean
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare dressCode: string
+  @column()
+  declare durationMinutes: number | null
+  @column()
+  declare endsMode: string
+  @column.date()
+  declare endsOn: DateTime | null
+  @column()
+  declare frequency: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare interval: number
+  @column()
+  declare ministryId: string
+  @column()
+  declare notes: string
+  @column()
+  declare occurrenceCount: number | null
+  @column.dateTime()
+  declare startsAt: DateTime
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare weekdays: any
 }
 
 export class SongLinkSchema extends BaseModel {

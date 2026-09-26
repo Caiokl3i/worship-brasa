@@ -120,6 +120,14 @@ router
           SchedulesController,
           'destroy',
         ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/excluir', [
+          SchedulesController,
+          'destroyScoped',
+        ])
+        router.post('/ministerios/:ministryId/series/:seriesId/materializar', [
+          SchedulesController,
+          'materialize',
+        ])
         router.post('/ministerios/:ministryId/escalas/:scheduleId/publicar', [
           SchedulesController,
           'publish',

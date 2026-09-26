@@ -20,6 +20,16 @@ import {
 } from '#exceptions/ministry_exceptions'
 import { SONG_KEYS } from '#ministries/repertoire'
 import { findConflicts, scheduleHasEnded, type Conflict } from '#schedules/conflicts'
+import {
+  applySeriesEdit,
+  createRepeatingSchedules,
+  deleteSeriesScope,
+  readWeekdays,
+  type RepeatInput,
+  type SeriesScope,
+} from '#services/series_service'
+import Series from '#models/series'
+import type { ScheduleSeriesSummary } from '#schedules/public_schedule'
 
 type HighlightInput = {
   membershipId: string
@@ -50,6 +60,8 @@ export type ScheduleWriteInput = {
   confirmationRequired?: boolean
   participants: ParticipantInput[]
   songs: SongInput[]
+  scope?: SeriesScope
+  replaceFilled?: boolean
 }
 
 export type ScheduleCreateInput = {
@@ -59,11 +71,13 @@ export type ScheduleCreateInput = {
   notes?: string | null
   dressCode?: string | null
   confirmationRequired?: boolean
+  repeat?: RepeatInput
 }
 
 export type ScheduleView = {
   schedule: Schedule
   conflicts: Map<string, Conflict[]>
+  series: ScheduleSeriesSummary | null
 }
 
 type PreparedWrite = {
@@ -97,6 +111,20 @@ function parseMinistryTime(value: string, zone: string, field: string) {
 
 function sameInstant(left: DateTime | null, right: DateTime | null) {
   return (left?.toUTC().toMillis() ?? null) === (right?.toUTC().toMillis() ?? null)
+}
+
+function patternChanged(schedule: Schedule, prepared: PreparedWrite) {
+  const sameConfirmation =
+    prepared.confirmationRequired === undefined ||
+    prepared.confirmationRequired === schedule.confirmationRequired
+  return !(
+    schedule.title === prepared.title &&
+    schedule.notes === prepared.notes &&
+    schedule.dressCode === prepared.dressCode &&
+    sameConfirmation &&
+    sameInstant(schedule.startsAt, prepared.startsAt) &&
+    sameInstant(schedule.endsAt, prepared.endsAt)
+  )
 }
 
 function teamKey(participants: Array<{ membershipId: string; functionIds: string[] }>) {
@@ -141,15 +169,35 @@ export default class ScheduleService {
     const endsAt = blank(input.endsAt) ? parseMinistryTime(input.endsAt!, zone, 'endsAt') : null
     this.#assertRange(startsAt, endsAt)
 
+    const title = input.title.trim()
+    const notes = input.notes?.trim() ?? ''
+    const dressCode = input.dressCode?.trim() ?? ''
+    const confirmationRequired = input.confirmationRequired ?? true
+
+    if (input.repeat) {
+      const scheduleId = await createRepeatingSchedules({
+        ministryId: actor.ministryId,
+        zone,
+        title,
+        startsAt,
+        endsAt,
+        notes,
+        dressCode,
+        confirmationRequired,
+        repeat: input.repeat,
+      })
+      return this.#view(actor, scheduleId)
+    }
+
     const schedule = await Schedule.create({
       ministryId: actor.ministryId,
-      title: input.title.trim(),
+      title,
       startsAt,
       endsAt,
       status: 'draft',
-      notes: input.notes?.trim() ?? '',
-      dressCode: input.dressCode?.trim() ?? '',
-      confirmationRequired: input.confirmationRequired ?? true,
+      notes,
+      dressCode,
+      confirmationRequired,
       version: 1,
     })
 
@@ -170,11 +218,18 @@ export default class ScheduleService {
     return this.#write(actor, scheduleId, input, 'draft')
   }
 
-  async delete(actor: Membership, scheduleId: string) {
+  async delete(
+    actor: Membership,
+    scheduleId: string,
+    scope: SeriesScope = 'only_this',
+    replaceFilled = false
+  ) {
     new MembershipAccessService().assertCanManageSchedules(actor)
-    const schedule = await this.#find(actor.ministryId, scheduleId)
-    schedule.deletedAt = DateTime.utc()
-    await schedule.save()
+    const zone = await this.#zone(actor.ministryId)
+    await db.transaction(async (trx) => {
+      const schedule = await this.#lock(actor, scheduleId, trx)
+      await deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
+    })
   }
 
   async confirm(
@@ -402,6 +457,12 @@ export default class ScheduleService {
         }
       }
 
+      const linked = Boolean(schedule.seriesId) && !schedule.detachedFromSeries
+      const patternDiffers = patternChanged(schedule, prepared)
+      if (linked && access.managesSchedules(actor) && patternDiffers && !input.scope) {
+        throw new FieldException('scope', 'Escolha o alcance da alteração.')
+      }
+
       const previousFunctions = new Map(
         currentParticipants.map((participant) => [
           participant.membershipId,
@@ -428,6 +489,24 @@ export default class ScheduleService {
       }
       schedule.version += 1
       await schedule.save()
+
+      if (linked && patternDiffers && input.scope) {
+        await applySeriesEdit({
+          trx,
+          schedule,
+          zone,
+          scope: input.scope,
+          replaceFilled: input.replaceFilled === true,
+          pattern: {
+            title: prepared.title,
+            startsAt: prepared.startsAt,
+            endsAt: prepared.endsAt,
+            notes: prepared.notes,
+            dressCode: prepared.dressCode,
+            confirmationRequired: prepared.confirmationRequired ?? schedule.confirmationRequired,
+          },
+        })
+      }
     })
 
     return this.#view(actor, scheduleId)
@@ -771,6 +850,38 @@ export default class ScheduleService {
       )
     }
 
-    return { schedule, conflicts }
+    return { schedule, conflicts, series: await this.#seriesSummary(schedule) }
+  }
+
+  async #seriesSummary(schedule: Schedule): Promise<ScheduleSeriesSummary | null> {
+    if (!schedule.seriesId) {
+      return null
+    }
+
+    const series = await Series.find(schedule.seriesId)
+    if (!series) {
+      return null
+    }
+
+    const upcoming = await Schedule.query()
+      .where('seriesId', series.id)
+      .whereNull('deletedAt')
+      .where('startsAt', '>=', DateTime.utc().toSQL()!)
+      .orderBy('startsAt', 'asc')
+      .limit(16)
+
+    return {
+      id: series.id,
+      frequency: series.frequency as ScheduleSeriesSummary['frequency'],
+      interval: series.interval,
+      weekdays: readWeekdays(series.weekdays),
+      detached: schedule.detachedFromSeries,
+      upcoming: upcoming.map((row) => ({
+        id: row.id,
+        title: row.title,
+        startsAt: row.startsAt.toUTC().toISO()!,
+        detachedFromSeries: row.detachedFromSeries,
+      })),
+    }
   }
 }

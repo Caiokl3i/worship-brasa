@@ -5,6 +5,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Ministry from '#models/ministry'
 import ScheduleParticipant from '#models/schedule_participant'
 import ScheduleSong from '#models/schedule_song'
+import Series from '#models/series'
 
 export type ScheduleStatus = 'draft' | 'published'
 
@@ -16,6 +17,9 @@ export default class Schedule extends ScheduleSchema {
 
   @belongsTo(() => Ministry)
   declare ministry: BelongsTo<typeof Ministry>
+
+  @belongsTo(() => Series)
+  declare series: BelongsTo<typeof Series>
 
   @hasMany(() => ScheduleParticipant)
   declare participants: HasMany<typeof ScheduleParticipant>

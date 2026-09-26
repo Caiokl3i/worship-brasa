@@ -282,6 +282,18 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId","type":1,"val":"scheduleId","end":""}],
     types: placeholder as Registry['schedules.destroy']['types'],
   },
+  'schedules.destroy_scoped': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/excluir',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/excluir","type":0,"val":"excluir","end":""}],
+    types: placeholder as Registry['schedules.destroy_scoped']['types'],
+  },
+  'schedules.materialize': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/series/:seriesId/materializar',
+    tokens: [{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":0,"val":"series","end":""},{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":1,"val":"seriesId","end":""},{"old":"/api/ministerios/:ministryId/series/:seriesId/materializar","type":0,"val":"materializar","end":""}],
+    types: placeholder as Registry['schedules.materialize']['types'],
+  },
   'schedules.publish': {
     methods: ["POST"],
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/publicar',

@@ -559,6 +559,30 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['destroy']>>>
     }
   }
+  'schedules.destroy_scoped': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/excluir'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').deleteScheduleValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').deleteScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['destroyScoped']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['destroyScoped']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.materialize': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/series/:seriesId/materializar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; seriesId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['materialize']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['materialize']>>>
+    }
+  }
   'schedules.publish': {
     methods: ["POST"]
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/publicar'

@@ -18,6 +18,9 @@ const messages = new SimpleMessagesProvider({
   'songs.*.notes.maxLength': 'A observação é longa demais.',
   'songs.*.durationSeconds.min': 'A duração precisa ser maior que zero.',
   'songs.*.durationSeconds.max': 'A duração é longa demais.',
+  'scope.enum': 'Escolha o alcance da alteração.',
+  'interval.min': 'O intervalo precisa ser pelo menos 1.',
+  'occurrenceCount.min': 'Informe quantas vezes.',
 })
 
 const header = {
@@ -29,7 +32,19 @@ const header = {
   confirmationRequired: vine.boolean().optional(),
 }
 
-export const createScheduleValidator = vine.create(header)
+const repeat = vine.object({
+  frequency: vine.enum(['daily', 'weekly', 'monthly', 'yearly']),
+  interval: vine.number().min(1).max(366),
+  weekdays: vine.array(vine.number().min(1).max(7)).optional(),
+  endsMode: vine.enum(['never', 'on_date', 'after_count']),
+  endsOn: vine.string().trim().nullable().optional(),
+  occurrenceCount: vine.number().min(1).max(366).nullable().optional(),
+})
+
+export const createScheduleValidator = vine.create({
+  ...header,
+  repeat: repeat.optional(),
+})
 createScheduleValidator.messagesProvider = messages
 
 const highlight = vine.object({
@@ -56,8 +71,16 @@ export const saveScheduleValidator = vine.create({
       highlights: vine.array(highlight),
     })
   ),
+  scope: vine.enum(['only_this', 'this_and_following', 'all']).optional(),
+  replaceFilled: vine.boolean().optional(),
 })
 saveScheduleValidator.messagesProvider = messages
+
+export const deleteScheduleValidator = vine.create({
+  scope: vine.enum(['only_this', 'this_and_following', 'all']),
+  replaceFilled: vine.boolean().optional(),
+})
+deleteScheduleValidator.messagesProvider = messages
 
 export const saveUnavailabilityValidator = vine.create({
   membershipId: vine.string().uuid().optional(),
