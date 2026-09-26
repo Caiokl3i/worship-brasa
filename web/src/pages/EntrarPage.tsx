@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError, type PublicUser } from '../lib/api.ts'
@@ -11,6 +11,11 @@ export function EntrarPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<FieldError[]>([])
+  const [params] = useSearchParams()
+  const googleNotice =
+    params.get('google') === 'desconhecido'
+      ? 'Não encontramos uma conta com este e-mail verificado.'
+      : ''
 
   async function submit(event: React.FormEvent) {
     event.preventDefault()
@@ -32,12 +37,27 @@ export function EntrarPage() {
     }
   }
 
+  async function google() {
+    setErrors([])
+    try {
+      const body = await api<{ url: string }>('/api/entrar/google', { method: 'POST' })
+      window.location.assign(body.url)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        return
+      }
+      throw error
+    }
+  }
+
   return (
     <main className="page">
       <p className="eyebrow">Conta</p>
       <h1>Entrar</h1>
       <form onSubmit={(event) => void submit(event)} className="form">
         <FieldErrors errors={errors} />
+        {googleNotice ? <p className="notice">{googleNotice}</p> : null}
         <TextField
           label="E-mail"
           name="email"
@@ -57,6 +77,9 @@ export function EntrarPage() {
           message={fieldMessage(errors, 'password')}
         />
         <button type="submit">Entrar</button>
+        <button type="button" onClick={() => void google()}>
+          Entrar com Google
+        </button>
       </form>
       <p>
         <Link to="/cadastrar">Criar conta</Link>

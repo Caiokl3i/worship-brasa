@@ -29,6 +29,8 @@ router.get('/health', [HealthController, 'show'])
 
 router.post('/api/cadastrar', [AccountController, 'store'])
 router.post('/api/entrar', [SessionController, 'store'])
+router.post('/api/entrar/google', [SessionController, 'google'])
+router.get('/api/entrar/google/retorno', [SessionController, 'googleCallback'])
 router.post('/api/recuperar-senha', [PasswordResetController, 'store'])
 router.post('/api/recuperar-senha/confirmar', [PasswordResetController, 'update'])
 router.post('/api/ativar/confirmar', [InvitesController, 'activate'])
