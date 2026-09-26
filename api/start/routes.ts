@@ -19,6 +19,7 @@ const NoticesController = () => import('#controllers/notices_controller')
 const ChatsController = () => import('#controllers/chats_controller')
 const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
 const NotificationsController = () => import('#controllers/notifications_controller')
+const ReportsController = () => import('#controllers/reports_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -129,6 +130,10 @@ router
           ScriptsController,
           'apply',
         ])
+        router.get('/ministerios/:ministryId/relatorios/visao', [ReportsController, 'overview'])
+        router.get('/ministerios/:ministryId/relatorios', [ReportsController, 'show'])
+        router.get('/ministerios/:ministryId/relatorios/panorama', [ReportsController, 'panorama'])
+
         router.get('/ministerios/:ministryId/roteiros', [ScriptsController, 'index'])
         router.post('/ministerios/:ministryId/roteiros', [ScriptsController, 'store'])
         router.patch('/ministerios/:ministryId/roteiros/:templateId', [ScriptsController, 'update'])

@@ -382,6 +382,7 @@ export class ScheduleSongHighlightSchema extends BaseModel {
 
 export class ScheduleSongSchema extends BaseModel {
   static $columns = [
+    'artistSnapshot',
     'createdAt',
     'durationSeconds',
     'id',
@@ -390,10 +391,13 @@ export class ScheduleSongSchema extends BaseModel {
     'position',
     'scheduleId',
     'songId',
+    'titleSnapshot',
     'updatedAt',
     'versionId',
   ] as const
   $columns = ScheduleSongSchema.$columns
+  @column()
+  declare artistSnapshot: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()
@@ -410,6 +414,8 @@ export class ScheduleSongSchema extends BaseModel {
   declare scheduleId: string
   @column()
   declare songId: string
+  @column()
+  declare titleSnapshot: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
   @column()

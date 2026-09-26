@@ -306,6 +306,24 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"roteiro","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar","type":0,"val":"aplicar","end":""}],
     types: placeholder as Registry['scripts.apply']['types'],
   },
+  'reports.overview': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/relatorios/visao',
+    tokens: [{"old":"/api/ministerios/:ministryId/relatorios/visao","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/relatorios/visao","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/relatorios/visao","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/relatorios/visao","type":0,"val":"relatorios","end":""},{"old":"/api/ministerios/:ministryId/relatorios/visao","type":0,"val":"visao","end":""}],
+    types: placeholder as Registry['reports.overview']['types'],
+  },
+  'reports.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/relatorios',
+    tokens: [{"old":"/api/ministerios/:ministryId/relatorios","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/relatorios","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/relatorios","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/relatorios","type":0,"val":"relatorios","end":""}],
+    types: placeholder as Registry['reports.show']['types'],
+  },
+  'reports.panorama': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/relatorios/panorama',
+    tokens: [{"old":"/api/ministerios/:ministryId/relatorios/panorama","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/relatorios/panorama","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/relatorios/panorama","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/relatorios/panorama","type":0,"val":"relatorios","end":""},{"old":"/api/ministerios/:ministryId/relatorios/panorama","type":0,"val":"panorama","end":""}],
+    types: placeholder as Registry['reports.panorama']['types'],
+  },
   'scripts.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios/:ministryId/roteiros',

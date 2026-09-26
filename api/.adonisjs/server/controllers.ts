@@ -17,6 +17,7 @@ export const controllers = {
   Notifications: () => import('#controllers/notifications_controller'),
   PasswordReset: () => import('#controllers/password_reset_controller'),
   Profile: () => import('#controllers/profile_controller'),
+  Reports: () => import('#controllers/reports_controller'),
   Schedules: () => import('#controllers/schedules_controller'),
   Scripts: () => import('#controllers/scripts_controller'),
   Session: () => import('#controllers/session_controller'),

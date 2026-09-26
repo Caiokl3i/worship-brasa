@@ -23,6 +23,7 @@ import { RepertorioFormPage } from './pages/RepertorioFormPage.tsx'
 import { RepertorioPage } from './pages/RepertorioPage.tsx'
 import { RoteirosPage } from './pages/RoteirosPage.tsx'
 import { RecuperarSenhaPage } from './pages/RecuperarSenhaPage.tsx'
+import { RelatoriosPage } from './pages/RelatoriosPage.tsx'
 import { GuestOnly, RequireAuth } from './routes.tsx'
 import { SessionProvider } from './session.tsx'
 
@@ -57,6 +58,7 @@ export default function App() {
                 <Route path="avisos" element={<AvisosPage />} />
                 <Route path="chat" element={<ChatPage />} />
                 <Route path="roteiros" element={<RoteirosPage />} />
+                <Route path="relatorios" element={<RelatoriosPage />} />
                 <Route path="escalas" element={<EscalasPage />} />
                 <Route path="escalas/nova" element={<NovaEscalaPage />} />
                 <Route path="escalas/:scheduleId" element={<EscalaEditorPage />} />

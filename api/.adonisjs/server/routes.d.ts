@@ -54,6 +54,9 @@ export type ScannedRoutes = {
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'templateId': ParamValue} }
@@ -98,6 +101,9 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'chats.ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -121,6 +127,9 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'chats.ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }

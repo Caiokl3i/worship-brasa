@@ -607,6 +607,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['apply']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'reports.overview': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/relatorios/visao'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['overview']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['overview']>>>
+    }
+  }
+  'reports.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/relatorios'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['show']>>>
+    }
+  }
+  'reports.panorama': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/relatorios/panorama'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['panorama']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/reports_controller').default['panorama']>>>
+    }
+  }
   'scripts.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios/:ministryId/roteiros'

@@ -55,6 +55,15 @@ export class NotificationNotFoundException extends Exception {
   }
 }
 
+export class ReportNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_REPORT_NOT_FOUND'
+
+  constructor() {
+    super('Relatório não encontrado.', { status: 404, code: 'E_REPORT_NOT_FOUND' })
+  }
+}
+
 export class NoticeNotFoundException extends Exception {
   static status = 404
   static code = 'E_NOTICE_NOT_FOUND'

@@ -741,7 +741,13 @@ export default class ScheduleService {
       }
     }
 
+    const libraryIds = [...new Set(prepared.songs.map((song) => song.songId))]
+    const library =
+      libraryIds.length === 0 ? [] : await Song.query({ client: trx }).whereIn('id', libraryIds)
+    const songsById = new Map(library.map((song) => [song.id, song]))
+
     for (const [index, songInput] of prepared.songs.entries()) {
+      const source = songsById.get(songInput.songId)
       const scheduleSong = await ScheduleSong.create(
         {
           scheduleId,
@@ -751,6 +757,8 @@ export default class ScheduleService {
           keyOverride: songInput.keyOverride,
           notes: songInput.notes,
           durationSeconds: songInput.durationSeconds ?? null,
+          titleSnapshot: source?.title ?? null,
+          artistSnapshot: source?.artist ?? null,
         },
         { client: trx }
       )

@@ -143,6 +143,21 @@ h2 {
   color: #faf7f2;
 }
 
+.panorama {
+  overflow-x: auto;
+  margin: 1rem 0 2rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+}
+
+.panorama th,
+.panorama td {
+  border: 1px solid #e7e5e4;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
 .badge {
   display: inline-block;
   width: fit-content;
