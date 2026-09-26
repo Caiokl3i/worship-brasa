@@ -10,6 +10,7 @@ import {
   type FolderItem,
   type SongSummary,
 } from '../lib/repertoire.ts'
+import { downloadCsv } from '../lib/spreadsheet.ts'
 
 export function RepertorioPage() {
   const { ministry } = useMinistry()
@@ -21,6 +22,14 @@ export function RepertorioPage() {
   const [songs, setSongs] = useState<SongSummary[] | null>(null)
   const [folders, setFolders] = useState<FolderItem[]>([])
   const [classifications, setClassifications] = useState<ClassificationItem[]>([])
+  const [csv, setCsv] = useState('')
+  const [preview, setPreview] = useState<Array<{
+    title: string
+    artist: string
+    action: 'criar' | 'ignorar'
+    reason: string
+  }> | null>(null)
+  const [sheetError, setSheetError] = useState('')
 
   async function loadCatalog(term = query, folder = folderId, classification = classificationId) {
     const params = new URLSearchParams()
@@ -65,7 +74,12 @@ export function RepertorioPage() {
           void loadCatalog(draft, folderId, classificationId)
         }}
       >
-        <TextField label="Buscar por título ou artista" name="q" value={draft} onChange={setDraft} />
+        <TextField
+          label="Buscar por título ou artista"
+          name="q"
+          value={draft}
+          onChange={setDraft}
+        />
         <label className="field">
           <span>Pasta</span>
           <select
@@ -106,6 +120,95 @@ export function RepertorioPage() {
         </label>
         <button type="submit">Buscar</button>
       </form>
+
+      {canManage ? (
+        <form
+          className="form"
+          onSubmit={(event) => {
+            event.preventDefault()
+            setSheetError('')
+            void api<{
+              rows: Array<{
+                title: string
+                artist: string
+                action: 'criar' | 'ignorar'
+                reason: string
+              }>
+            }>(`/api/ministerios/${ministry.id}/repertorio/previa`, {
+              method: 'POST',
+              body: JSON.stringify({ csv }),
+            })
+              .then((body) => setPreview(body.rows))
+              .catch((error: unknown) => {
+                if (error instanceof ApiError) {
+                  setSheetError(error.message)
+                }
+              })
+          }}
+        >
+          <h2>Planilha</h2>
+          {sheetError ? <p className="errors">{sheetError}</p> : null}
+          <div className="row">
+            <button
+              type="button"
+              onClick={() =>
+                void downloadCsv(`/api/ministerios/${ministry.id}/repertorio/modelo`, 'modelo.csv')
+              }
+            >
+              Baixar modelo
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                void downloadCsv(
+                  `/api/ministerios/${ministry.id}/repertorio/exportar`,
+                  'repertorio.csv'
+                )
+              }
+            >
+              Exportar
+            </button>
+          </div>
+          <label className="field">
+            <span>CSV</span>
+            <textarea name="csv" value={csv} onChange={(event) => setCsv(event.target.value)} />
+          </label>
+          <button type="submit">Prévia</button>
+          {preview ? (
+            <ul className="list">
+              {preview.map((row, index) => (
+                <li key={`${row.title}-${index}`}>
+                  {row.title || 'Sem título'}: {row.action === 'criar' ? 'nova' : row.reason}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {preview?.some((row) => row.action === 'criar') ? (
+            <button
+              type="button"
+              onClick={() => {
+                setSheetError('')
+                void api(`/api/ministerios/${ministry.id}/repertorio/importar`, {
+                  method: 'POST',
+                  body: JSON.stringify({ csv }),
+                })
+                  .then(() => {
+                    setPreview(null)
+                    setCsv('')
+                    return loadCatalog()
+                  })
+                  .catch((error: unknown) => {
+                    if (error instanceof ApiError) {
+                      setSheetError(error.message)
+                    }
+                  })
+              }}
+            >
+              Gravar
+            </button>
+          ) : null}
+        </form>
+      ) : null}
 
       {songs === null ? <p>Carregando…</p> : null}
       {emptyCatalog ? (
@@ -263,7 +366,12 @@ function CatalogSettings({
         ))}
       </ul>
       <form onSubmit={(event) => void createFolder(event)} className="form">
-        <TextField label="Nova pasta" name="folderName" value={folderName} onChange={setFolderName} />
+        <TextField
+          label="Nova pasta"
+          name="folderName"
+          value={folderName}
+          onChange={setFolderName}
+        />
         <button type="submit">Criar pasta</button>
       </form>
 

@@ -11,6 +11,7 @@ const InvitesController = () => import('#controllers/invites_controller')
 const MembersController = () => import('#controllers/members_controller')
 const MinistryFunctionsController = () => import('#controllers/ministry_functions_controller')
 const SongsController = () => import('#controllers/songs_controller')
+const SpreadsheetsController = () => import('#controllers/spreadsheets_controller')
 const FoldersController = () => import('#controllers/folders_controller')
 const ClassificationsController = () => import('#controllers/classifications_controller')
 const SchedulesController = () => import('#controllers/schedules_controller')
@@ -114,6 +115,22 @@ router
             router.get('/ministerios/:ministryId/musicas/:songId', [SongsController, 'show'])
             router.patch('/ministerios/:ministryId/musicas/:songId', [SongsController, 'update'])
             router.delete('/ministerios/:ministryId/musicas/:songId', [SongsController, 'destroy'])
+            router.get('/ministerios/:ministryId/repertorio/modelo', [
+              SpreadsheetsController,
+              'template',
+            ])
+            router.post('/ministerios/:ministryId/repertorio/previa', [
+              SpreadsheetsController,
+              'preview',
+            ])
+            router.post('/ministerios/:ministryId/repertorio/importar', [
+              SpreadsheetsController,
+              'import',
+            ])
+            router.get('/ministerios/:ministryId/repertorio/exportar', [
+              SpreadsheetsController,
+              'export',
+            ])
             router.get('/ministerios/:ministryId/lixeira/musicas', [SongsController, 'trash'])
             router.post('/ministerios/:ministryId/lixeira/musicas/:songId/restaurar', [
               SongsController,
