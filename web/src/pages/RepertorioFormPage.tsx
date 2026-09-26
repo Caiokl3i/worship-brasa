@@ -12,6 +12,7 @@ import {
   type LinkKind,
   type SongDetail,
 } from '../lib/repertoire.ts'
+import { bpmFromIntervals, intervalsFromTaps } from '../lib/tempo.ts'
 
 type VersionDraft = { name: string; key: string }
 type LinkDraft = { versionIndex: number | null; kind: LinkKind; label: string; url: string }
@@ -29,6 +30,8 @@ export function RepertorioFormPage() {
   const [artist, setArtist] = useState('')
   const [defaultKey, setDefaultKey] = useState('')
   const [bpm, setBpm] = useState('')
+  const [taps, setTaps] = useState<number[]>([])
+  const [tempo, setTempo] = useState<number | null>(null)
   const [minutes, setMinutes] = useState('')
   const [seconds, setSeconds] = useState('')
   const [classificationId, setClassificationId] = useState('')
@@ -78,7 +81,9 @@ export function RepertorioFormPage() {
         setSeconds(song.durationSeconds === null ? '' : String(song.durationSeconds % 60))
         setClassificationId(song.classification?.id ?? '')
         setFolderId(song.folder?.id ?? '')
-        setVersions(song.versions.map((version) => ({ name: version.name, key: version.key ?? '' })))
+        setVersions(
+          song.versions.map((version) => ({ name: version.name, key: version.key ?? '' }))
+        )
         setLinks(
           song.links.map((link) => {
             const versionIndex = link.versionId
@@ -185,7 +190,9 @@ export function RepertorioFormPage() {
 
   function updateVersion(index: number, patch: Partial<VersionDraft>) {
     setVersions((current) =>
-      current.map((version, itemIndex) => (itemIndex === index ? { ...version, ...patch } : version))
+      current.map((version, itemIndex) =>
+        itemIndex === index ? { ...version, ...patch } : version
+      )
     )
   }
 
@@ -282,7 +289,9 @@ export function RepertorioFormPage() {
               </option>
             ))}
           </select>
-          {fieldMessage(errors, 'defaultKey') ? <small>{fieldMessage(errors, 'defaultKey')}</small> : null}
+          {fieldMessage(errors, 'defaultKey') ? (
+            <small>{fieldMessage(errors, 'defaultKey')}</small>
+          ) : null}
         </label>
         <TextField
           label="BPM"
@@ -292,6 +301,28 @@ export function RepertorioFormPage() {
           readOnly={!canManage}
           message={fieldMessage(errors, 'bpm')}
         />
+        {canManage ? (
+          <div className="row">
+            <button
+              type="button"
+              onClick={() => {
+                const now = performance.now()
+                const last = taps.at(-1)
+                const next = last !== undefined && now - last > 2000 ? [now] : [...taps, now]
+                setTaps(next)
+                setTempo(bpmFromIntervals(intervalsFromTaps(next)))
+              }}
+            >
+              Marcar ritmo
+            </button>
+            {tempo ? <span>{tempo} BPM</span> : null}
+            {tempo ? (
+              <button type="button" onClick={() => setBpm(String(tempo))}>
+                Gravar BPM
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         <div className="row">
           <TextField
             label="Minutos"
@@ -378,7 +409,10 @@ export function RepertorioFormPage() {
           </div>
         ))}
         {canManage ? (
-          <button type="button" onClick={() => setVersions((current) => [...current, emptyVersion()])}>
+          <button
+            type="button"
+            onClick={() => setVersions((current) => [...current, emptyVersion()])}
+          >
             Acrescentar versão
           </button>
         ) : null}
