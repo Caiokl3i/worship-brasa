@@ -13,6 +13,7 @@ import { ensureDefaultTemplate } from '#services/script_service'
 type CreateInput = {
   name: string
   functions?: string[]
+  musicModuleEnabled?: boolean
 }
 
 type UpdateInput = {
@@ -63,7 +64,7 @@ export default class MinistryService {
           name: input.name,
           timezone: DEFAULT_TIMEZONE,
           color: DEFAULT_MINISTRY_COLOR,
-          musicModuleEnabled: true,
+          musicModuleEnabled: input.musicModuleEnabled !== false,
         },
         { client: trx }
       )
@@ -93,16 +94,18 @@ export default class MinistryService {
         )
       }
 
-      for (const [index, item] of DEFAULT_CLASSIFICATIONS.entries()) {
-        const classification = new Classification()
-        classification.fill({
-          ministryId: ministry.id,
-          name: item.name,
-          description: item.description,
-        })
-        classification.createdAt = ministry.createdAt.plus({ milliseconds: index })
-        classification.useTransaction(trx)
-        await classification.save()
+      if (ministry.musicModuleEnabled) {
+        for (const [index, item] of DEFAULT_CLASSIFICATIONS.entries()) {
+          const classification = new Classification()
+          classification.fill({
+            ministryId: ministry.id,
+            name: item.name,
+            description: item.description,
+          })
+          classification.createdAt = ministry.createdAt.plus({ milliseconds: index })
+          classification.useTransaction(trx)
+          await classification.save()
+        }
       }
 
       await ensureDefaultTemplate(ministry.id, trx)

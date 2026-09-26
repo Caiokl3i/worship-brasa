@@ -202,16 +202,20 @@ export function RelatoriosPage() {
             ))}
           </ul>
 
-          <h2>Músicas</h2>
-          {report.songs.length === 0 ? <p>Nenhuma música neste período.</p> : null}
-          <ul className="list">
-            {report.songs.map((song) => (
-              <li key={`${song.title}-${song.artist ?? ''}`}>
-                {song.title}
-                {song.artist ? ` — ${song.artist}` : ''}: {song.count}
-              </li>
-            ))}
-          </ul>
+          {ministry.musicModuleEnabled ? (
+            <>
+              <h2>Músicas</h2>
+              {report.songs.length === 0 ? <p>Nenhuma música neste período.</p> : null}
+              <ul className="list">
+                {report.songs.map((song) => (
+                  <li key={`${song.title}-${song.artist ?? ''}`}>
+                    {song.title}
+                    {song.artist ? ` — ${song.artist}` : ''}: {song.count}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
 
           <h2>Confirmações</h2>
           <p>
@@ -224,7 +228,12 @@ export function RelatoriosPage() {
       <h2>Panorama</h2>
       <label className="field">
         <span>Mês</span>
-        <input name="month" type="month" value={month} onChange={(event) => setMonth(event.target.value)} />
+        <input
+          name="month"
+          type="month"
+          value={month}
+          onChange={(event) => setMonth(event.target.value)}
+        />
         {fieldMessage(errors, 'month') ? <small>{fieldMessage(errors, 'month')}</small> : null}
       </label>
       {panorama && panorama.days.length === 0 ? <p>Nenhuma escala neste mês.</p> : null}
@@ -247,8 +256,12 @@ export function RelatoriosPage() {
                     <td key={cell.date}>
                       {cell.people.map((person) => (
                         <p key={`${person.scheduleId}-${person.name}`}>
-                          <Link to={`/m/${ministry.id}/escalas/${person.scheduleId}`}>{person.name}</Link>
-                          {person.conflicts.length > 0 ? ` (${conflictLabel(person.conflicts)})` : ''}
+                          <Link to={`/m/${ministry.id}/escalas/${person.scheduleId}`}>
+                            {person.name}
+                          </Link>
+                          {person.conflicts.length > 0
+                            ? ` (${conflictLabel(person.conflicts)})`
+                            : ''}
                         </p>
                       ))}
                     </td>

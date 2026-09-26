@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
-import { WORSHIP_FUNCTIONS } from '../lib/ministry.ts'
+import { MEDIA_FUNCTIONS, WORSHIP_FUNCTIONS } from '../lib/ministry.ts'
 
 export function NovoMinisterioPage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [kind, setKind] = useState<'louvor' | 'midia'>('louvor')
   const [selected, setSelected] = useState<string[]>([...WORSHIP_FUNCTIONS])
   const [extra, setExtra] = useState('')
   const [errors, setErrors] = useState<FieldError[]>([])
@@ -41,7 +42,11 @@ export function NovoMinisterioPage() {
     try {
       const ministry = await api<{ id: string }>('/api/ministerios', {
         method: 'POST',
-        body: JSON.stringify({ name, functions: selected }),
+        body: JSON.stringify({
+          name,
+          functions: selected,
+          musicModuleEnabled: kind === 'louvor',
+        }),
       })
       navigate(`/m/${ministry.id}`, { replace: true })
     } catch (error) {
@@ -67,14 +72,35 @@ export function NovoMinisterioPage() {
           message={fieldMessage(errors, 'name')}
         />
         <div className="checks">
+          <label>
+            <input
+              type="radio"
+              name="kind"
+              checked={kind === 'louvor'}
+              onChange={() => {
+                setKind('louvor')
+                setSelected([...WORSHIP_FUNCTIONS])
+              }}
+            />{' '}
+            Louvor
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="kind"
+              checked={kind === 'midia'}
+              onChange={() => {
+                setKind('midia')
+                setSelected([...MEDIA_FUNCTIONS])
+              }}
+            />{' '}
+            Mídia
+          </label>
+        </div>
+        <div className="checks">
           {selected.map((functionName) => (
             <label key={functionName}>
-              <input
-                type="checkbox"
-                checked
-                onChange={() => toggle(functionName)}
-              />{' '}
-              {functionName}
+              <input type="checkbox" checked onChange={() => toggle(functionName)} /> {functionName}
             </label>
           ))}
           {WORSHIP_FUNCTIONS.filter((functionName) => !selected.includes(functionName)).map(

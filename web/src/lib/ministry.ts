@@ -1,3 +1,5 @@
+export const MEDIA_FUNCTIONS = ['Projeção', 'Som', 'Transmissão', 'Iluminação', 'Câmera']
+
 export const WORSHIP_FUNCTIONS = [
   'Ministro',
   'Vocal',

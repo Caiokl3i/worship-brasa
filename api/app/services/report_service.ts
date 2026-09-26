@@ -52,6 +52,7 @@ export default class ReportService {
     }
 
     const zone = await this.#zone(actor.ministryId)
+    const ministry = await Ministry.findOrFail(actor.ministryId)
     const schedules = await this.#published(actor.ministryId, start, end, zone)
     const counts = this.#counts(schedules)
     const served = new Set(counts.members.map((member) => member.membershipId))
@@ -81,7 +82,7 @@ export default class ReportService {
         .sort(
           (left, right) => right.count - left.count || left.name.localeCompare(right.name, 'pt')
         ),
-      songs: counts.songs,
+      songs: ministry.musicModuleEnabled ? counts.songs : null,
       confirmations: counts.confirmations,
     }
   }

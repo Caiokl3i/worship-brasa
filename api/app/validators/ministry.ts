@@ -21,6 +21,7 @@ const functionName = () => vine.string().trim().minLength(1).maxLength(80)
 export const createMinistryValidator = vine.create({
   name: name(),
   functions: vine.array(functionName()).optional(),
+  musicModuleEnabled: vine.boolean().optional(),
 })
 createMinistryValidator.messagesProvider = messages
 

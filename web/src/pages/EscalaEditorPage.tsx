@@ -879,9 +879,11 @@ export function EscalaEditorPage() {
         <button type="button" aria-selected={tab === 'equipe'} onClick={() => setTab('equipe')}>
           Equipe
         </button>
-        <button type="button" aria-selected={tab === 'musicas'} onClick={() => setTab('musicas')}>
-          Músicas
-        </button>
+        {ministry.musicModuleEnabled ? (
+          <button type="button" aria-selected={tab === 'musicas'} onClick={() => setTab('musicas')}>
+            Músicas
+          </button>
+        ) : null}
         <button type="button" aria-selected={tab === 'roteiro'} onClick={() => setTab('roteiro')}>
           Roteiro
         </button>

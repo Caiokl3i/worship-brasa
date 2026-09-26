@@ -95,7 +95,7 @@ export function MinistryHomePage() {
         <Link to="membros">Membros</Link>
         {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}
         {ministry.membership.isAdmin ? <Link to="integracao">Integrações</Link> : null}
-        <Link to="repertorio">Repertório</Link>
+        {ministry.musicModuleEnabled ? <Link to="repertorio">Repertório</Link> : null}
         <Link to="escalas">Escalas</Link>
         <Link to="avisos">Avisos</Link>
         <Link to="chat">Chat</Link>
