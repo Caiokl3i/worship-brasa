@@ -37,4 +37,20 @@ export default class SongsController {
     await new SongService().delete(membership, params.songId)
     return response.noContent()
   }
+
+  async trash({ membership, response }: HttpContext) {
+    const songs = await new SongService().trash(membership)
+    return response.ok({
+      songs: songs.map((song) => ({
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      })),
+    })
+  }
+
+  async restore({ membership, params, response }: HttpContext) {
+    const song = await new SongService().restore(membership, params.songId)
+    return response.ok(toSongDetail(song))
+  }
 }

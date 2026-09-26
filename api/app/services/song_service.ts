@@ -10,6 +10,7 @@ import SongVersion from '#models/song_version'
 import MembershipAccessService, { isUuid } from '#services/membership_access_service'
 import { FieldException, SongNotFoundException } from '#exceptions/ministry_exceptions'
 import { isHttpUrl, LINK_KINDS, SONG_KEYS, type LinkKind } from '#ministries/repertoire'
+import { trashSince } from '#constants/trash'
 
 type VersionInput = {
   name: string
@@ -246,6 +247,34 @@ export default class SongService {
     const song = await this.#find(actor.ministryId, songId)
     song.deletedAt = DateTime.utc()
     await song.save()
+  }
+
+  async trash(actor: Membership) {
+    new MembershipAccessService().assertCanManageRepertoire(actor)
+    return Song.query()
+      .where('ministryId', actor.ministryId)
+      .whereNotNull('deletedAt')
+      .where('deletedAt', '>=', trashSince().toSQL()!)
+      .orderBy('deletedAt', 'desc')
+  }
+
+  async restore(actor: Membership, songId: string) {
+    new MembershipAccessService().assertCanManageRepertoire(actor)
+    if (!isUuid(songId)) {
+      throw new SongNotFoundException()
+    }
+    const song = await Song.query()
+      .where('id', songId)
+      .where('ministryId', actor.ministryId)
+      .whereNotNull('deletedAt')
+      .where('deletedAt', '>=', trashSince().toSQL()!)
+      .first()
+    if (!song) {
+      throw new SongNotFoundException()
+    }
+    song.deletedAt = null
+    await song.save()
+    return this.#find(actor.ministryId, songId)
   }
 
   async #replaceChildren(song: Song, payload: PreparedSong, trx: TransactionClientContract) {

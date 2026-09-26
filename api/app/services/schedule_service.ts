@@ -35,6 +35,7 @@ import { intentsFromEffects, type SeriesEffect } from '#notifications/effects'
 import { snapshotSchedule } from '#schedules/snapshot'
 import NotificationService from '#services/notification_service'
 import { syncCalendarEffects } from '#services/calendar_sync'
+import { trashSince } from '#constants/trash'
 
 type HighlightInput = {
   membershipId: string
@@ -236,6 +237,34 @@ export default class ScheduleService {
       return deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
     })
     await this.#afterCommit(effects, zone)
+  }
+
+  async trash(actor: Membership) {
+    new MembershipAccessService().assertCanManageSchedules(actor)
+    return Schedule.query()
+      .where('ministryId', actor.ministryId)
+      .whereNotNull('deletedAt')
+      .where('deletedAt', '>=', trashSince().toSQL()!)
+      .orderBy('deletedAt', 'desc')
+  }
+
+  async restore(actor: Membership, scheduleId: string) {
+    new MembershipAccessService().assertCanManageSchedules(actor)
+    if (!isUuid(scheduleId)) {
+      throw new ScheduleNotFoundException()
+    }
+    const schedule = await Schedule.query()
+      .where('id', scheduleId)
+      .where('ministryId', actor.ministryId)
+      .whereNotNull('deletedAt')
+      .where('deletedAt', '>=', trashSince().toSQL()!)
+      .first()
+    if (!schedule) {
+      throw new ScheduleNotFoundException()
+    }
+    schedule.deletedAt = null
+    await schedule.save()
+    return this.#view(actor, scheduleId)
   }
 
   async confirm(

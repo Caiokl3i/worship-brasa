@@ -111,6 +111,11 @@ router
             router.get('/ministerios/:ministryId/musicas/:songId', [SongsController, 'show'])
             router.patch('/ministerios/:ministryId/musicas/:songId', [SongsController, 'update'])
             router.delete('/ministerios/:ministryId/musicas/:songId', [SongsController, 'destroy'])
+            router.get('/ministerios/:ministryId/lixeira/musicas', [SongsController, 'trash'])
+            router.post('/ministerios/:ministryId/lixeira/musicas/:songId/restaurar', [
+              SongsController,
+              'restore',
+            ])
 
             router.get('/ministerios/:ministryId/pastas', [FoldersController, 'index'])
             router.post('/ministerios/:ministryId/pastas', [FoldersController, 'store'])
@@ -135,6 +140,11 @@ router
           })
           .use(middleware.repertoire())
 
+        router.get('/ministerios/:ministryId/lixeira/escalas', [SchedulesController, 'trash'])
+        router.post('/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar', [
+          SchedulesController,
+          'restore',
+        ])
         router.get('/ministerios/:ministryId/escalas', [SchedulesController, 'index'])
         router.post('/ministerios/:ministryId/escalas', [SchedulesController, 'store'])
         router.get('/ministerios/:ministryId/escalas/:scheduleId', [SchedulesController, 'show'])

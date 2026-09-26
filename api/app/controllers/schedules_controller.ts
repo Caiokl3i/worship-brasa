@@ -45,6 +45,16 @@ export default class SchedulesController {
     return response.noContent()
   }
 
+  async trash({ membership, response }: HttpContext) {
+    const rows = await new ScheduleService().trash(membership)
+    return response.ok({ schedules: rows.map(toScheduleSummary) })
+  }
+
+  async restore({ membership, params, response }: HttpContext) {
+    const view = await new ScheduleService().restore(membership, params.scheduleId)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts, view.series))
+  }
+
   async destroyScoped({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(deleteScheduleValidator)
     await new ScheduleService().delete(

@@ -13,6 +13,7 @@ import { NovaEscalaPage } from './pages/NovaEscalaPage.tsx'
 import { EntrarPage } from './pages/EntrarPage.tsx'
 import { HomeGate } from './pages/HomeGate.tsx'
 import { IndisponibilidadesPage } from './pages/IndisponibilidadesPage.tsx'
+import { LixeiraPage } from './pages/LixeiraPage.tsx'
 import { IntegracaoPage } from './pages/IntegracaoPage.tsx'
 import { MembrosPage } from './pages/MembrosPage.tsx'
 import { MinisteriosPage } from './pages/MinisteriosPage.tsx'
@@ -63,6 +64,7 @@ export default function App() {
                 <Route path="chat" element={<ChatPage />} />
                 <Route path="roteiros" element={<RoteirosPage />} />
                 <Route path="relatorios" element={<RelatoriosPage />} />
+                <Route path="lixeira" element={<LixeiraPage />} />
                 <Route path="escalas" element={<EscalasPage />} />
                 <Route path="escalas/nova" element={<NovaEscalaPage />} />
                 <Route path="escalas/:scheduleId" element={<EscalaEditorPage />} />
