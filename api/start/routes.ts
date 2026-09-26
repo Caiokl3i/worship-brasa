@@ -21,6 +21,7 @@ const UnavailabilitiesController = () => import('#controllers/unavailabilities_c
 const NotificationsController = () => import('#controllers/notifications_controller')
 const ReportsController = () => import('#controllers/reports_controller')
 const GenerationsController = () => import('#controllers/generations_controller')
+const SharesController = () => import('#controllers/shares_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -136,6 +137,14 @@ router
         router.post('/ministerios/:ministryId/escalas/:scheduleId/sugerir', [
           GenerationsController,
           'suggest',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/texto', [
+          SharesController,
+          'text',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/imagem', [
+          SharesController,
+          'image',
         ])
 
         router.get('/ministerios/:ministryId/relatorios/visao', [ReportsController, 'overview'])

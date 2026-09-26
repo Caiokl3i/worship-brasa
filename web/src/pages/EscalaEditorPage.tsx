@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChatPanel } from '../components/ChatPanel.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { ScriptEditor } from '../components/ScriptEditor.tsx'
+import { SharePanel } from '../components/SharePanel.tsx'
 import { SuggestPanel } from '../components/SuggestPanel.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
@@ -168,6 +169,7 @@ export function EscalaEditorPage() {
   } | null>(null)
   const [revision, setRevision] = useState(0)
   const [suggestOpen, setSuggestOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
   const suggestionDraft = useRef<{
     team: TeamMember[]
     songs: SongDraft[]
@@ -1355,6 +1357,8 @@ export function EscalaEditorPage() {
         </form>
       ) : null}
 
+      {shareOpen ? <SharePanel ministryId={ministry.id} scheduleId={scheduleId} /> : null}
+
       {canManage && suggestOpen ? (
         <SuggestPanel
           ministryId={ministry.id}
@@ -1366,6 +1370,9 @@ export function EscalaEditorPage() {
       ) : null}
 
       <div className="row">
+        <button type="button" onClick={() => setShareOpen((open) => !open)}>
+          Compartilhar
+        </button>
         {canManage ? (
           <button type="button" onClick={() => setSuggestOpen((open) => !open)}>
             Sugerir equipe e músicas

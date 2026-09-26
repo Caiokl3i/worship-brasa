@@ -100,6 +100,10 @@ export interface ApiDefinition {
     update: typeof routes['generations.update']
     suggest: typeof routes['generations.suggest']
   }
+  shares: {
+    text: typeof routes['shares.text']
+    image: typeof routes['shares.image']
+  }
   reports: {
     overview: typeof routes['reports.overview']
     show: typeof routes['reports.show']

@@ -22,6 +22,7 @@ export const controllers = {
   Schedules: () => import('#controllers/schedules_controller'),
   Scripts: () => import('#controllers/scripts_controller'),
   Session: () => import('#controllers/session_controller'),
+  Shares: () => import('#controllers/shares_controller'),
   Songs: () => import('#controllers/songs_controller'),
   Unavailabilities: () => import('#controllers/unavailabilities_controller'),
 }

@@ -57,6 +57,8 @@ export type ScannedRoutes = {
     'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'generations.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'generations.suggest': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'shares.text': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'shares.image': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'reports.overview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'reports.panorama': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -165,6 +167,8 @@ export type ScannedRoutes = {
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'generations.suggest': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'shares.text': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'shares.image': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }

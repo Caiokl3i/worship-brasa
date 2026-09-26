@@ -324,6 +324,18 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/sugerir","type":0,"val":"sugerir","end":""}],
     types: placeholder as Registry['generations.suggest']['types'],
   },
+  'shares.text': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/texto',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/texto","type":0,"val":"texto","end":""}],
+    types: placeholder as Registry['shares.text']['types'],
+  },
+  'shares.image': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/imagem',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/imagem","type":0,"val":"imagem","end":""}],
+    types: placeholder as Registry['shares.image']['types'],
+  },
   'reports.overview': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios/:ministryId/relatorios/visao',

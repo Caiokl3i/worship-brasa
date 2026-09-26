@@ -643,6 +643,30 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/generations_controller').default['suggest']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'shares.text': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/texto'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/share').shareTextValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/share').shareTextValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/shares_controller').default['text']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/shares_controller').default['text']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'shares.image': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/imagem'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/shares_controller').default['image']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/shares_controller').default['image']>>>
+    }
+  }
   'reports.overview': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios/:ministryId/relatorios/visao'
