@@ -8,6 +8,7 @@ import { DEFAULT_CLASSIFICATIONS } from '#ministries/repertoire'
 import { DEFAULT_MINISTRY_COLOR, WORSHIP_FUNCTIONS } from '#ministries/worship_functions'
 import MembershipAccessService from '#services/membership_access_service'
 import { FieldException } from '#exceptions/ministry_exceptions'
+import { ensureDefaultTemplate } from '#services/script_service'
 
 type CreateInput = {
   name: string
@@ -103,6 +104,8 @@ export default class MinistryService {
         classification.useTransaction(trx)
         await classification.save()
       }
+
+      await ensureDefaultTemplate(ministry.id, trx)
 
       return ministry
     })

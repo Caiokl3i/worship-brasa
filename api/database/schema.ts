@@ -344,6 +344,84 @@ export class ScheduleSchema extends BaseModel {
   declare version: number
 }
 
+export class ScriptItemSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'durationSeconds',
+    'id',
+    'notes',
+    'position',
+    'scheduleId',
+    'source',
+    'title',
+    'updatedAt',
+  ] as const
+  $columns = ScriptItemSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durationSeconds: number | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare notes: string
+  @column()
+  declare position: number
+  @column()
+  declare scheduleId: string
+  @column()
+  declare source: string
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ScriptTemplateItemSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'durationSeconds',
+    'id',
+    'notes',
+    'position',
+    'templateId',
+    'title',
+    'updatedAt',
+  ] as const
+  $columns = ScriptTemplateItemSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durationSeconds: number | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare notes: string
+  @column()
+  declare position: number
+  @column()
+  declare templateId: string
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ScriptTemplateSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'ministryId', 'name', 'updatedAt'] as const
+  $columns = ScriptTemplateSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare name: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class SeriesSchema extends BaseModel {
   static $columns = [
     'confirmationRequired',
@@ -396,6 +474,36 @@ export class SeriesSchema extends BaseModel {
   declare updatedAt: DateTime | null
   @column()
   declare weekdays: any
+}
+
+export class SeriesScriptItemSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'durationSeconds',
+    'id',
+    'notes',
+    'position',
+    'seriesId',
+    'title',
+    'updatedAt',
+  ] as const
+  $columns = SeriesScriptItemSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durationSeconds: number | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare notes: string
+  @column()
+  declare position: number
+  @column()
+  declare seriesId: string
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
 }
 
 export class SongLinkSchema extends BaseModel {

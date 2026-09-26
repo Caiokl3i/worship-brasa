@@ -82,6 +82,13 @@ export interface ApiDefinition {
     removeUnavailable: typeof routes['schedules.remove_unavailable']
     conflicts: typeof routes['schedules.conflicts']
   }
+  scripts: {
+    save: typeof routes['scripts.save']
+    apply: typeof routes['scripts.apply']
+    index: typeof routes['scripts.index']
+    store: typeof routes['scripts.store']
+    update: typeof routes['scripts.update']
+  }
   unavailabilities: {
     index: typeof routes['unavailabilities.index']
     store: typeof routes['unavailabilities.store']

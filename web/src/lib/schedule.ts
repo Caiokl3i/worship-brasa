@@ -79,12 +79,43 @@ export type ScheduleSeries = {
   }>
 }
 
+export type ScriptItemView = {
+  id: string
+  position: number
+  title: string
+  notes: string
+  durationSeconds: number | null
+  source: 'manual' | 'songs'
+  effectiveKey: string | null
+  locked: boolean
+}
+
+export type ScheduleScript = {
+  totalDurationSeconds: number | null
+  items: ScriptItemView[]
+}
+
+export type ScriptTemplateItemView = {
+  id: string
+  position: number
+  title: string
+  notes: string
+  durationSeconds: number | null
+}
+
+export type ScriptTemplateView = {
+  id: string
+  name: string
+  items: ScriptTemplateItemView[]
+}
+
 export type ScheduleDetail = ScheduleSummary & {
   notes: string
   dressCode: string
   confirmationRequired: boolean
   version: number
   series: ScheduleSeries | null
+  script: ScheduleScript
   participants: ScheduleParticipant[]
   songs: ScheduleSong[]
 }

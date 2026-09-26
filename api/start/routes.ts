@@ -14,6 +14,7 @@ const SongsController = () => import('#controllers/songs_controller')
 const FoldersController = () => import('#controllers/folders_controller')
 const ClassificationsController = () => import('#controllers/classifications_controller')
 const SchedulesController = () => import('#controllers/schedules_controller')
+const ScriptsController = () => import('#controllers/scripts_controller')
 const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
 
 router.get('/health', [HealthController, 'show'])
@@ -112,6 +113,17 @@ router
         router.get('/ministerios/:ministryId/escalas', [SchedulesController, 'index'])
         router.post('/ministerios/:ministryId/escalas', [SchedulesController, 'store'])
         router.get('/ministerios/:ministryId/escalas/:scheduleId', [SchedulesController, 'show'])
+        router.put('/ministerios/:ministryId/escalas/:scheduleId/roteiro', [
+          ScriptsController,
+          'save',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar', [
+          ScriptsController,
+          'apply',
+        ])
+        router.get('/ministerios/:ministryId/roteiros', [ScriptsController, 'index'])
+        router.post('/ministerios/:ministryId/roteiros', [ScriptsController, 'store'])
+        router.patch('/ministerios/:ministryId/roteiros/:templateId', [ScriptsController, 'update'])
         router.patch('/ministerios/:ministryId/escalas/:scheduleId', [
           SchedulesController,
           'update',

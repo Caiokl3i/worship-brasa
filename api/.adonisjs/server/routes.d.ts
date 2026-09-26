@@ -48,6 +48,11 @@ export type ScannedRoutes = {
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'scripts.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'scripts.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'templateId': ParamValue} }
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
@@ -78,6 +83,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   HEAD: {
@@ -95,6 +101,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   POST: {
@@ -118,6 +125,8 @@ export type ScannedRoutes = {
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'scripts.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.materialize': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'seriesId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
@@ -135,6 +144,7 @@ export type ScannedRoutes = {
     'ministry_functions.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
     'songs.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
+    'scripts.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'templateId': ParamValue} }
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'unavailabilities.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
@@ -147,6 +157,7 @@ export type ScannedRoutes = {
   }
   PUT: {
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

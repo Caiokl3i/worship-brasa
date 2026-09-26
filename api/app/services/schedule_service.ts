@@ -30,6 +30,7 @@ import {
 } from '#services/series_service'
 import Series from '#models/series'
 import type { ScheduleSeriesSummary } from '#schedules/public_schedule'
+import { rebuildScheduleScript } from '#services/script_service'
 
 type HighlightInput = {
   membershipId: string
@@ -474,6 +475,7 @@ export default class ScheduleService {
       await this.#assertSongs(actor.ministryId, prepared, trx)
 
       await this.#replaceChildren(schedule.id, prepared, trx)
+      await rebuildScheduleScript(schedule.id, trx)
 
       schedule.useTransaction(trx)
       schedule.title = prepared.title
@@ -801,6 +803,8 @@ export default class ScheduleService {
       }
       await scheduleSong.load('highlights')
     }
+
+    await schedule.load('scriptItems', (items) => items.orderBy('position', 'asc'))
 
     schedule.participants.sort((left, right) =>
       left.membership.user.name.localeCompare(right.membership.user.name, 'pt')

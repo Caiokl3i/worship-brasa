@@ -535,6 +535,66 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['show']>>>
     }
   }
+  'scripts.save': {
+    methods: ["PUT"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/roteiro'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/script').saveScheduleScriptValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/script').saveScheduleScriptValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['save']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['save']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'scripts.apply': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/roteiro/aplicar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/script').applyScriptTemplateValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/script').applyScriptTemplateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['apply']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['apply']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'scripts.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/roteiros'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['index']>>>
+    }
+  }
+  'scripts.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/roteiros'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/script').saveScriptTemplateValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/script').saveScriptTemplateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'scripts.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/roteiros/:templateId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/script').saveScriptTemplateValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; templateId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/script').saveScriptTemplateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'schedules.update': {
     methods: ["PATCH"]
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
+import { ScriptEditor } from '../components/ScriptEditor.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import type { MemberItem, MinistryFunctionItem } from '../lib/ministry.ts'
 import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire.ts'
+import { manualsForSave } from '../lib/script.ts'
 import {
   SONG_KEYS,
   formatInZone,
@@ -15,9 +17,11 @@ import {
   type ScheduleHighlight,
   type ScheduleLink,
   type ScheduleSeries,
+  type ScriptItemView,
+  type ScriptTemplateView,
 } from '../lib/schedule.ts'
 
-type Tab = 'dados' | 'equipe' | 'musicas'
+type Tab = 'dados' | 'equipe' | 'musicas' | 'roteiro'
 
 type TeamMember = {
   membershipId: string
@@ -147,7 +151,10 @@ export function EscalaEditorPage() {
   const [ready, setReady] = useState(false)
   const [seriesInfo, setSeriesInfo] = useState<ScheduleSeries | null>(null)
   const [baseline, setBaseline] = useState<Baseline | null>(null)
-  const [scopePrompt, setScopePrompt] = useState<'save' | 'delete' | null>(null)
+  const [scopePrompt, setScopePrompt] = useState<'save' | 'delete' | 'script' | 'apply' | null>(null)
+  const [scriptItems, setScriptItems] = useState<ScriptItemView[]>([])
+  const [templates, setTemplates] = useState<ScriptTemplateView[]>([])
+  const [templateId, setTemplateId] = useState('')
   const [scopeChoice, setScopeChoice] = useState<ScopeChoice>('only_this')
   const [replaceFilled, setReplaceFilled] = useState(false)
   const [pending, setPending] = useState<{ path: string; method: string } | null>(null)
@@ -210,6 +217,7 @@ export function EscalaEditorPage() {
         }
       })
     )
+    setScriptItems(detail.script.items)
   }
 
   useEffect(() => {
@@ -269,6 +277,23 @@ export function EscalaEditorPage() {
     }
   }, [ministry.id, ministry.membership.canEditScheduleSongs, scheduleId, canManage, revision])
 
+  useEffect(() => {
+    if (tab !== 'roteiro' || !canManage) {
+      return
+    }
+    let cancelled = false
+    void api<{ templates: ScriptTemplateView[] }>(`/api/ministerios/${ministry.id}/roteiros`).then(
+      (body) => {
+        if (!cancelled) {
+          setTemplates(body.templates)
+        }
+      }
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [tab, canManage, ministry.id])
+
   function patternDirty() {
     if (!canManage || !seriesInfo || seriesInfo.detached || !baseline) {
       return false
@@ -311,6 +336,100 @@ export function EscalaEditorPage() {
           )
         ),
       })),
+    }
+  }
+
+  function catalogFromSongs() {
+    const catalog = new Map<string, SongDetail>()
+    for (const song of songs) {
+      catalog.set(song.songId, {
+        id: song.songId,
+        title: song.title,
+        artist: song.artist,
+        bpm: null,
+        durationSeconds: null,
+        defaultKey: song.defaultKey,
+        folder: null,
+        classification: null,
+        versions: song.versions,
+        links: [],
+      })
+    }
+    return catalog
+  }
+
+  function linkedSeries() {
+    return Boolean(seriesInfo && !seriesInfo.detached)
+  }
+
+  function requestScript(kind: 'script' | 'apply') {
+    if (linkedSeries()) {
+      setScopeChoice('only_this')
+      setReplaceFilled(false)
+      setScopePrompt(kind)
+      return
+    }
+    if (kind === 'script') {
+      void saveScript()
+      return
+    }
+    void applyTemplate()
+  }
+
+  async function saveScript(scope?: { scope: ScopeChoice; replaceFilled: boolean }) {
+    setErrors([])
+    setNotice('')
+    try {
+      const detail = await api<ScheduleDetail>(
+        `/api/ministerios/${ministry.id}/escalas/${scheduleId}/roteiro`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({
+            version,
+            items: manualsForSave(scriptItems),
+            ...(scope ?? {}),
+          }),
+        }
+      )
+      apply(detail, catalogFromSongs())
+      setNotice('Roteiro salvo.')
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        setNotice(error.message)
+        return
+      }
+      throw error
+    }
+  }
+
+  async function applyTemplate(scope?: { scope: ScopeChoice; replaceFilled: boolean }) {
+    if (!templateId) {
+      return
+    }
+    setErrors([])
+    setNotice('')
+    try {
+      const detail = await api<ScheduleDetail>(
+        `/api/ministerios/${ministry.id}/escalas/${scheduleId}/roteiro/aplicar`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            version,
+            templateId,
+            ...(scope ?? {}),
+          }),
+        }
+      )
+      apply(detail, catalogFromSongs())
+      setNotice('Modelo aplicado.')
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        setNotice(error.message)
+        return
+      }
+      throw error
     }
   }
 
@@ -642,6 +761,9 @@ export function EscalaEditorPage() {
         <button type="button" aria-selected={tab === 'musicas'} onClick={() => setTab('musicas')}>
           Músicas
         </button>
+        <button type="button" aria-selected={tab === 'roteiro'} onClick={() => setTab('roteiro')}>
+          Roteiro
+        </button>
       </div>
       <FieldErrors errors={errors} />
       {notice ? <p className="notice">{notice}</p> : null}
@@ -966,6 +1088,20 @@ export function EscalaEditorPage() {
         </div>
       ) : null}
 
+      {tab === 'roteiro' ? (
+        <ScriptEditor
+          items={scriptItems}
+          canManage={canManage}
+          templates={templates}
+          templateId={templateId}
+          errors={errors}
+          onChange={setScriptItems}
+          onTemplateId={setTemplateId}
+          onSave={() => requestScript('script')}
+          onApply={() => requestScript('apply')}
+        />
+      ) : null}
+
       {seriesInfo ? (
         <div>
           <h2>Próximas datas</h2>
@@ -1027,6 +1163,14 @@ export function EscalaEditorPage() {
                   }
                   throw error
                 })
+              return
+            }
+            if (scopePrompt === 'script') {
+              void saveScript(choice)
+              return
+            }
+            if (scopePrompt === 'apply') {
+              void applyTemplate(choice)
               return
             }
             if (pending) {

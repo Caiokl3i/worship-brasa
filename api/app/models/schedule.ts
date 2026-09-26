@@ -5,6 +5,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import Ministry from '#models/ministry'
 import ScheduleParticipant from '#models/schedule_participant'
 import ScheduleSong from '#models/schedule_song'
+import ScriptItem from '#models/script_item'
 import Series from '#models/series'
 
 export type ScheduleStatus = 'draft' | 'published'
@@ -26,4 +27,7 @@ export default class Schedule extends ScheduleSchema {
 
   @hasMany(() => ScheduleSong)
   declare songs: HasMany<typeof ScheduleSong>
+
+  @hasMany(() => ScriptItem)
+  declare scriptItems: HasMany<typeof ScriptItem>
 }

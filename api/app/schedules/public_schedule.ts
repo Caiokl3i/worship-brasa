@@ -2,6 +2,7 @@ import type Schedule from '#models/schedule'
 import type Membership from '#models/membership'
 import { effectiveKey } from '#schedules/effective_key'
 import type { Conflict } from '#schedules/conflicts'
+import { summedDuration } from '#schedules/script_layout'
 import MembershipAccessService from '#services/membership_access_service'
 
 export function toScheduleSummary(schedule: Schedule) {
@@ -42,6 +43,7 @@ export function toScheduleDetail(
     confirmationRequired: schedule.confirmationRequired,
     version: schedule.version,
     series,
+    script: toScript(schedule),
     participants: schedule.participants.map((participant) => ({
       id: participant.id,
       membershipId: participant.membershipId,
@@ -100,5 +102,41 @@ export function toScheduleDetail(
         }),
       }
     }),
+  }
+}
+
+function toScript(schedule: Schedule) {
+  const stored = schedule.$preloaded.scriptItems ? schedule.scriptItems : []
+  const songRows = stored.filter((item) => item.source === 'songs')
+  const pair = schedule.songs.length > 0 && songRows.length === schedule.songs.length
+  let cursor = 0
+  const items = stored.map((item) => {
+    let key: string | null = null
+    if (item.source === 'songs' && pair) {
+      const song = schedule.songs[cursor]
+      cursor += 1
+      const versionKey = song.versionId ? song.version.key : null
+      const resolved = effectiveKey({
+        keyOverride: song.keyOverride,
+        versionKey,
+        defaultKey: song.song.defaultKey,
+      })
+      key = resolved || null
+    }
+    return {
+      id: item.id,
+      position: item.position,
+      title: item.title,
+      notes: item.notes,
+      durationSeconds: item.durationSeconds,
+      source: item.source === 'songs' ? ('songs' as const) : ('manual' as const),
+      effectiveKey: key,
+      locked: item.source === 'songs',
+    }
+  })
+
+  return {
+    totalDurationSeconds: summedDuration(items),
+    items,
   }
 }

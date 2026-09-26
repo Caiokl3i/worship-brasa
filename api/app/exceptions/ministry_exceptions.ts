@@ -37,6 +37,15 @@ export class ClassificationNotFoundException extends Exception {
   }
 }
 
+export class ScriptTemplateNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_SCRIPT_TEMPLATE_NOT_FOUND'
+
+  constructor() {
+    super('Modelo de roteiro não encontrado.', { status: 404, code: 'E_SCRIPT_TEMPLATE_NOT_FOUND' })
+  }
+}
+
 export class ScheduleNotFoundException extends Exception {
   static status = 404
   static code = 'E_SCHEDULE_NOT_FOUND'
