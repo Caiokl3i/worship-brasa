@@ -58,6 +58,10 @@ export type ScannedRoutes = {
     'notices.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
     'notices.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
     'notices.unarchive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
+    'chats.ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.send_ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.schedule': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'chats.send_schedule': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
@@ -90,6 +94,8 @@ export type ScannedRoutes = {
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.schedule': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   HEAD: {
@@ -109,6 +115,8 @@ export type ScannedRoutes = {
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'scripts.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.schedule': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   POST: {
@@ -137,6 +145,8 @@ export type ScannedRoutes = {
     'notices.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'notices.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
     'notices.unarchive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'noticeId': ParamValue} }
+    'chats.send_ministry': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'chats.send_schedule': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.destroy_scoped': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.materialize': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'seriesId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }

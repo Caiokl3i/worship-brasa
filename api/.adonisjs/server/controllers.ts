@@ -5,6 +5,7 @@
 
 export const controllers = {
   Account: () => import('#controllers/account_controller'),
+  Chats: () => import('#controllers/chats_controller'),
   Classifications: () => import('#controllers/classifications_controller'),
   Folders: () => import('#controllers/folders_controller'),
   Health: () => import('#controllers/health_controller'),

@@ -96,6 +96,12 @@ export interface ApiDefinition {
     archive: typeof routes['notices.archive']
     unarchive: typeof routes['notices.unarchive']
   }
+  chats: {
+    ministry: typeof routes['chats.ministry']
+    sendMinistry: typeof routes['chats.send_ministry']
+    schedule: typeof routes['chats.schedule']
+    sendSchedule: typeof routes['chats.send_schedule']
+  }
   unavailabilities: {
     index: typeof routes['unavailabilities.index']
     store: typeof routes['unavailabilities.store']

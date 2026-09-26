@@ -85,6 +85,7 @@ export function MinistryHomePage() {
         <Link to="repertorio">Repertório</Link>
         <Link to="escalas">Escalas</Link>
         <Link to="avisos">Avisos</Link>
+        <Link to="chat">Chat</Link>
         {ministry.membership.isAdmin || ministry.membership.canManageSchedules ? (
           <Link to="roteiros">Roteiros</Link>
         ) : null}

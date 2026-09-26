@@ -16,6 +16,7 @@ const ClassificationsController = () => import('#controllers/classifications_con
 const SchedulesController = () => import('#controllers/schedules_controller')
 const ScriptsController = () => import('#controllers/scripts_controller')
 const NoticesController = () => import('#controllers/notices_controller')
+const ChatsController = () => import('#controllers/chats_controller')
 const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
 
 router.get('/health', [HealthController, 'show'])
@@ -136,6 +137,17 @@ router
         router.post('/ministerios/:ministryId/avisos/:noticeId/desarquivar', [
           NoticesController,
           'unarchive',
+        ])
+
+        router.get('/ministerios/:ministryId/chat', [ChatsController, 'ministry'])
+        router.post('/ministerios/:ministryId/chat', [ChatsController, 'sendMinistry'])
+        router.get('/ministerios/:ministryId/escalas/:scheduleId/chat', [
+          ChatsController,
+          'schedule',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/chat', [
+          ChatsController,
+          'sendSchedule',
         ])
         router.patch('/ministerios/:ministryId/escalas/:scheduleId', [
           SchedulesController,

@@ -330,6 +330,30 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"avisos","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":1,"val":"noticeId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"desarquivar","end":""}],
     types: placeholder as Registry['notices.unarchive']['types'],
   },
+  'chats.ministry': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/chat',
+    tokens: [{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/chat","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"chat","end":""}],
+    types: placeholder as Registry['chats.ministry']['types'],
+  },
+  'chats.send_ministry': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/chat',
+    tokens: [{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/chat","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/chat","type":0,"val":"chat","end":""}],
+    types: placeholder as Registry['chats.send_ministry']['types'],
+  },
+  'chats.schedule': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/chat',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"chat","end":""}],
+    types: placeholder as Registry['chats.schedule']['types'],
+  },
+  'chats.send_schedule': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/chat',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/chat","type":0,"val":"chat","end":""}],
+    types: placeholder as Registry['chats.send_schedule']['types'],
+  },
   'schedules.update': {
     methods: ["PATCH"],
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId',

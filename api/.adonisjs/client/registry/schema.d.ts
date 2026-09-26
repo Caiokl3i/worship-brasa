@@ -655,6 +655,54 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['unarchive']>>>
     }
   }
+  'chats.ministry': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/chat'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['ministry']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['ministry']>>>
+    }
+  }
+  'chats.send_ministry': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/chat'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/chat').sendChatMessageValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/chat').sendChatMessageValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['sendMinistry']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['sendMinistry']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'chats.schedule': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/chat'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['schedule']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['schedule']>>>
+    }
+  }
+  'chats.send_schedule': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/chat'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/chat').sendChatMessageValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/chat').sendChatMessageValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['sendSchedule']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/chats_controller').default['sendSchedule']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'schedules.update': {
     methods: ["PATCH"]
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'

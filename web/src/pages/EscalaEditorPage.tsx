@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ChatPanel } from '../components/ChatPanel.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { ScriptEditor } from '../components/ScriptEditor.tsx'
 import { TextField } from '../components/TextField.tsx'
@@ -21,7 +22,7 @@ import {
   type ScriptTemplateView,
 } from '../lib/schedule.ts'
 
-type Tab = 'dados' | 'equipe' | 'musicas' | 'roteiro'
+type Tab = 'dados' | 'equipe' | 'musicas' | 'roteiro' | 'chat'
 
 type TeamMember = {
   membershipId: string
@@ -764,6 +765,9 @@ export function EscalaEditorPage() {
         <button type="button" aria-selected={tab === 'roteiro'} onClick={() => setTab('roteiro')}>
           Roteiro
         </button>
+        <button type="button" aria-selected={tab === 'chat'} onClick={() => setTab('chat')}>
+          Chat
+        </button>
       </div>
       <FieldErrors errors={errors} />
       {notice ? <p className="notice">{notice}</p> : null}
@@ -1086,6 +1090,13 @@ export function EscalaEditorPage() {
             </form>
           ) : null}
         </div>
+      ) : null}
+
+      {tab === 'chat' ? (
+        <ChatPanel
+          path={`/api/ministerios/${ministry.id}/escalas/${scheduleId}/chat`}
+          timeZone={ministry.timezone}
+        />
       ) : null}
 
       {tab === 'roteiro' ? (

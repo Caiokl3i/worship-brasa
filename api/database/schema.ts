@@ -7,6 +7,38 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class ChatMessageSchema extends BaseModel {
+  static $columns = ['body', 'createdAt', 'id', 'membershipId', 'threadId', 'updatedAt'] as const
+  $columns = ChatMessageSchema.$columns
+  @column()
+  declare body: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare membershipId: string
+  @column()
+  declare threadId: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class ChatThreadSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'ministryId', 'scheduleId', 'updatedAt'] as const
+  $columns = ChatThreadSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare scheduleId: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class ClassificationSchema extends BaseModel {
   static $columns = [
     'archivedAt',
