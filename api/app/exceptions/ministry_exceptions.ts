@@ -55,6 +55,15 @@ export class ScheduleConflictException extends Exception {
   }
 }
 
+export class UnavailabilityNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_UNAVAILABILITY_NOT_FOUND'
+
+  constructor() {
+    super('Indisponibilidade não encontrada.', { status: 404, code: 'E_UNAVAILABILITY_NOT_FOUND' })
+  }
+}
+
 export class RequestNotFoundException extends Exception {
   static status = 404
   static code = 'E_REQUEST_NOT_FOUND'

@@ -1,6 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import ScheduleService from '#services/schedule_service'
-import { createScheduleValidator, saveScheduleValidator } from '#validators/schedule'
+import {
+  absenceValidator,
+  confirmScheduleValidator,
+  conflictCheckValidator,
+  createScheduleValidator,
+  removeUnavailableValidator,
+  saveScheduleValidator,
+} from '#validators/schedule'
 import { toScheduleDetail, toScheduleSummary } from '#schedules/public_schedule'
 
 export default class SchedulesController {
@@ -14,19 +21,19 @@ export default class SchedulesController {
 
   async store({ membership, request, response }: HttpContext) {
     const payload = await request.validateUsing(createScheduleValidator)
-    const schedule = await new ScheduleService().create(membership, payload)
-    return response.created(toScheduleDetail(schedule))
+    const view = await new ScheduleService().create(membership, payload)
+    return response.created(toScheduleDetail(view.schedule, membership, view.conflicts))
   }
 
   async show({ membership, params, response }: HttpContext) {
-    const schedule = await new ScheduleService().show(membership, params.scheduleId)
-    return response.ok(toScheduleDetail(schedule))
+    const view = await new ScheduleService().show(membership, params.scheduleId)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
   }
 
   async update({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
-    const schedule = await new ScheduleService().update(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(schedule))
+    const view = await new ScheduleService().update(membership, params.scheduleId, payload)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
   }
 
   async destroy({ membership, params, response }: HttpContext) {
@@ -36,13 +43,41 @@ export default class SchedulesController {
 
   async publish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
-    const schedule = await new ScheduleService().publish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(schedule))
+    const view = await new ScheduleService().publish(membership, params.scheduleId, payload)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
   }
 
   async unpublish({ membership, params, request, response }: HttpContext) {
     const payload = await request.validateUsing(saveScheduleValidator)
-    const schedule = await new ScheduleService().unpublish(membership, params.scheduleId, payload)
-    return response.ok(toScheduleDetail(schedule))
+    const view = await new ScheduleService().unpublish(membership, params.scheduleId, payload)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+  }
+
+  async confirm({ membership, params, request, response }: HttpContext) {
+    const payload = await request.validateUsing(confirmScheduleValidator)
+    const view = await new ScheduleService().confirm(membership, params.scheduleId, payload)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+  }
+
+  async absence({ membership, params, request, response }: HttpContext) {
+    const payload = await request.validateUsing(absenceValidator)
+    const view = await new ScheduleService().markAbsent(membership, params.scheduleId, payload)
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
+  }
+
+  async conflicts({ membership, request, response }: HttpContext) {
+    const payload = await request.validateUsing(conflictCheckValidator)
+    const results = await new ScheduleService().checkConflicts(membership, payload)
+    return response.ok({ results })
+  }
+
+  async removeUnavailable({ membership, params, request, response }: HttpContext) {
+    const payload = await request.validateUsing(removeUnavailableValidator)
+    const view = await new ScheduleService().removeUnavailable(
+      membership,
+      params.scheduleId,
+      payload.version
+    )
+    return response.ok(toScheduleDetail(view.schedule, membership, view.conflicts))
   }
 }

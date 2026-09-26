@@ -75,5 +75,15 @@ export interface ApiDefinition {
     destroy: typeof routes['schedules.destroy']
     publish: typeof routes['schedules.publish']
     unpublish: typeof routes['schedules.unpublish']
+    confirm: typeof routes['schedules.confirm']
+    absence: typeof routes['schedules.absence']
+    removeUnavailable: typeof routes['schedules.remove_unavailable']
+    conflicts: typeof routes['schedules.conflicts']
+  }
+  unavailabilities: {
+    index: typeof routes['unavailabilities.index']
+    store: typeof routes['unavailabilities.store']
+    update: typeof routes['unavailabilities.update']
+    destroy: typeof routes['unavailabilities.destroy']
   }
 }

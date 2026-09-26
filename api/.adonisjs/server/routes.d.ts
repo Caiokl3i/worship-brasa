@@ -52,6 +52,14 @@ export type ScannedRoutes = {
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.confirm': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.absence': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.remove_unavailable': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.conflicts': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'unavailabilities.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'unavailabilities.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
+    'unavailabilities.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
@@ -68,6 +76,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
@@ -84,6 +93,7 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'unavailabilities.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   POST: {
     'account.store': { paramsTuple?: []; params?: {} }
@@ -108,6 +118,11 @@ export type ScannedRoutes = {
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.publish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.unpublish': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.confirm': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.absence': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.remove_unavailable': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'schedules.conflicts': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'unavailabilities.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
   PATCH: {
     'profile.update': { paramsTuple?: []; params?: {} }
@@ -117,12 +132,14 @@ export type ScannedRoutes = {
     'songs.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'unavailabilities.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
   DELETE: {
     'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
     'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'unavailabilities.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
   PUT: {
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }

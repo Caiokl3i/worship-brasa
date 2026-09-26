@@ -26,6 +26,7 @@ const header = {
   endsAt: vine.string().trim().nullable().optional(),
   notes: vine.string().trim().maxLength(4000).optional(),
   dressCode: vine.string().trim().maxLength(200).optional(),
+  confirmationRequired: vine.boolean().optional(),
 }
 
 export const createScheduleValidator = vine.create(header)
@@ -57,3 +58,36 @@ export const saveScheduleValidator = vine.create({
   ),
 })
 saveScheduleValidator.messagesProvider = messages
+
+export const saveUnavailabilityValidator = vine.create({
+  membershipId: vine.string().uuid().optional(),
+  startsOn: vine.string().trim().minLength(1),
+  endsOn: vine.string().trim().minLength(1),
+  description: vine.string().trim().maxLength(2000).optional(),
+})
+saveUnavailabilityValidator.messagesProvider = messages
+
+export const confirmScheduleValidator = vine.create({
+  confirmation: vine.enum(['confirmed', 'declined']),
+  membershipId: vine.string().uuid().optional(),
+})
+confirmScheduleValidator.messagesProvider = messages
+
+export const absenceValidator = vine.create({
+  membershipId: vine.string().uuid(),
+  absent: vine.boolean(),
+})
+absenceValidator.messagesProvider = messages
+
+export const conflictCheckValidator = vine.create({
+  startsAt: vine.string().trim().minLength(1),
+  endsAt: vine.string().trim().nullable().optional(),
+  ignoreScheduleId: vine.string().uuid().nullable().optional(),
+  membershipIds: vine.array(vine.string().uuid()),
+})
+conflictCheckValidator.messagesProvider = messages
+
+export const removeUnavailableValidator = vine.create({
+  version: vine.number().min(1),
+})
+removeUnavailableValidator.messagesProvider = messages

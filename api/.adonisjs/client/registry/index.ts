@@ -294,6 +294,54 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/rascunho","type":0,"val":"rascunho","end":""}],
     types: placeholder as Registry['schedules.unpublish']['types'],
   },
+  'schedules.confirm': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao","type":0,"val":"confirmacao","end":""}],
+    types: placeholder as Registry['schedules.confirm']['types'],
+  },
+  'schedules.absence': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/falta',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/falta","type":0,"val":"falta","end":""}],
+    types: placeholder as Registry['schedules.absence']['types'],
+  },
+  'schedules.remove_unavailable': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis',
+    tokens: [{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis","type":0,"val":"remover-indisponiveis","end":""}],
+    types: placeholder as Registry['schedules.remove_unavailable']['types'],
+  },
+  'schedules.conflicts': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/conflitos',
+    tokens: [{"old":"/api/ministerios/:ministryId/conflitos","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/conflitos","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/conflitos","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/conflitos","type":0,"val":"conflitos","end":""}],
+    types: placeholder as Registry['schedules.conflicts']['types'],
+  },
+  'unavailabilities.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/indisponibilidades',
+    tokens: [{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"indisponibilidades","end":""}],
+    types: placeholder as Registry['unavailabilities.index']['types'],
+  },
+  'unavailabilities.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/indisponibilidades',
+    tokens: [{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades","type":0,"val":"indisponibilidades","end":""}],
+    types: placeholder as Registry['unavailabilities.store']['types'],
+  },
+  'unavailabilities.update': {
+    methods: ["PATCH"],
+    pattern: '/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId',
+    tokens: [{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"indisponibilidades","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":1,"val":"unavailabilityId","end":""}],
+    types: placeholder as Registry['unavailabilities.update']['types'],
+  },
+  'unavailabilities.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId',
+    tokens: [{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":0,"val":"indisponibilidades","end":""},{"old":"/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId","type":1,"val":"unavailabilityId","end":""}],
+    types: placeholder as Registry['unavailabilities.destroy']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

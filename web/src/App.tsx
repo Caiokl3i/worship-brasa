@@ -9,6 +9,7 @@ import { EscalasPage } from './pages/EscalasPage.tsx'
 import { NovaEscalaPage } from './pages/NovaEscalaPage.tsx'
 import { EntrarPage } from './pages/EntrarPage.tsx'
 import { HomeGate } from './pages/HomeGate.tsx'
+import { IndisponibilidadesPage } from './pages/IndisponibilidadesPage.tsx'
 import { MembrosPage } from './pages/MembrosPage.tsx'
 import { MinisteriosPage } from './pages/MinisteriosPage.tsx'
 import { MinistryHomePage } from './pages/MinistryHomePage.tsx'
@@ -49,6 +50,7 @@ export default function App() {
                 <Route path="escalas" element={<EscalasPage />} />
                 <Route path="escalas/nova" element={<NovaEscalaPage />} />
                 <Route path="escalas/:scheduleId" element={<EscalaEditorPage />} />
+                <Route path="indisponibilidades" element={<IndisponibilidadesPage />} />
               </Route>
             </Route>
           </Route>

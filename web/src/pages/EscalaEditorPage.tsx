@@ -9,6 +9,7 @@ import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire
 import {
   SONG_KEYS,
   toLocalInput,
+  type ScheduleConflict,
   type ScheduleDetail,
   type ScheduleHighlight,
   type ScheduleLink,
@@ -20,6 +21,9 @@ type TeamMember = {
   membershipId: string
   name: string
   functions: Array<{ id: string; name: string }>
+  confirmation: 'pending' | 'confirmed' | 'declined' | null
+  absent: boolean | null
+  conflicts: ScheduleConflict[]
 }
 
 type SongDraft = {
@@ -46,6 +50,30 @@ function shownKey(song: SongDraft) {
   return song.keyOverride || originKey(song) || song.effectiveKey
 }
 
+function confirmationLabel(confirmation: TeamMember['confirmation']) {
+  if (confirmation === 'confirmed') {
+    return 'Confirmado'
+  }
+  if (confirmation === 'declined') {
+    return 'Não participarei'
+  }
+  if (confirmation === 'pending') {
+    return 'Pendente'
+  }
+  return ''
+}
+
+function conflictLabels(conflicts: ScheduleConflict[]) {
+  const labels: string[] = []
+  if (conflicts.some((item) => item.kind === 'unavailability')) {
+    labels.push('indisponível')
+  }
+  if (conflicts.some((item) => item.kind === 'schedule')) {
+    labels.push('já escalado neste horário')
+  }
+  return labels
+}
+
 export function EscalaEditorPage() {
   const navigate = useNavigate()
   const params = useParams()
@@ -62,11 +90,15 @@ export function EscalaEditorPage() {
   const [endsAt, setEndsAt] = useState('')
   const [notes, setNotes] = useState('')
   const [dressCode, setDressCode] = useState('')
+  const [confirmationRequired, setConfirmationRequired] = useState(true)
+  const [startsAtIso, setStartsAtIso] = useState<string | null>(null)
+  const [endsAtIso, setEndsAtIso] = useState<string | null>(null)
   const [team, setTeam] = useState<TeamMember[]>([])
   const [songs, setSongs] = useState<SongDraft[]>([])
   const [functions, setFunctions] = useState<MinistryFunctionItem[]>([])
   const [memberQuery, setMemberQuery] = useState('')
   const [memberHits, setMemberHits] = useState<MemberItem[]>([])
+  const [hitConflicts, setHitConflicts] = useState<Record<string, ScheduleConflict[]>>({})
   const [pickedFunctions, setPickedFunctions] = useState<string[]>([])
   const [songQuery, setSongQuery] = useState('')
   const [songHits, setSongHits] = useState<SongSummary[]>([])
@@ -82,11 +114,17 @@ export function EscalaEditorPage() {
     setEndsAt(toLocalInput(detail.endsAt, ministry.timezone))
     setNotes(detail.notes)
     setDressCode(detail.dressCode)
+    setConfirmationRequired(detail.confirmationRequired)
+    setStartsAtIso(detail.startsAt)
+    setEndsAtIso(detail.endsAt)
     setTeam(
       detail.participants.map((participant) => ({
         membershipId: participant.membershipId,
         name: participant.name,
         functions: participant.functions.map((item) => ({ id: item.id, name: item.name })),
+        confirmation: participant.confirmation,
+        absent: participant.absent,
+        conflicts: participant.conflicts,
       }))
     )
     setSongs(
@@ -178,6 +216,7 @@ export function EscalaEditorPage() {
       endsAt: endsAt || null,
       notes,
       dressCode,
+      ...(canManage ? { confirmationRequired } : {}),
       participants: team.map((member) => ({
         membershipId: member.membershipId,
         functionIds: member.functions.map((item) => item.id),
@@ -247,7 +286,109 @@ export function EscalaEditorPage() {
     const body = await api<{ members: MemberItem[] }>(
       `/api/ministerios/${ministry.id}/membros${suffix}`
     )
-    setMemberHits(body.members.filter((member) => !team.some((item) => item.membershipId === member.membershipId)))
+    const hits = body.members.filter(
+      (member) => !team.some((item) => item.membershipId === member.membershipId)
+    )
+    setMemberHits(hits)
+    if (!startsAt || hits.length === 0) {
+      setHitConflicts({})
+      return
+    }
+    const checked = await api<{
+      results: Array<{ membershipId: string; conflicts: ScheduleConflict[] }>
+    }>(`/api/ministerios/${ministry.id}/conflitos`, {
+      method: 'POST',
+      body: JSON.stringify({
+        startsAt,
+        endsAt: endsAt || null,
+        ignoreScheduleId: scheduleId,
+        membershipIds: hits.map((member) => member.membershipId),
+      }),
+    })
+    setHitConflicts(
+      Object.fromEntries(checked.results.map((item) => [item.membershipId, item.conflicts]))
+    )
+  }
+
+  function currentCatalog() {
+    const catalog = new Map<string, SongDetail>()
+    for (const song of songs) {
+      catalog.set(song.songId, {
+        id: song.songId,
+        title: song.title,
+        artist: song.artist,
+        bpm: null,
+        durationSeconds: null,
+        defaultKey: song.defaultKey,
+        folder: null,
+        classification: null,
+        versions: song.versions,
+        links: [],
+      })
+    }
+    return catalog
+  }
+
+  async function confirmAttendance(confirmation: 'confirmed' | 'declined') {
+    setErrors([])
+    setNotice('')
+    try {
+      const detail = await api<ScheduleDetail>(
+        `/api/ministerios/${ministry.id}/escalas/${scheduleId}/confirmacao`,
+        { method: 'POST', body: JSON.stringify({ confirmation }) }
+      )
+      apply(detail, currentCatalog())
+      setNotice(confirmation === 'confirmed' ? 'Presença confirmada.' : 'Resposta registrada.')
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        setNotice(error.message)
+        return
+      }
+      throw error
+    }
+  }
+
+  async function toggleAbsence(member: TeamMember) {
+    setErrors([])
+    setNotice('')
+    try {
+      const detail = await api<ScheduleDetail>(
+        `/api/ministerios/${ministry.id}/escalas/${scheduleId}/falta`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ membershipId: member.membershipId, absent: !member.absent }),
+        }
+      )
+      apply(detail, currentCatalog())
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        setNotice(error.message)
+        return
+      }
+      throw error
+    }
+  }
+
+  async function removeUnavailablePeople() {
+    setErrors([])
+    setNotice('')
+    try {
+      const detail = await api<ScheduleDetail>(
+        `/api/ministerios/${ministry.id}/escalas/${scheduleId}/remover-indisponiveis`,
+        { method: 'POST', body: JSON.stringify({ version }) }
+      )
+      apply(detail, currentCatalog())
+      setNotice('Indisponíveis removidos. Quem só está em outra escala permanece.')
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrors(error.errors)
+        setNotice(error.message)
+        return
+      }
+      throw error
+    }
   }
 
   function addMember(member: MemberItem) {
@@ -264,6 +405,9 @@ export function EscalaEditorPage() {
           id: functionId,
           name: functions.find((item) => item.id === functionId)?.name ?? 'Função',
         })),
+        confirmation: 'pending',
+        absent: false,
+        conflicts: hitConflicts[member.membershipId] ?? [],
       },
     ])
     setMemberHits((current) => current.filter((item) => item.membershipId !== member.membershipId))
@@ -366,12 +510,30 @@ export function EscalaEditorPage() {
   const availableFunctions = functions.filter(
     (item) => !item.archived || team.some((member) => member.functions.some((fn) => fn.id === item.id))
   )
+  const deadline = new Date(endsAtIso ?? startsAtIso ?? 0).getTime()
+  const ended = Boolean(startsAtIso) && Date.now() >= deadline
+  const mine = team.find((member) => member.membershipId === ministry.membership.id)
+  const teamWarnings = team.flatMap((member) =>
+    conflictLabels(member.conflicts).map((label) => `${member.name}: ${label}`)
+  )
 
   return (
     <section>
       <p className="eyebrow">Escalas</p>
       <h1>{title || 'Escala'}</h1>
       <p className="badge">{status === 'draft' ? 'Rascunho' : 'Publicada'}</p>
+      {mine && status === 'published' && confirmationRequired ? (
+        <div className="row">
+          <span>{confirmationLabel(mine.confirmation) || 'Pendente'}</span>
+          <button type="button" onClick={() => void confirmAttendance('confirmed')}>
+            Confirmar
+          </button>
+          <button type="button" onClick={() => void confirmAttendance('declined')}>
+            Não participarei
+          </button>
+        </div>
+      ) : null}
+      {mine?.absent ? <p className="notice">Falta</p> : null}
       <div className="tabs" role="tablist">
         <button type="button" aria-selected={tab === 'dados'} onClick={() => setTab('dados')}>
           Dados
@@ -430,17 +592,49 @@ export function EscalaEditorPage() {
             onChange={canManage ? setDressCode : undefined}
             readOnly={!canManage}
           />
+          {canManage ? (
+            <label className="checks">
+              <span>
+                <input
+                  type="checkbox"
+                  checked={confirmationRequired}
+                  onChange={(event) => setConfirmationRequired(event.target.checked)}
+                />{' '}
+                Pedir confirmação
+              </span>
+            </label>
+          ) : null}
         </div>
       ) : null}
 
       {tab === 'equipe' ? (
         <div className="form">
+          {teamWarnings.length > 0 ? (
+            <p className="notice">
+              Há avisos na equipe. Você ainda pode mantê-los nesta escala.{' '}
+              {teamWarnings.join('. ')}.
+            </p>
+          ) : null}
           {team.length === 0 ? <p>Ninguém na equipe.</p> : null}
           <ul className="list">
             {team.map((member) => (
               <li key={member.membershipId} className="card">
                 <strong>{member.name}</strong>
                 <span>{member.functions.map((item) => item.name).join(', ')}</span>
+                {confirmationLabel(member.confirmation) ? (
+                  <span className="badge">{confirmationLabel(member.confirmation)}</span>
+                ) : null}
+                {member.absent ? <span className="badge">Falta</span> : null}
+                {conflictLabels(member.conflicts).map((label) => (
+                  <span key={label} className="badge">
+                    {label}
+                  </span>
+                ))}
+                {canManage && ended ? (
+                  <button type="button" onClick={() => void toggleAbsence(member)}>
+                    {member.absent ? 'Desmarcar falta' : 'Marcar falta'}
+                  </button>
+                ) : null}
                 {canManage ? (
                   <button
                     type="button"
@@ -494,15 +688,25 @@ export function EscalaEditorPage() {
                 {memberHits.map((member) => (
                   <li key={member.membershipId} className="card">
                     <span>{member.name}</span>
+                    {conflictLabels(hitConflicts[member.membershipId] ?? []).map((label) => (
+                      <span key={label} className="badge">
+                        {label}
+                      </span>
+                    ))}
                     <button type="button" onClick={() => addMember(member)}>
                       Incluir
                     </button>
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={clearTeam}>
-                Limpar equipe
-              </button>
+              <div className="row">
+                <button type="button" onClick={clearTeam}>
+                  Limpar equipe
+                </button>
+                <button type="button" onClick={() => void removeUnavailablePeople()}>
+                  Remover indisponíveis desta escala
+                </button>
+              </div>
             </>
           ) : null}
         </div>

@@ -14,6 +14,7 @@ const SongsController = () => import('#controllers/songs_controller')
 const FoldersController = () => import('#controllers/folders_controller')
 const ClassificationsController = () => import('#controllers/classifications_controller')
 const SchedulesController = () => import('#controllers/schedules_controller')
+const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -126,6 +127,36 @@ router
         router.post('/ministerios/:ministryId/escalas/:scheduleId/rascunho', [
           SchedulesController,
           'unpublish',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/confirmacao', [
+          SchedulesController,
+          'confirm',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/falta', [
+          SchedulesController,
+          'absence',
+        ])
+        router.post('/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis', [
+          SchedulesController,
+          'removeUnavailable',
+        ])
+        router.post('/ministerios/:ministryId/conflitos', [SchedulesController, 'conflicts'])
+
+        router.get('/ministerios/:ministryId/indisponibilidades', [
+          UnavailabilitiesController,
+          'index',
+        ])
+        router.post('/ministerios/:ministryId/indisponibilidades', [
+          UnavailabilitiesController,
+          'store',
+        ])
+        router.patch('/ministerios/:ministryId/indisponibilidades/:unavailabilityId', [
+          UnavailabilitiesController,
+          'update',
+        ])
+        router.delete('/ministerios/:ministryId/indisponibilidades/:unavailabilityId', [
+          UnavailabilitiesController,
+          'destroy',
         ])
       })
       .use(middleware.ministry())

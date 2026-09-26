@@ -583,4 +583,100 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['unpublish']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'schedules.confirm': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/confirmacao'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').confirmScheduleValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').confirmScheduleValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['confirm']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['confirm']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.absence': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/falta'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').absenceValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').absenceValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['absence']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['absence']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.remove_unavailable': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/escalas/:scheduleId/remover-indisponiveis'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').removeUnavailableValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').removeUnavailableValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['removeUnavailable']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['removeUnavailable']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'schedules.conflicts': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/conflitos'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').conflictCheckValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').conflictCheckValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['conflicts']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['conflicts']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'unavailabilities.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/indisponibilidades'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['index']>>>
+    }
+  }
+  'unavailabilities.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/indisponibilidades'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').saveUnavailabilityValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').saveUnavailabilityValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'unavailabilities.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/schedule').saveUnavailabilityValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; unavailabilityId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/schedule').saveUnavailabilityValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'unavailabilities.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/ministerios/:ministryId/indisponibilidades/:unavailabilityId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; unavailabilityId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/unavailabilities_controller').default['destroy']>>>
+    }
+  }
 }

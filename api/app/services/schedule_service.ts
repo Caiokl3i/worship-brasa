@@ -19,6 +19,7 @@ import {
   ScheduleNotFoundException,
 } from '#exceptions/ministry_exceptions'
 import { SONG_KEYS } from '#ministries/repertoire'
+import { findConflicts, scheduleHasEnded, type Conflict } from '#schedules/conflicts'
 
 type HighlightInput = {
   membershipId: string
@@ -46,6 +47,7 @@ export type ScheduleWriteInput = {
   endsAt?: string | null
   notes?: string | null
   dressCode?: string | null
+  confirmationRequired?: boolean
   participants: ParticipantInput[]
   songs: SongInput[]
 }
@@ -56,6 +58,12 @@ export type ScheduleCreateInput = {
   endsAt?: string | null
   notes?: string | null
   dressCode?: string | null
+  confirmationRequired?: boolean
+}
+
+export type ScheduleView = {
+  schedule: Schedule
+  conflicts: Map<string, Conflict[]>
 }
 
 type PreparedWrite = {
@@ -64,6 +72,7 @@ type PreparedWrite = {
   endsAt: DateTime | null
   notes: string
   dressCode: string
+  confirmationRequired?: boolean
   participants: ParticipantInput[]
   songs: Array<SongInput & { keyOverride: string | null; versionId: string | null; notes: string }>
 }
@@ -122,7 +131,7 @@ export default class ScheduleService {
   }
 
   async show(actor: Membership, scheduleId: string) {
-    return this.#loadVisible(actor, scheduleId)
+    return this.#view(actor, scheduleId)
   }
 
   async create(actor: Membership, input: ScheduleCreateInput) {
@@ -140,10 +149,11 @@ export default class ScheduleService {
       status: 'draft',
       notes: input.notes?.trim() ?? '',
       dressCode: input.dressCode?.trim() ?? '',
+      confirmationRequired: input.confirmationRequired ?? true,
       version: 1,
     })
 
-    return this.#loadVisible(actor, schedule.id)
+    return this.#view(actor, schedule.id)
   }
 
   async update(actor: Membership, scheduleId: string, input: ScheduleWriteInput) {
@@ -165,6 +175,161 @@ export default class ScheduleService {
     const schedule = await this.#find(actor.ministryId, scheduleId)
     schedule.deletedAt = DateTime.utc()
     await schedule.save()
+  }
+
+  async confirm(
+    actor: Membership,
+    scheduleId: string,
+    input: { confirmation: 'confirmed' | 'declined'; membershipId?: string }
+  ) {
+    const access = new MembershipAccessService()
+    await db.transaction(async (trx) => {
+      const schedule = await this.#lock(actor, scheduleId, trx)
+      if (schedule.status !== 'published') {
+        throw new FieldException('confirmation', 'Só dá para confirmar uma escala publicada.')
+      }
+      if (!schedule.confirmationRequired) {
+        throw new FieldException('confirmation', 'Esta escala não pede confirmação.')
+      }
+      if (scheduleHasEnded(schedule.startsAt, schedule.endsAt)) {
+        throw new FieldException(
+          'confirmation',
+          'Não dá mais para confirmar. O horário desta escala já passou.'
+        )
+      }
+
+      const membershipId = input.membershipId || actor.id
+      if (membershipId !== actor.id && !access.managesSchedules(actor)) {
+        throw new ForbiddenActionException()
+      }
+
+      const participant = await ScheduleParticipant.query({ client: trx })
+        .where('scheduleId', schedule.id)
+        .where('membershipId', membershipId)
+        .first()
+      if (!participant) {
+        throw new FieldException('membershipId', 'Este membro não está nesta escala.')
+      }
+
+      participant.useTransaction(trx)
+      participant.confirmation = input.confirmation
+      participant.confirmedAt = DateTime.utc()
+      await participant.save()
+    })
+
+    return this.#view(actor, scheduleId)
+  }
+
+  async markAbsent(
+    actor: Membership,
+    scheduleId: string,
+    input: { membershipId: string; absent: boolean }
+  ) {
+    new MembershipAccessService().assertCanManageSchedules(actor)
+    await db.transaction(async (trx) => {
+      const schedule = await this.#lock(actor, scheduleId, trx)
+      if (!scheduleHasEnded(schedule.startsAt, schedule.endsAt)) {
+        throw new FieldException(
+          'absent',
+          'A falta só pode ser marcada depois que a escala já passou.'
+        )
+      }
+
+      const participant = await ScheduleParticipant.query({ client: trx })
+        .where('scheduleId', schedule.id)
+        .where('membershipId', input.membershipId)
+        .first()
+      if (!participant) {
+        throw new FieldException('membershipId', 'Este membro não está nesta escala.')
+      }
+
+      participant.useTransaction(trx)
+      participant.absent = input.absent
+      participant.absentAt = input.absent ? DateTime.utc() : null
+      await participant.save()
+    })
+
+    return this.#view(actor, scheduleId)
+  }
+
+  async checkConflicts(
+    actor: Membership,
+    input: {
+      startsAt: string
+      endsAt?: string | null
+      ignoreScheduleId?: string | null
+      membershipIds: string[]
+    }
+  ) {
+    const zone = await this.#zone(actor.ministryId)
+    const startsAt = parseMinistryTime(input.startsAt, zone, 'startsAt')
+    const endsAt = blank(input.endsAt) ? parseMinistryTime(input.endsAt!, zone, 'endsAt') : null
+    this.#assertRange(startsAt, endsAt)
+    const includeDrafts = new MembershipAccessService().managesSchedules(actor)
+    const results = []
+
+    for (const membershipId of [...new Set(input.membershipIds)]) {
+      const membership = await Membership.query()
+        .where('id', membershipId)
+        .where('ministryId', actor.ministryId)
+        .where('status', 'active')
+        .first()
+      if (!membership) {
+        throw new FieldException('membershipIds', 'Este membro não pode entrar nesta escala.')
+      }
+      results.push({
+        membershipId,
+        conflicts: await findConflicts(
+          membershipId,
+          startsAt,
+          endsAt,
+          input.ignoreScheduleId ?? null,
+          {
+            includeDrafts,
+          }
+        ),
+      })
+    }
+
+    return results
+  }
+
+  async removeUnavailable(actor: Membership, scheduleId: string, version: number) {
+    new MembershipAccessService().assertCanManageSchedules(actor)
+    await db.transaction(async (trx) => {
+      const schedule = await this.#lock(actor, scheduleId, trx)
+      if (schedule.version !== version) {
+        throw new ScheduleConflictException()
+      }
+
+      const participants = await ScheduleParticipant.query({ client: trx }).where(
+        'scheduleId',
+        schedule.id
+      )
+      const removing: string[] = []
+      for (const participant of participants) {
+        const conflicts = await findConflicts(
+          participant.membershipId,
+          schedule.startsAt,
+          schedule.endsAt,
+          schedule.id,
+          { includeDrafts: true }
+        )
+        if (conflicts.some((conflict) => conflict.kind === 'unavailability')) {
+          removing.push(participant.id)
+        }
+      }
+
+      if (removing.length > 0) {
+        await ScheduleParticipant.query({ client: trx }).whereIn('id', removing).delete()
+      }
+
+      schedule.useTransaction(trx)
+      schedule.version += 1
+      await schedule.save()
+    })
+
+    return this.#view(actor, scheduleId)
   }
 
   async #write(
@@ -214,10 +379,14 @@ export default class ScheduleService {
         .preload('assignments')
 
       if (!access.managesSchedules(actor)) {
+        const sameConfirmation =
+          prepared.confirmationRequired === undefined ||
+          prepared.confirmationRequired === schedule.confirmationRequired
         const sameData =
           schedule.title === prepared.title &&
           schedule.notes === prepared.notes &&
           schedule.dressCode === prepared.dressCode &&
+          sameConfirmation &&
           sameInstant(schedule.startsAt, prepared.startsAt) &&
           sameInstant(schedule.endsAt, prepared.endsAt)
         const sameTeam =
@@ -251,6 +420,9 @@ export default class ScheduleService {
       schedule.endsAt = prepared.endsAt
       schedule.notes = prepared.notes
       schedule.dressCode = prepared.dressCode
+      if (prepared.confirmationRequired !== undefined) {
+        schedule.confirmationRequired = prepared.confirmationRequired
+      }
       if (nextStatus !== 'keep') {
         schedule.status = nextStatus
       }
@@ -258,7 +430,7 @@ export default class ScheduleService {
       await schedule.save()
     })
 
-    return this.#loadVisible(actor, scheduleId)
+    return this.#view(actor, scheduleId)
   }
 
   #prepare(input: ScheduleWriteInput, zone: string): PreparedWrite {
@@ -288,6 +460,7 @@ export default class ScheduleService {
       endsAt,
       notes: input.notes?.trim() ?? '',
       dressCode: input.dressCode?.trim() ?? '',
+      confirmationRequired: input.confirmationRequired,
       participants,
       songs: input.songs.map((song) => ({
         ...song,
@@ -419,6 +592,17 @@ export default class ScheduleService {
       'scheduleId',
       scheduleId
     )
+    const keptAnswers = new Map(
+      currentParticipants.map((participant) => [
+        participant.membershipId,
+        {
+          confirmation: participant.confirmation,
+          confirmedAt: participant.confirmedAt,
+          absent: participant.absent,
+          absentAt: participant.absentAt,
+        },
+      ])
+    )
     const participantIds = currentParticipants.map((participant) => participant.id)
     if (participantIds.length > 0) {
       await ScheduleAssignment.query({ client: trx })
@@ -431,8 +615,16 @@ export default class ScheduleService {
 
     const participants = new Map<string, ScheduleParticipant>()
     for (const participantInput of prepared.participants) {
+      const previous = keptAnswers.get(participantInput.membershipId)
       const participant = await ScheduleParticipant.create(
-        { scheduleId, membershipId: participantInput.membershipId },
+        {
+          scheduleId,
+          membershipId: participantInput.membershipId,
+          confirmation: previous?.confirmation ?? 'pending',
+          confirmedAt: previous?.confirmedAt ?? null,
+          absent: previous?.absent ?? false,
+          absentAt: previous?.absentAt ?? null,
+        },
         { client: trx }
       )
       participants.set(participant.membershipId, participant)
@@ -536,5 +728,49 @@ export default class ScheduleService {
     )
 
     return schedule
+  }
+
+  async #lock(actor: Membership, scheduleId: string, trx: TransactionClientContract) {
+    if (!isUuid(scheduleId)) {
+      throw new ScheduleNotFoundException()
+    }
+
+    const schedule = await Schedule.query({ client: trx })
+      .where('id', scheduleId)
+      .where('ministryId', actor.ministryId)
+      .whereNull('deletedAt')
+      .forUpdate()
+      .first()
+
+    if (!schedule) {
+      throw new ScheduleNotFoundException()
+    }
+
+    if (schedule.status === 'draft' && !new MembershipAccessService().managesSchedules(actor)) {
+      throw new ScheduleNotFoundException()
+    }
+
+    return schedule
+  }
+
+  async #view(actor: Membership, scheduleId: string): Promise<ScheduleView> {
+    const schedule = await this.#loadVisible(actor, scheduleId)
+    const includeDrafts = new MembershipAccessService().managesSchedules(actor)
+    const conflicts = new Map<string, Conflict[]>()
+
+    for (const participant of schedule.participants) {
+      conflicts.set(
+        participant.membershipId,
+        await findConflicts(
+          participant.membershipId,
+          schedule.startsAt,
+          schedule.endsAt,
+          schedule.id,
+          { includeDrafts }
+        )
+      )
+    }
+
+    return { schedule, conflicts }
   }
 }

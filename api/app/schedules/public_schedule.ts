@@ -1,5 +1,8 @@
 import type Schedule from '#models/schedule'
+import type Membership from '#models/membership'
 import { effectiveKey } from '#schedules/effective_key'
+import type { Conflict } from '#schedules/conflicts'
+import MembershipAccessService from '#services/membership_access_service'
 
 export function toScheduleSummary(schedule: Schedule) {
   return {
@@ -11,11 +14,17 @@ export function toScheduleSummary(schedule: Schedule) {
   }
 }
 
-export function toScheduleDetail(schedule: Schedule) {
+export function toScheduleDetail(
+  schedule: Schedule,
+  actor: Membership,
+  conflicts: Map<string, Conflict[]>
+) {
+  const manages = new MembershipAccessService().managesSchedules(actor)
   return {
     ...toScheduleSummary(schedule),
     notes: schedule.notes,
     dressCode: schedule.dressCode,
+    confirmationRequired: schedule.confirmationRequired,
     version: schedule.version,
     participants: schedule.participants.map((participant) => ({
       id: participant.id,
@@ -33,6 +42,10 @@ export function toScheduleDetail(schedule: Schedule) {
           name: assignment.function.name,
           archived: assignment.function.archivedAt !== null,
         })),
+      confirmation:
+        manages || participant.membershipId === actor.id ? participant.confirmation : null,
+      absent: manages || participant.membershipId === actor.id ? participant.absent : null,
+      conflicts: conflicts.get(participant.membershipId) ?? [],
     })),
     songs: schedule.songs.map((scheduleSong) => {
       const versionKey = scheduleSong.versionId ? scheduleSong.version.key : null

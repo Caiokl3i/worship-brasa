@@ -70,6 +70,7 @@ export function MinistryHomePage() {
         {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}
         <Link to="repertorio">Repertório</Link>
         <Link to="escalas">Escalas</Link>
+        <Link to="indisponibilidades">Indisponibilidades</Link>
       </p>
 
       {ministry.membership.isAdmin ? (

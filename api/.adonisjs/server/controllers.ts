@@ -17,4 +17,5 @@ export const controllers = {
   Schedules: () => import('#controllers/schedules_controller'),
   Session: () => import('#controllers/session_controller'),
   Songs: () => import('#controllers/songs_controller'),
+  Unavailabilities: () => import('#controllers/unavailabilities_controller'),
 }

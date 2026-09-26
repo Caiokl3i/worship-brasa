@@ -21,11 +21,20 @@ export type ScheduleFunction = {
   archived: boolean
 }
 
+export type ScheduleConflict = {
+  kind: 'schedule' | 'unavailability'
+  title?: string
+  status?: 'draft' | 'published'
+}
+
 export type ScheduleParticipant = {
   id: string
   membershipId: string
   name: string
   functions: ScheduleFunction[]
+  confirmation: 'pending' | 'confirmed' | 'declined' | null
+  absent: boolean | null
+  conflicts: ScheduleConflict[]
 }
 
 export type ScheduleLink = {
@@ -59,6 +68,7 @@ export type ScheduleSong = {
 export type ScheduleDetail = ScheduleSummary & {
   notes: string
   dressCode: string
+  confirmationRequired: boolean
   version: number
   participants: ScheduleParticipant[]
   songs: ScheduleSong[]

@@ -211,8 +211,26 @@ export class ScheduleAssignmentSchema extends BaseModel {
 }
 
 export class ScheduleParticipantSchema extends BaseModel {
-  static $columns = ['createdAt', 'id', 'membershipId', 'scheduleId', 'updatedAt'] as const
+  static $columns = [
+    'absent',
+    'absentAt',
+    'confirmation',
+    'confirmedAt',
+    'createdAt',
+    'id',
+    'membershipId',
+    'scheduleId',
+    'updatedAt',
+  ] as const
   $columns = ScheduleParticipantSchema.$columns
+  @column()
+  declare absent: boolean
+  @column.dateTime()
+  declare absentAt: DateTime | null
+  @column()
+  declare confirmation: string
+  @column.dateTime()
+  declare confirmedAt: DateTime | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column({ isPrimary: true })
@@ -274,6 +292,7 @@ export class ScheduleSongSchema extends BaseModel {
 
 export class ScheduleSchema extends BaseModel {
   static $columns = [
+    'confirmationRequired',
     'createdAt',
     'deletedAt',
     'dressCode',
@@ -288,6 +307,8 @@ export class ScheduleSchema extends BaseModel {
     'version',
   ] as const
   $columns = ScheduleSchema.$columns
+  @column()
+  declare confirmationRequired: boolean
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column.dateTime()
@@ -399,6 +420,36 @@ export class SongSchema extends BaseModel {
   declare ministryId: string
   @column()
   declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
+export class UnavailabilitySchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'deletedAt',
+    'description',
+    'endsOn',
+    'id',
+    'membershipId',
+    'startsOn',
+    'updatedAt',
+  ] as const
+  $columns = UnavailabilitySchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime()
+  declare deletedAt: DateTime | null
+  @column()
+  declare description: string
+  @column.date()
+  declare endsOn: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare membershipId: string
+  @column.date()
+  declare startsOn: DateTime
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }
