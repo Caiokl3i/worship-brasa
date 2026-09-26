@@ -18,6 +18,11 @@ import {
   type SeriesFrequency,
   type SeriesRule,
 } from '#schedules/occurrences'
+import {
+  copySeriesScript,
+  copySeriesScriptToSchedule,
+  snapshotDefaultSeriesScript,
+} from '#services/script_service'
 
 export type SeriesScope = 'only_this' | 'this_and_following' | 'all'
 
@@ -118,8 +123,9 @@ export async function materializeSeries(seriesId: string, options: MaterializeOp
     }
 
     const startsAt = start.toUTC()
+    let created: Schedule
     try {
-      await Schedule.create(
+      created = await Schedule.create(
         {
           ministryId: series.ministryId,
           title: series.title,
@@ -142,7 +148,10 @@ export async function materializeSeries(seriesId: string, options: MaterializeOp
       if (!isUniqueViolation(error)) {
         throw error
       }
+      takenDates.add(localDate)
+      continue
     }
+    await copySeriesScriptToSchedule(series.id, created.id, trx)
     takenDates.add(localDate)
   }
 }
@@ -209,6 +218,7 @@ export async function createRepeatingSchedules(input: {
       { client: trx }
     )
 
+    await snapshotDefaultSeriesScript(series.id, input.ministryId, trx)
     await materializeSeries(series.id, { trx })
     const first = await Schedule.query({ client: trx })
       .where('seriesId', series.id)
@@ -369,6 +379,7 @@ export async function applySeriesEdit(input: {
     { client: trx }
   )
 
+  await copySeriesScript(series.id, created.id, trx)
   await materializeSeries(created.id, { trx, skipLocalDates: [...skip] })
 }
 

@@ -216,4 +216,57 @@ test.group('Roteiro', (group) => {
     denied.assertStatus(403)
     denied.assertBodyContains({ message: 'Você não pode fazer isso.' })
   })
+
+  test('ocorrência nova da série nasce com abertura e palavra', async ({ client, assert }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client)
+    const created = await client.post(`/api/ministerios/${ministryId}/escalas`).json({
+      title: 'Culto de domingo',
+      startsAt: '2026-10-04T19:00',
+      endsAt: null,
+      notes: '',
+      dressCode: '',
+      repeat: {
+        frequency: 'weekly',
+        interval: 1,
+        weekdays: [7],
+        endsMode: 'after_count',
+        occurrenceCount: 2,
+      },
+    })
+    created.assertStatus(201)
+    const titles = created.body().script.items.map((item: { title: string }) => item.title)
+    assert.include(titles, 'Abertura')
+    assert.include(titles, 'Palavra')
+
+    const templates = await client.get(`/api/ministerios/${ministryId}/roteiros`)
+    const culto = templates.body().templates.find((item: { name: string }) => item.name === 'Culto')
+    const edited = await client.patch(`/api/ministerios/${ministryId}/roteiros/${culto.id}`).json({
+      name: 'Culto',
+      items: culto.items.map(
+        (item: { title: string; notes: string; durationSeconds: number | null }) => ({
+          title: item.title === 'Abertura' ? 'Começo' : item.title,
+          notes: item.notes,
+          durationSeconds: item.durationSeconds,
+        })
+      ),
+    })
+    edited.assertStatus(200)
+
+    const again = await client.get(`/api/ministerios/${ministryId}/escalas/${created.body().id}`)
+    again.assertStatus(200)
+    const kept = again.body().script.items.map((item: { title: string }) => item.title)
+    assert.include(kept, 'Abertura')
+    assert.notInclude(kept, 'Começo')
+
+    const sibling = created
+      .body()
+      .series.upcoming.find((item: { id: string }) => item.id !== created.body().id)
+    const other = await client.get(`/api/ministerios/${ministryId}/escalas/${sibling.id}`)
+    other.assertStatus(200)
+    assert.include(
+      other.body().script.items.map((item: { title: string }) => item.title),
+      'Abertura'
+    )
+  })
 })
