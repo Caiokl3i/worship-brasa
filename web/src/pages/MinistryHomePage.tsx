@@ -79,6 +79,18 @@ export function MinistryHomePage() {
     <section>
       <p className="eyebrow">Ministério</p>
       <h1>{ministry.name}</h1>
+      <div>
+        <h2>Aniversariantes do dia</h2>
+        {ministry.birthdays.length === 0 ? (
+          <p>Ninguém faz aniversário hoje.</p>
+        ) : (
+          <ul className="list">
+            {ministry.birthdays.map((name) => (
+              <li key={name}>{name}</li>
+            ))}
+          </ul>
+        )}
+      </div>
       <p className="row">
         <Link to="membros">Membros</Link>
         {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}

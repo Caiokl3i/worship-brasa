@@ -12,6 +12,7 @@ export const NOTIFICATION_TYPES = [
   'notice',
   'chat_ministry',
   'chat_schedule',
+  'birthday',
 ] as const
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]
@@ -53,6 +54,12 @@ export const NOTIFICATION_DEFAULTS: Record<NotificationType, PreferenceDefault> 
     inApp: false,
     email: false,
     label: 'Mensagem no chat da escala',
+    group: 'ministerio',
+  },
+  birthday: {
+    inApp: true,
+    email: false,
+    label: 'Aniversariantes do dia',
     group: 'ministerio',
   },
 }

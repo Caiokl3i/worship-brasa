@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import MinistryService from '#services/ministry_service'
+import { listTodayBirthdays } from '#services/birthday_service'
 import { createMinistryValidator, updateMinistryValidator } from '#validators/ministry'
 import { toMembershipAccess, toPublicMinistry } from '#ministries/public_ministry'
 
@@ -32,9 +33,11 @@ export default class MinistriesController {
 
   async show({ membership, response }: HttpContext) {
     const ministry = await new MinistryService().show(membership)
+    const birthdays = await listTodayBirthdays(ministry)
     return response.ok({
       ...toPublicMinistry(ministry),
       membership: toMembershipAccess(membership),
+      birthdays,
     })
   }
 

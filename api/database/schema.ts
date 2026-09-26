@@ -7,6 +7,21 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class BirthdayDigestSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'localDate', 'ministryId', 'userId'] as const
+  $columns = BirthdayDigestSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column.date()
+  declare localDate: DateTime
+  @column()
+  declare ministryId: string
+  @column()
+  declare userId: string
+}
+
 export class CalendarConnectionSchema extends BaseModel {
   static $columns = [
     'calendarId',

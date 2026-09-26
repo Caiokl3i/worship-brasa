@@ -60,6 +60,7 @@ export type MinistryDetail = {
   color: string
   musicModuleEnabled: boolean
   membership: MembershipAccess
+  birthdays: string[]
 }
 
 export type MinistryFunctionItem = {
