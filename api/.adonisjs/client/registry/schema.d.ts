@@ -67,6 +67,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/password_reset_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'invites.activate': {
+    methods: ["POST"]
+    pattern: '/api/ativar/confirmar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/invite_email').activateInviteValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/invite_email').activateInviteValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['activate']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['activate']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'integrations.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/integracao/escalas'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: ExtractQueryForGet<InferInput<(typeof import('#validators/integration').integrationRangeValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['index']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'integrations.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/integracao/escalas/:scheduleId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['show']>>>
+    }
+  }
   'profile.show': {
     methods: ["GET","HEAD"]
     pattern: '/api/eu'
@@ -77,6 +113,54 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['show']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['show']>>>
+    }
+  }
+  'calendars.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/agenda'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['show']>>>
+    }
+  }
+  'calendars.store': {
+    methods: ["POST"]
+    pattern: '/api/agenda/conectar'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['store']>>>
+    }
+  }
+  'calendars.callback': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/agenda/retorno'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['callback']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['callback']>>>
+    }
+  }
+  'calendars.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/agenda'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/calendars_controller').default['destroy']>>>
     }
   }
   'profile.update': {
@@ -269,6 +353,54 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['store']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['store']>>>
+    }
+  }
+  'invites.email': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/convite/email'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/invite_email').sendInviteEmailValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/invite_email').sendInviteEmailValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['email']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/invites_controller').default['email']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'integrations.current': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/integracao'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['current']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['current']>>>
+    }
+  }
+  'integrations.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/integracao'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['store']>>>
+    }
+  }
+  'integrations.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/ministerios/:ministryId/integracao'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/integrations_controller').default['destroy']>>>
     }
   }
   'members.index': {

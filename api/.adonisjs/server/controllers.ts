@@ -5,11 +5,13 @@
 
 export const controllers = {
   Account: () => import('#controllers/account_controller'),
+  Calendars: () => import('#controllers/calendars_controller'),
   Chats: () => import('#controllers/chats_controller'),
   Classifications: () => import('#controllers/classifications_controller'),
   Folders: () => import('#controllers/folders_controller'),
   Generations: () => import('#controllers/generations_controller'),
   Health: () => import('#controllers/health_controller'),
+  Integrations: () => import('#controllers/integrations_controller'),
   Invites: () => import('#controllers/invites_controller'),
   Members: () => import('#controllers/members_controller'),
   Ministries: () => import('#controllers/ministries_controller'),

@@ -9,7 +9,14 @@ export type ScannedRoutes = {
     'session.store': { paramsTuple?: []; params?: {} }
     'password_reset.store': { paramsTuple?: []; params?: {} }
     'password_reset.update': { paramsTuple?: []; params?: {} }
+    'invites.activate': { paramsTuple?: []; params?: {} }
+    'integrations.index': { paramsTuple?: []; params?: {} }
+    'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'calendars.show': { paramsTuple?: []; params?: {} }
+    'calendars.store': { paramsTuple?: []; params?: {} }
+    'calendars.callback': { paramsTuple?: []; params?: {} }
+    'calendars.destroy': { paramsTuple?: []; params?: {} }
     'profile.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
@@ -26,6 +33,10 @@ export type ScannedRoutes = {
     'ministries.leave': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.email': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.current': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.destroy': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.approve': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
@@ -91,12 +102,17 @@ export type ScannedRoutes = {
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'integrations.index': { paramsTuple?: []; params?: {} }
+    'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'calendars.show': { paramsTuple?: []; params?: {} }
+    'calendars.callback': { paramsTuple?: []; params?: {} }
     'notifications.index': { paramsTuple?: []; params?: {} }
     'notifications.preferences': { paramsTuple?: []; params?: {} }
     'ministries.index': { paramsTuple?: []; params?: {} }
     'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.current': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -118,12 +134,17 @@ export type ScannedRoutes = {
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'integrations.index': { paramsTuple?: []; params?: {} }
+    'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'calendars.show': { paramsTuple?: []; params?: {} }
+    'calendars.callback': { paramsTuple?: []; params?: {} }
     'notifications.index': { paramsTuple?: []; params?: {} }
     'notifications.preferences': { paramsTuple?: []; params?: {} }
     'ministries.index': { paramsTuple?: []; params?: {} }
     'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.current': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.pending': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -148,6 +169,8 @@ export type ScannedRoutes = {
     'session.store': { paramsTuple?: []; params?: {} }
     'password_reset.store': { paramsTuple?: []; params?: {} }
     'password_reset.update': { paramsTuple?: []; params?: {} }
+    'invites.activate': { paramsTuple?: []; params?: {} }
+    'calendars.store': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'notifications.read': { paramsTuple: [ParamValue]; params: {'notificationId': ParamValue} }
@@ -155,6 +178,8 @@ export type ScannedRoutes = {
     'invites.enter': { paramsTuple?: []; params?: {} }
     'ministries.leave': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'invites.email': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'integrations.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.approve': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'members.reject': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'ministry_functions.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -185,6 +210,15 @@ export type ScannedRoutes = {
     'schedules.conflicts': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'unavailabilities.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
   }
+  DELETE: {
+    'calendars.destroy': { paramsTuple?: []; params?: {} }
+    'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
+    'integrations.destroy': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
+    'folders.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
+    'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+    'unavailabilities.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
+  }
   PATCH: {
     'profile.update': { paramsTuple?: []; params?: {} }
     'ministries.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -202,13 +236,6 @@ export type ScannedRoutes = {
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'generations.update': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
-  }
-  DELETE: {
-    'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
-    'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
-    'folders.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
-    'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
-    'unavailabilities.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

@@ -13,6 +13,7 @@ import { NovaEscalaPage } from './pages/NovaEscalaPage.tsx'
 import { EntrarPage } from './pages/EntrarPage.tsx'
 import { HomeGate } from './pages/HomeGate.tsx'
 import { IndisponibilidadesPage } from './pages/IndisponibilidadesPage.tsx'
+import { IntegracaoPage } from './pages/IntegracaoPage.tsx'
 import { MembrosPage } from './pages/MembrosPage.tsx'
 import { MinisteriosPage } from './pages/MinisteriosPage.tsx'
 import { MinistryHomePage } from './pages/MinistryHomePage.tsx'
@@ -54,6 +55,7 @@ export default function App() {
                 <Route index element={<MinistryHomePage />} />
                 <Route path="membros" element={<MembrosPage />} />
                 <Route path="convite" element={<ConviteAdminPage />} />
+                <Route path="integracao" element={<IntegracaoPage />} />
                 <Route path="repertorio" element={<RepertorioPage />} />
                 <Route path="repertorio/nova" element={<RepertorioFormPage />} />
                 <Route path="repertorio/:songId" element={<RepertorioFormPage />} />

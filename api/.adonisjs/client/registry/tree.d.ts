@@ -16,10 +16,30 @@ export interface ApiDefinition {
     store: typeof routes['password_reset.store']
     update: typeof routes['password_reset.update']
   }
+  invites: {
+    activate: typeof routes['invites.activate']
+    enter: typeof routes['invites.enter']
+    show: typeof routes['invites.show']
+    store: typeof routes['invites.store']
+    email: typeof routes['invites.email']
+  }
+  integrations: {
+    index: typeof routes['integrations.index']
+    show: typeof routes['integrations.show']
+    current: typeof routes['integrations.current']
+    store: typeof routes['integrations.store']
+    destroy: typeof routes['integrations.destroy']
+  }
   profile: {
     show: typeof routes['profile.show']
     update: typeof routes['profile.update']
     updatePassword: typeof routes['profile.update_password']
+  }
+  calendars: {
+    show: typeof routes['calendars.show']
+    store: typeof routes['calendars.store']
+    callback: typeof routes['calendars.callback']
+    destroy: typeof routes['calendars.destroy']
   }
   notifications: {
     index: typeof routes['notifications.index']
@@ -33,11 +53,6 @@ export interface ApiDefinition {
     show: typeof routes['ministries.show']
     update: typeof routes['ministries.update']
     leave: typeof routes['ministries.leave']
-  }
-  invites: {
-    enter: typeof routes['invites.enter']
-    show: typeof routes['invites.show']
-    store: typeof routes['invites.store']
   }
   members: {
     cancel: typeof routes['members.cancel']

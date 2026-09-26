@@ -109,6 +109,15 @@ export class RequestNotFoundException extends Exception {
   }
 }
 
+export class InvalidIntegrationTokenException extends Exception {
+  static status = 401
+  static code = 'E_INTEGRATION_TOKEN'
+
+  constructor() {
+    super('Token inválido.', { status: 401, code: 'E_INTEGRATION_TOKEN' })
+  }
+}
+
 export class ForbiddenActionException extends Exception {
   static status = 403
   static code = 'E_FORBIDDEN_ACTION'

@@ -82,6 +82,7 @@ export function MinistryHomePage() {
       <p className="row">
         <Link to="membros">Membros</Link>
         {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}
+        {ministry.membership.isAdmin ? <Link to="integracao">Integrações</Link> : null}
         <Link to="repertorio">Repertório</Link>
         <Link to="escalas">Escalas</Link>
         <Link to="avisos">Avisos</Link>
@@ -124,14 +125,20 @@ export function MinistryHomePage() {
           />
           <label className="field">
             <span>Fuso</span>
-            <select name="timezone" value={timezone} onChange={(event) => setTimezone(event.target.value)}>
+            <select
+              name="timezone"
+              value={timezone}
+              onChange={(event) => setTimezone(event.target.value)}
+            >
               {zones.map((zone) => (
                 <option key={zone} value={zone}>
                   {zone}
                 </option>
               ))}
             </select>
-            {fieldMessage(errors, 'timezone') ? <small>{fieldMessage(errors, 'timezone')}</small> : null}
+            {fieldMessage(errors, 'timezone') ? (
+              <small>{fieldMessage(errors, 'timezone')}</small>
+            ) : null}
           </label>
           <label className="field">
             <span>Cor</span>

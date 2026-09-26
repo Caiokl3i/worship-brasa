@@ -23,6 +23,7 @@ const ReportsController = () => import('#controllers/reports_controller')
 const GenerationsController = () => import('#controllers/generations_controller')
 const SharesController = () => import('#controllers/shares_controller')
 const CalendarsController = () => import('#controllers/calendars_controller')
+const IntegrationsController = () => import('#controllers/integrations_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -31,6 +32,8 @@ router.post('/api/entrar', [SessionController, 'store'])
 router.post('/api/recuperar-senha', [PasswordResetController, 'store'])
 router.post('/api/recuperar-senha/confirmar', [PasswordResetController, 'update'])
 router.post('/api/ativar/confirmar', [InvitesController, 'activate'])
+router.get('/api/integracao/escalas', [IntegrationsController, 'index'])
+router.get('/api/integracao/escalas/:scheduleId', [IntegrationsController, 'show'])
 
 router
   .group(() => {
@@ -62,6 +65,10 @@ router
         router.get('/ministerios/:ministryId/convite', [InvitesController, 'show'])
         router.post('/ministerios/:ministryId/convite', [InvitesController, 'store'])
         router.post('/ministerios/:ministryId/convite/email', [InvitesController, 'email'])
+
+        router.get('/ministerios/:ministryId/integracao', [IntegrationsController, 'current'])
+        router.post('/ministerios/:ministryId/integracao', [IntegrationsController, 'store'])
+        router.delete('/ministerios/:ministryId/integracao', [IntegrationsController, 'destroy'])
 
         router.get('/ministerios/:ministryId/membros', [MembersController, 'index'])
         router.get('/ministerios/:ministryId/pedidos', [MembersController, 'pending'])
