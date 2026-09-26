@@ -13,6 +13,10 @@ export type ScannedRoutes = {
     'profile.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
+    'notifications.read': { paramsTuple: [ParamValue]; params: {'notificationId': ParamValue} }
+    'notifications.preferences': { paramsTuple?: []; params?: {} }
+    'notifications.update_preferences': { paramsTuple?: []; params?: {} }
     'ministries.index': { paramsTuple?: []; params?: {} }
     'ministries.store': { paramsTuple?: []; params?: {} }
     'invites.enter': { paramsTuple?: []; params?: {} }
@@ -80,6 +84,8 @@ export type ScannedRoutes = {
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
+    'notifications.preferences': { paramsTuple?: []; params?: {} }
     'ministries.index': { paramsTuple?: []; params?: {} }
     'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -101,6 +107,8 @@ export type ScannedRoutes = {
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
     'profile.show': { paramsTuple?: []; params?: {} }
+    'notifications.index': { paramsTuple?: []; params?: {} }
+    'notifications.preferences': { paramsTuple?: []; params?: {} }
     'ministries.index': { paramsTuple?: []; params?: {} }
     'ministries.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'invites.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -126,6 +134,7 @@ export type ScannedRoutes = {
     'password_reset.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
+    'notifications.read': { paramsTuple: [ParamValue]; params: {'notificationId': ParamValue} }
     'ministries.store': { paramsTuple?: []; params?: {} }
     'invites.enter': { paramsTuple?: []; params?: {} }
     'ministries.leave': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -169,16 +178,17 @@ export type ScannedRoutes = {
     'schedules.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'unavailabilities.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
   }
+  PUT: {
+    'notifications.update_preferences': { paramsTuple?: []; params?: {} }
+    'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
+  }
   DELETE: {
     'members.cancel': { paramsTuple: [ParamValue]; params: {'membershipId': ParamValue} }
     'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
     'schedules.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'unavailabilities.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'unavailabilityId': ParamValue} }
-  }
-  PUT: {
-    'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
-    'scripts.save': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

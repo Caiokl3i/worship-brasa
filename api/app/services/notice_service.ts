@@ -4,6 +4,7 @@ import Ministry from '#models/ministry'
 import Notice from '#models/notice'
 import { NoticeNotFoundException } from '#exceptions/ministry_exceptions'
 import MembershipAccessService, { isUuid } from '#services/membership_access_service'
+import NotificationService from '#services/notification_service'
 
 type NoticeInput = {
   title: string
@@ -78,6 +79,7 @@ export default class NoticeService {
       pinned: input.pinned,
       expiresAt: input.expiresAt ?? null,
     })
+    await new NotificationService().notifyNotice(actor, notice.title, notice.body)
     return withAuthor(notice)
   }
 
@@ -89,6 +91,7 @@ export default class NoticeService {
     notice.pinned = input.pinned
     notice.expiresAt = input.expiresAt ?? null
     await notice.save()
+    await new NotificationService().notifyNotice(actor, notice.title, notice.body)
     return withAuthor(notice)
   }
 

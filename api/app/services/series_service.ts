@@ -23,6 +23,8 @@ import {
   copySeriesScriptToSchedule,
   snapshotDefaultSeriesScript,
 } from '#services/script_service'
+import type { SeriesEffect } from '#notifications/effects'
+import { snapshotSchedule } from '#schedules/snapshot'
 
 export type SeriesScope = 'only_this' | 'this_and_following' | 'all'
 
@@ -243,15 +245,16 @@ export async function applySeriesEdit(input: {
   pattern: Pattern
 }) {
   const { trx, schedule, zone, scope, replaceFilled, pattern } = input
+  const effects: SeriesEffect[] = []
   if (scope === 'only_this') {
     schedule.detachedFromSeries = true
     schedule.useTransaction(trx)
     await schedule.save()
-    return
+    return effects
   }
 
   if (!schedule.seriesId) {
-    return
+    return effects
   }
 
   const series = await Series.query({ client: trx })
@@ -259,7 +262,7 @@ export async function applySeriesEdit(input: {
     .forUpdate()
     .first()
   if (!series) {
-    return
+    return effects
   }
 
   if (scope === 'all') {
@@ -282,14 +285,19 @@ export async function applySeriesEdit(input: {
       if (filled && !replaceFilled) {
         continue
       }
-      if (filled) {
-        await clearChildren(row.id, trx)
+      const effect = await trackPublished(row.id, trx, 'saved', async () => {
+        if (filled) {
+          await clearChildren(row.id, trx)
+        }
+        writeOccurrence(row, pattern, zone)
+        row.useTransaction(trx)
+        await row.save()
+      })
+      if (effect) {
+        effects.push(effect)
       }
-      writeOccurrence(row, pattern, zone)
-      row.useTransaction(trx)
-      await row.save()
     }
-    return
+    return effects
   }
 
   const previousMode = series.endsMode
@@ -343,9 +351,14 @@ export async function applySeriesEdit(input: {
       }
       continue
     }
-    row.deletedAt = DateTime.utc()
-    row.useTransaction(trx)
-    await row.save()
+    const effect = await trackPublished(row.id, trx, 'deleted', async () => {
+      row.deletedAt = DateTime.utc()
+      row.useTransaction(trx)
+      await row.save()
+    })
+    if (effect) {
+      effects.push(effect)
+    }
   }
 
   if (pivotDate) {
@@ -356,7 +369,7 @@ export async function applySeriesEdit(input: {
   }
 
   if (following.length === 0) {
-    return
+    return effects
   }
 
   const created = await Series.create(
@@ -381,6 +394,7 @@ export async function applySeriesEdit(input: {
 
   await copySeriesScript(series.id, created.id, trx)
   await materializeSeries(created.id, { trx, skipLocalDates: [...skip] })
+  return effects
 }
 
 export async function deleteSeriesScope(input: {
@@ -391,11 +405,17 @@ export async function deleteSeriesScope(input: {
   replaceFilled: boolean
 }) {
   const { trx, schedule, zone, scope, replaceFilled } = input
+  const effects: SeriesEffect[] = []
   if (!schedule.seriesId || schedule.detachedFromSeries || scope === 'only_this') {
-    schedule.deletedAt = DateTime.utc()
-    schedule.useTransaction(trx)
-    await schedule.save()
-    return
+    const effect = await trackPublished(schedule.id, trx, 'deleted', async () => {
+      schedule.deletedAt = DateTime.utc()
+      schedule.useTransaction(trx)
+      await schedule.save()
+    })
+    if (effect) {
+      effects.push(effect)
+    }
+    return effects
   }
 
   const series = await Series.query({ client: trx })
@@ -403,10 +423,15 @@ export async function deleteSeriesScope(input: {
     .forUpdate()
     .first()
   if (!series) {
-    schedule.deletedAt = DateTime.utc()
-    schedule.useTransaction(trx)
-    await schedule.save()
-    return
+    const effect = await trackPublished(schedule.id, trx, 'deleted', async () => {
+      schedule.deletedAt = DateTime.utc()
+      schedule.useTransaction(trx)
+      await schedule.save()
+    })
+    if (effect) {
+      effects.push(effect)
+    }
+    return effects
   }
 
   const now = DateTime.utc().toMillis()
@@ -424,9 +449,14 @@ export async function deleteSeriesScope(input: {
     if (row.id !== schedule.id && (await occurrenceFilled(row.id, trx)) && !replaceFilled) {
       continue
     }
-    row.deletedAt = DateTime.utc()
-    row.useTransaction(trx)
-    await row.save()
+    const effect = await trackPublished(row.id, trx, 'deleted', async () => {
+      row.deletedAt = DateTime.utc()
+      row.useTransaction(trx)
+      await row.save()
+    })
+    if (effect) {
+      effects.push(effect)
+    }
   }
 
   const cutoffBase =
@@ -440,6 +470,24 @@ export async function deleteSeriesScope(input: {
     series.useTransaction(trx)
     await series.save()
   }
+  return effects
+}
+
+async function trackPublished(
+  scheduleId: string,
+  trx: TransactionClientContract,
+  kind: 'saved' | 'deleted',
+  mutate: () => Promise<void>
+) {
+  const before = await snapshotSchedule(scheduleId, trx)
+  await mutate()
+  if (before.status !== 'published') {
+    return null
+  }
+  if (kind === 'deleted') {
+    return { kind: 'deleted' as const, before }
+  }
+  return { kind: 'saved' as const, before, after: await snapshotSchedule(scheduleId, trx) }
 }
 
 function ruleFrom(series: Series, zone: string): SeriesRule {

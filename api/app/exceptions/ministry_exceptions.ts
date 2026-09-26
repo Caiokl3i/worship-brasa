@@ -46,6 +46,15 @@ export class ScriptTemplateNotFoundException extends Exception {
   }
 }
 
+export class NotificationNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_NOTIFICATION_NOT_FOUND'
+
+  constructor() {
+    super('Notificação não encontrada.', { status: 404, code: 'E_NOTIFICATION_NOT_FOUND' })
+  }
+}
+
 export class NoticeNotFoundException extends Exception {
   static status = 404
   static code = 'E_NOTICE_NOT_FOUND'

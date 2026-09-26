@@ -115,6 +115,54 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
     }
   }
+  'notifications.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/notificacoes'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['index']>>>
+    }
+  }
+  'notifications.read': {
+    methods: ["POST"]
+    pattern: '/api/notificacoes/:notificationId/lida'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { notificationId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['read']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['read']>>>
+    }
+  }
+  'notifications.preferences': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/notificacoes/preferencias'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['preferences']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['preferences']>>>
+    }
+  }
+  'notifications.update_preferences': {
+    methods: ["PUT"]
+    pattern: '/api/notificacoes/preferencias'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/notification').saveNotificationPreferencesValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/notification').saveNotificationPreferencesValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['updatePreferences']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notifications_controller').default['updatePreferences']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'ministries.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios'

@@ -21,6 +21,12 @@ export interface ApiDefinition {
     update: typeof routes['profile.update']
     updatePassword: typeof routes['profile.update_password']
   }
+  notifications: {
+    index: typeof routes['notifications.index']
+    read: typeof routes['notifications.read']
+    preferences: typeof routes['notifications.preferences']
+    updatePreferences: typeof routes['notifications.update_preferences']
+  }
   ministries: {
     index: typeof routes['ministries.index']
     store: typeof routes['ministries.store']

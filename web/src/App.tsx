@@ -16,7 +16,9 @@ import { MembrosPage } from './pages/MembrosPage.tsx'
 import { MinisteriosPage } from './pages/MinisteriosPage.tsx'
 import { MinistryHomePage } from './pages/MinistryHomePage.tsx'
 import { NovoMinisterioPage } from './pages/NovoMinisterioPage.tsx'
+import { NotificacoesPage } from './pages/NotificacoesPage.tsx'
 import { PerfilPage } from './pages/PerfilPage.tsx'
+import { PreferenciasNotificacaoPage } from './pages/PreferenciasNotificacaoPage.tsx'
 import { RepertorioFormPage } from './pages/RepertorioFormPage.tsx'
 import { RepertorioPage } from './pages/RepertorioPage.tsx'
 import { RoteirosPage } from './pages/RoteirosPage.tsx'
@@ -43,6 +45,8 @@ export default function App() {
               <Route path="/ministerios/novo" element={<NovoMinisterioPage />} />
               <Route path="/convite/:codigo" element={<ConvitePage />} />
               <Route path="/perfil" element={<PerfilPage />} />
+              <Route path="/notificacoes" element={<NotificacoesPage />} />
+              <Route path="/notificacoes/preferencias" element={<PreferenciasNotificacaoPage />} />
               <Route path="/m/:ministryId" element={<MinistryLayout />}>
                 <Route index element={<MinistryHomePage />} />
                 <Route path="membros" element={<MembrosPage />} />

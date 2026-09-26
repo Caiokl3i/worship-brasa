@@ -18,6 +18,7 @@ const ScriptsController = () => import('#controllers/scripts_controller')
 const NoticesController = () => import('#controllers/notices_controller')
 const ChatsController = () => import('#controllers/chats_controller')
 const UnavailabilitiesController = () => import('#controllers/unavailabilities_controller')
+const NotificationsController = () => import('#controllers/notifications_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -32,6 +33,11 @@ router
     router.patch('/perfil', [ProfileController, 'update'])
     router.post('/perfil/senha', [ProfileController, 'updatePassword'])
     router.post('/sair', [SessionController, 'destroy'])
+
+    router.get('/notificacoes', [NotificationsController, 'index'])
+    router.post('/notificacoes/:notificationId/lida', [NotificationsController, 'read'])
+    router.get('/notificacoes/preferencias', [NotificationsController, 'preferences'])
+    router.put('/notificacoes/preferencias', [NotificationsController, 'updatePreferences'])
 
     router.get('/ministerios', [MinistriesController, 'index'])
     router.post('/ministerios', [MinistriesController, 'store'])

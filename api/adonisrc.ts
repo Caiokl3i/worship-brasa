@@ -71,6 +71,10 @@ export default defineConfig({
       file: () => import('#start/series_scheduler'),
       environment: ['web'],
     },
+    {
+      file: () => import('#start/reminder_scheduler'),
+      environment: ['web'],
+    },
   ],
 
   /*

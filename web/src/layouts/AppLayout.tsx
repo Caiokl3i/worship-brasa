@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Outlet, useMatch, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useMatch, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api.ts'
 import type { MinistryList } from '../lib/ministry.ts'
+import type { NotificationList } from '../lib/notification.ts'
 import { useSession } from '../session.tsx'
 
 export function AppLayout() {
@@ -11,6 +12,31 @@ export function AppLayout() {
   const exact = useMatch('/m/:ministryId')
   const currentId = nested?.params.ministryId ?? exact?.params.ministryId ?? ''
   const [ministries, setMinistries] = useState<MinistryList['active']>([])
+  const [unread, setUnread] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    async function refresh() {
+      try {
+        const body = await api<NotificationList>('/api/notificacoes')
+        if (!cancelled) {
+          setUnread(body.unreadCount)
+        }
+      } catch {
+        if (!cancelled) {
+          setUnread(0)
+        }
+      }
+    }
+    void refresh()
+    const timer = window.setInterval(() => void refresh(), 30_000)
+    window.addEventListener('focus', refresh)
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [currentId])
 
   useEffect(() => {
     void api<MinistryList>('/api/ministerios')
@@ -46,6 +72,9 @@ export function AppLayout() {
             ))}
           </select>
         ) : null}
+        <Link to="/notificacoes">
+          Notificações{unread > 0 ? ` (${unread})` : ''}
+        </Link>
         <button type="button" onClick={() => void logout()}>
           Sair
         </button>

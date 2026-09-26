@@ -6,6 +6,7 @@ import ChatThread from '#models/chat_thread'
 import Schedule from '#models/schedule'
 import { ScheduleNotFoundException } from '#exceptions/ministry_exceptions'
 import MembershipAccessService, { isUuid } from '#services/membership_access_service'
+import NotificationService from '#services/notification_service'
 
 const PAGE_SIZE = 50
 
@@ -25,7 +26,9 @@ export default class ChatService {
 
   async sendToMinistry(actor: Membership, body: string) {
     const thread = await this.#ministryThread(actor.ministryId)
-    return this.#send(thread, actor, body)
+    const message = await this.#send(thread, actor, body)
+    await new NotificationService().notifyMinistryChat(actor, body)
+    return message
   }
 
   async schedulePage(actor: Membership, scheduleId: string, before?: string) {
@@ -37,7 +40,9 @@ export default class ChatService {
   async sendToSchedule(actor: Membership, scheduleId: string, body: string) {
     const schedule = await this.#visibleSchedule(actor, scheduleId)
     const thread = await this.#scheduleThread(schedule)
-    return this.#send(thread, actor, body)
+    const message = await this.#send(thread, actor, body)
+    await new NotificationService().notifyScheduleChat(actor, schedule, body)
+    return message
   }
 
   async #page(thread: ChatThread | null, before?: string) {

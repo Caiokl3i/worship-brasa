@@ -5,6 +5,8 @@ import Invite from '#models/invite'
 import Membership from '#models/membership'
 import type { MembershipStatus } from '#models/membership'
 import MembershipAccessService from '#services/membership_access_service'
+import NotificationService from '#services/notification_service'
+import User from '#models/user'
 import { FieldException } from '#exceptions/ministry_exceptions'
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -100,6 +102,7 @@ export default class InviteService {
       existing.status = 'pending' satisfies MembershipStatus
       clearFlags(existing)
       await existing.save()
+      await this.#notifyRequest(userId, invite.ministryId)
       return { membership: existing, ministryName: invite.ministry.name, created: false }
     }
 
@@ -113,7 +116,13 @@ export default class InviteService {
       canManageFunctions: false,
       canEditScheduleSongs: false,
     })
+    await this.#notifyRequest(userId, invite.ministryId)
 
     return { membership, ministryName: invite.ministry.name, created: true }
+  }
+
+  async #notifyRequest(userId: string, ministryId: string) {
+    const user = await User.findOrFail(userId)
+    await new NotificationService().notifyJoinRequested(ministryId, user.name)
   }
 }

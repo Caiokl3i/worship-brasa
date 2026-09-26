@@ -60,6 +60,30 @@ const routes = {
     tokens: [{"old":"/api/sair","type":0,"val":"api","end":""},{"old":"/api/sair","type":0,"val":"sair","end":""}],
     types: placeholder as Registry['session.destroy']['types'],
   },
+  'notifications.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/notificacoes',
+    tokens: [{"old":"/api/notificacoes","type":0,"val":"api","end":""},{"old":"/api/notificacoes","type":0,"val":"notificacoes","end":""}],
+    types: placeholder as Registry['notifications.index']['types'],
+  },
+  'notifications.read': {
+    methods: ["POST"],
+    pattern: '/api/notificacoes/:notificationId/lida',
+    tokens: [{"old":"/api/notificacoes/:notificationId/lida","type":0,"val":"api","end":""},{"old":"/api/notificacoes/:notificationId/lida","type":0,"val":"notificacoes","end":""},{"old":"/api/notificacoes/:notificationId/lida","type":1,"val":"notificationId","end":""},{"old":"/api/notificacoes/:notificationId/lida","type":0,"val":"lida","end":""}],
+    types: placeholder as Registry['notifications.read']['types'],
+  },
+  'notifications.preferences': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/notificacoes/preferencias',
+    tokens: [{"old":"/api/notificacoes/preferencias","type":0,"val":"api","end":""},{"old":"/api/notificacoes/preferencias","type":0,"val":"notificacoes","end":""},{"old":"/api/notificacoes/preferencias","type":0,"val":"preferencias","end":""}],
+    types: placeholder as Registry['notifications.preferences']['types'],
+  },
+  'notifications.update_preferences': {
+    methods: ["PUT"],
+    pattern: '/api/notificacoes/preferencias',
+    tokens: [{"old":"/api/notificacoes/preferencias","type":0,"val":"api","end":""},{"old":"/api/notificacoes/preferencias","type":0,"val":"notificacoes","end":""},{"old":"/api/notificacoes/preferencias","type":0,"val":"preferencias","end":""}],
+    types: placeholder as Registry['notifications.update_preferences']['types'],
+  },
   'ministries.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios',

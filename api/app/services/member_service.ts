@@ -3,6 +3,7 @@ import Membership from '#models/membership'
 import MinistryFunction from '#models/ministry_function'
 import MembershipAccessService, { isUuid } from '#services/membership_access_service'
 import { FieldException, RequestNotFoundException } from '#exceptions/ministry_exceptions'
+import NotificationService from '#services/notification_service'
 
 type FlagsInput = {
   isAdmin?: boolean
@@ -64,12 +65,14 @@ export default class MemberService {
     const request = await this.#pendingInMinistry(actor.ministryId, membershipId)
     request.status = 'active'
     await request.save()
+    await new NotificationService().notifyJoinDecided(request.userId, request.ministryId, true)
     return request
   }
 
   async reject(actor: Membership, membershipId: string) {
     new MembershipAccessService().assertAdmin(actor)
     const request = await this.#pendingInMinistry(actor.ministryId, membershipId)
+    await new NotificationService().notifyJoinDecided(request.userId, request.ministryId, false)
     await request.delete()
   }
 

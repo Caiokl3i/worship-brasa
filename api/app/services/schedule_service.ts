@@ -31,6 +31,9 @@ import {
 import Series from '#models/series'
 import type { ScheduleSeriesSummary } from '#schedules/public_schedule'
 import { rebuildScheduleScript } from '#services/script_service'
+import { intentsFromEffects } from '#notifications/effects'
+import { snapshotSchedule } from '#schedules/snapshot'
+import NotificationService from '#services/notification_service'
 
 type HighlightInput = {
   membershipId: string
@@ -227,10 +230,11 @@ export default class ScheduleService {
   ) {
     new MembershipAccessService().assertCanManageSchedules(actor)
     const zone = await this.#zone(actor.ministryId)
-    await db.transaction(async (trx) => {
+    const effects = await db.transaction(async (trx) => {
       const schedule = await this.#lock(actor, scheduleId, trx)
-      await deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
+      return deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
     })
+    await new NotificationService().deliver(intentsFromEffects(effects, zone))
   }
 
   async confirm(
@@ -352,12 +356,14 @@ export default class ScheduleService {
 
   async removeUnavailable(actor: Membership, scheduleId: string, version: number) {
     new MembershipAccessService().assertCanManageSchedules(actor)
-    await db.transaction(async (trx) => {
+    const zone = await this.#zone(actor.ministryId)
+    const effects = await db.transaction(async (trx) => {
       const schedule = await this.#lock(actor, scheduleId, trx)
       if (schedule.version !== version) {
         throw new ScheduleConflictException()
       }
 
+      const before = await snapshotSchedule(schedule.id, trx)
       const participants = await ScheduleParticipant.query({ client: trx }).where(
         'scheduleId',
         schedule.id
@@ -383,7 +389,16 @@ export default class ScheduleService {
       schedule.useTransaction(trx)
       schedule.version += 1
       await schedule.save()
+
+      if (removing.length === 0) {
+        return []
+      }
+      const removedMembershipIds = participants
+        .filter((participant) => removing.includes(participant.id))
+        .map((participant) => participant.membershipId)
+      return [{ kind: 'team_trimmed' as const, before, removedMembershipIds }]
     })
+    await new NotificationService().deliver(intentsFromEffects(effects, zone))
 
     return this.#view(actor, scheduleId)
   }
@@ -398,7 +413,7 @@ export default class ScheduleService {
     const zone = await this.#zone(actor.ministryId)
     const prepared = this.#prepare(input, zone)
 
-    await db.transaction(async (trx) => {
+    const effects = await db.transaction(async (trx) => {
       if (!isUuid(scheduleId)) {
         throw new ScheduleNotFoundException()
       }
@@ -474,6 +489,7 @@ export default class ScheduleService {
       await this.#assertTeam(actor.ministryId, prepared.participants, previousFunctions, trx)
       await this.#assertSongs(actor.ministryId, prepared, trx)
 
+      const before = await snapshotSchedule(schedule.id, trx)
       await this.#replaceChildren(schedule.id, prepared, trx)
       await rebuildScheduleScript(schedule.id, trx)
 
@@ -492,25 +508,32 @@ export default class ScheduleService {
       schedule.version += 1
       await schedule.save()
 
+      const collected = [
+        { kind: 'saved' as const, before, after: await snapshotSchedule(schedule.id, trx) },
+      ]
       if (linked && patternDiffers && input.scope) {
-        await applySeriesEdit({
-          trx,
-          schedule,
-          zone,
-          scope: input.scope,
-          replaceFilled: input.replaceFilled === true,
-          pattern: {
-            title: prepared.title,
-            startsAt: prepared.startsAt,
-            endsAt: prepared.endsAt,
-            notes: prepared.notes,
-            dressCode: prepared.dressCode,
-            confirmationRequired: prepared.confirmationRequired ?? schedule.confirmationRequired,
-          },
-        })
+        collected.push(
+          ...(await applySeriesEdit({
+            trx,
+            schedule,
+            zone,
+            scope: input.scope,
+            replaceFilled: input.replaceFilled === true,
+            pattern: {
+              title: prepared.title,
+              startsAt: prepared.startsAt,
+              endsAt: prepared.endsAt,
+              notes: prepared.notes,
+              dressCode: prepared.dressCode,
+              confirmationRequired: prepared.confirmationRequired ?? schedule.confirmationRequired,
+            },
+          }))
+        )
       }
+      return collected
     })
 
+    await new NotificationService().deliver(intentsFromEffects(effects, zone))
     return this.#view(actor, scheduleId)
   }
 

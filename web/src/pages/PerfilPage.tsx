@@ -127,7 +127,8 @@ export function PerfilPage() {
         <button type="submit">Atualizar senha</button>
       </form>
 
-      <p>
+      <p className="row">
+        <Link to="/notificacoes">Notificações</Link>
         <Link to="/ministerios">Voltar</Link>
       </p>
     </section>

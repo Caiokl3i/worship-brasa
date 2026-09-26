@@ -246,6 +246,64 @@ export class NoticeSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class NotificationPreferenceSchema extends BaseModel {
+  static $columns = ['createdAt', 'email', 'id', 'inApp', 'type', 'updatedAt', 'userId'] as const
+  $columns = NotificationPreferenceSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare email: boolean
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare inApp: boolean
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: string
+}
+
+export class NotificationSchema extends BaseModel {
+  static $columns = [
+    'body',
+    'createdAt',
+    'id',
+    'link',
+    'ministryId',
+    'readAt',
+    'scheduleId',
+    'title',
+    'type',
+    'updatedAt',
+    'userId',
+  ] as const
+  $columns = NotificationSchema.$columns
+  @column()
+  declare body: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare link: string
+  @column()
+  declare ministryId: string
+  @column.dateTime()
+  declare readAt: DateTime | null
+  @column()
+  declare scheduleId: string | null
+  @column()
+  declare title: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: string
+}
+
 export class PasswordResetSchema extends BaseModel {
   static $columns = ['codeHash', 'createdAt', 'expiresAt', 'id', 'usedAt', 'userId'] as const
   $columns = PasswordResetSchema.$columns
