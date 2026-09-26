@@ -17,6 +17,8 @@ export function PerfilPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [passwordErrors, setPasswordErrors] = useState<FieldError[]>([])
   const [passwordNotice, setPasswordNotice] = useState('')
+  const [calendarNotice, setCalendarNotice] = useState('')
+  const [calendarError, setCalendarError] = useState('')
 
   async function saveProfile(event: React.FormEvent) {
     event.preventDefault()
@@ -65,6 +67,42 @@ export function PerfilPage() {
       throw error
     }
   }
+
+  async function connectCalendar() {
+    setCalendarError('')
+    setCalendarNotice('')
+    try {
+      const body = await api<{ connected: boolean; url?: string }>('/api/agenda/conectar', {
+        method: 'POST',
+      })
+      if (body.url) {
+        window.location.assign(body.url)
+        return
+      }
+      if (user) {
+        setUser({ ...user, calendarConnected: true })
+      }
+      setCalendarNotice('Agenda conectada.')
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setCalendarError(error.message)
+        return
+      }
+      throw error
+    }
+  }
+
+  async function disconnectCalendar() {
+    setCalendarError('')
+    setCalendarNotice('')
+    await api('/api/agenda', { method: 'DELETE' })
+    if (user) {
+      setUser({ ...user, calendarConnected: false })
+    }
+    setCalendarNotice('Agenda desconectada. Os eventos futuros foram apagados.')
+  }
+
+  const agendaQuery = new URLSearchParams(window.location.search).get('agenda')
 
   return (
     <section>
@@ -126,6 +164,25 @@ export function PerfilPage() {
         />
         <button type="submit">Atualizar senha</button>
       </form>
+
+      <div className="form">
+        <h2>Google Agenda</h2>
+        {calendarError ? <p className="errors">{calendarError}</p> : null}
+        {calendarNotice ? <p className="notice">{calendarNotice}</p> : null}
+        {agendaQuery === 'conectada' ? <p className="notice">Agenda conectada.</p> : null}
+        {agendaQuery === 'erro' ? (
+          <p className="errors">Não foi possível conectar a agenda.</p>
+        ) : null}
+        {user?.calendarConnected ? (
+          <button type="button" onClick={() => void disconnectCalendar()}>
+            Desconectar
+          </button>
+        ) : (
+          <button type="button" onClick={() => void connectCalendar()}>
+            Conectar
+          </button>
+        )}
+      </div>
 
       <p className="row">
         <Link to="/notificacoes">Notificações</Link>

@@ -9,7 +9,7 @@ const wrongCurrentPassword = {
 
 export default class ProfileController {
   async show({ auth, response }: HttpContext) {
-    return response.ok(toPublicUser(auth.getUserOrFail()))
+    return response.ok(await toPublicUser(auth.getUserOrFail()))
   }
 
   async update({ auth, request, response }: HttpContext) {
@@ -21,7 +21,7 @@ export default class ProfileController {
       birthDate: payload.birthDate ?? null,
     })
 
-    return response.ok(toPublicUser(user))
+    return response.ok(await toPublicUser(user))
   }
 
   async updatePassword({ auth, request, response, session }: HttpContext) {
@@ -38,6 +38,6 @@ export default class ProfileController {
     }
 
     session.put('auth_version', user.authVersion)
-    return response.ok(toPublicUser(user))
+    return response.ok(await toPublicUser(user))
   }
 }

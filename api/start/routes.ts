@@ -22,6 +22,7 @@ const NotificationsController = () => import('#controllers/notifications_control
 const ReportsController = () => import('#controllers/reports_controller')
 const GenerationsController = () => import('#controllers/generations_controller')
 const SharesController = () => import('#controllers/shares_controller')
+const CalendarsController = () => import('#controllers/calendars_controller')
 
 router.get('/health', [HealthController, 'show'])
 
@@ -33,6 +34,10 @@ router.post('/api/recuperar-senha/confirmar', [PasswordResetController, 'update'
 router
   .group(() => {
     router.get('/eu', [ProfileController, 'show'])
+    router.get('/agenda', [CalendarsController, 'show'])
+    router.post('/agenda/conectar', [CalendarsController, 'store'])
+    router.get('/agenda/retorno', [CalendarsController, 'callback'])
+    router.delete('/agenda', [CalendarsController, 'destroy'])
     router.patch('/perfil', [ProfileController, 'update'])
     router.post('/perfil/senha', [ProfileController, 'updatePassword'])
     router.post('/sair', [SessionController, 'destroy'])

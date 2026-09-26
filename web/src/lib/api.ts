@@ -10,6 +10,7 @@ export type PublicUser = {
   name: string
   email: string
   birthDate: string | null
+  calendarConnected: boolean
 }
 
 export type FieldError = {
@@ -55,8 +56,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   const body = (await response.json().catch(() => null)) as
-    | (T & { errors?: FieldError[]; message?: string })
-    | null
+    (T & { errors?: FieldError[]; message?: string }) | null
 
   if (!response.ok) {
     const errors = [...(body?.errors ?? [])]

@@ -19,7 +19,7 @@ export default class SessionController {
     await auth.use('web').login(user)
     session.put('auth_version', user.authVersion)
 
-    return response.ok(toPublicUser(user))
+    return response.ok(await toPublicUser(user))
   }
 
   async destroy({ auth, response }: HttpContext) {

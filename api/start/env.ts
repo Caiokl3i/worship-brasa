@@ -30,4 +30,10 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string(),
   DB_DATABASE: Env.schema.string(),
+
+  // Google Agenda. Sem estas chaves, a conexão fica no gateway local.
+  GOOGLE_CLIENT_ID: Env.schema.string.optional(),
+  GOOGLE_CLIENT_SECRET: Env.schema.string.optional(),
+  GOOGLE_REDIRECT_URI: Env.schema.string.optional(),
+  WEB_URL: Env.schema.string.optional(),
 })

@@ -31,9 +31,10 @@ import {
 import Series from '#models/series'
 import type { ScheduleSeriesSummary } from '#schedules/public_schedule'
 import { rebuildScheduleScript } from '#services/script_service'
-import { intentsFromEffects } from '#notifications/effects'
+import { intentsFromEffects, type SeriesEffect } from '#notifications/effects'
 import { snapshotSchedule } from '#schedules/snapshot'
 import NotificationService from '#services/notification_service'
+import { syncCalendarEffects } from '#services/calendar_sync'
 
 type HighlightInput = {
   membershipId: string
@@ -234,7 +235,7 @@ export default class ScheduleService {
       const schedule = await this.#lock(actor, scheduleId, trx)
       return deleteSeriesScope({ trx, schedule, zone, scope, replaceFilled })
     })
-    await new NotificationService().deliver(intentsFromEffects(effects, zone))
+    await this.#afterCommit(effects, zone)
   }
 
   async confirm(
@@ -398,7 +399,7 @@ export default class ScheduleService {
         .map((participant) => participant.membershipId)
       return [{ kind: 'team_trimmed' as const, before, removedMembershipIds }]
     })
-    await new NotificationService().deliver(intentsFromEffects(effects, zone))
+    await this.#afterCommit(effects, zone)
 
     return this.#view(actor, scheduleId)
   }
@@ -533,7 +534,7 @@ export default class ScheduleService {
       return collected
     })
 
-    await new NotificationService().deliver(intentsFromEffects(effects, zone))
+    await this.#afterCommit(effects, zone)
     return this.#view(actor, scheduleId)
   }
 
@@ -784,6 +785,11 @@ export default class ScheduleService {
         )
       }
     }
+  }
+
+  async #afterCommit(effects: SeriesEffect[], zone: string) {
+    await new NotificationService().deliver(intentsFromEffects(effects, zone))
+    await syncCalendarEffects(effects)
   }
 
   async #zone(ministryId: string) {

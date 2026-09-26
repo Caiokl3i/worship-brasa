@@ -15,5 +15,32 @@ export default {
         },
       },
     },
+    integration_tokens: {
+      columns: {
+        token_hash: {
+          tsType: 'string',
+          imports: [],
+          decorators: [{ name: '@column', args: { serializeAs: null } }],
+        },
+      },
+    },
+    email_invites: {
+      columns: {
+        code_hash: {
+          tsType: 'string',
+          imports: [],
+          decorators: [{ name: '@column', args: { serializeAs: null } }],
+        },
+      },
+    },
+    calendar_connections: {
+      columns: {
+        refresh_token: {
+          tsType: 'string',
+          imports: [],
+          decorators: [{ name: '@column', args: { serializeAs: null } }],
+        },
+      },
+    },
   },
 } satisfies SchemaRules

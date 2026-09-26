@@ -7,6 +7,48 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class CalendarConnectionSchema extends BaseModel {
+  static $columns = [
+    'calendarId',
+    'createdAt',
+    'disconnectedAt',
+    'id',
+    'refreshToken',
+    'updatedAt',
+    'userId',
+  ] as const
+  $columns = CalendarConnectionSchema.$columns
+  @column()
+  declare calendarId: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.dateTime()
+  declare disconnectedAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column({ serializeAs: null })
+  declare refreshToken: string | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: string
+}
+
+export class CalendarEventLinkSchema extends BaseModel {
+  static $columns = ['createdAt', 'externalId', 'id', 'scheduleId', 'userId'] as const
+  $columns = CalendarEventLinkSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare externalId: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare scheduleId: string
+  @column()
+  declare userId: string
+}
+
 export class ChatMessageSchema extends BaseModel {
   static $columns = ['body', 'createdAt', 'id', 'membershipId', 'threadId', 'updatedAt'] as const
   $columns = ChatMessageSchema.$columns
@@ -66,6 +108,36 @@ export class ClassificationSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class EmailInviteSchema extends BaseModel {
+  static $columns = [
+    'codeHash',
+    'createdAt',
+    'createdByUserId',
+    'email',
+    'expiresAt',
+    'id',
+    'ministryId',
+    'usedAt',
+  ] as const
+  $columns = EmailInviteSchema.$columns
+  @column({ serializeAs: null })
+  declare codeHash: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare createdByUserId: string
+  @column()
+  declare email: string
+  @column.dateTime()
+  declare expiresAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare ministryId: string
+  @column.dateTime()
+  declare usedAt: DateTime | null
+}
+
 export class FolderSchema extends BaseModel {
   static $columns = ['createdAt', 'id', 'ministryId', 'name', 'updatedAt'] as const
   $columns = FolderSchema.$columns
@@ -79,6 +151,36 @@ export class FolderSchema extends BaseModel {
   declare name: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class IntegrationTokenSchema extends BaseModel {
+  static $columns = [
+    'createdAt',
+    'createdByUserId',
+    'id',
+    'lastUsedAt',
+    'ministryId',
+    'revokedAt',
+    'tokenHash',
+    'tokenPrefix',
+  ] as const
+  $columns = IntegrationTokenSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare createdByUserId: string
+  @column({ isPrimary: true })
+  declare id: string
+  @column.dateTime()
+  declare lastUsedAt: DateTime | null
+  @column()
+  declare ministryId: string
+  @column.dateTime()
+  declare revokedAt: DateTime | null
+  @column({ serializeAs: null })
+  declare tokenHash: string
+  @column()
+  declare tokenPrefix: string
 }
 
 export class InviteSchema extends BaseModel {

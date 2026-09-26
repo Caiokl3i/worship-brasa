@@ -15,6 +15,6 @@ export default class AccountController {
     await auth.use('web').login(user)
     session.put('auth_version', user.authVersion)
 
-    return response.created(toPublicUser(user))
+    return response.created(await toPublicUser(user))
   }
 }
