@@ -595,6 +595,66 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/scripts_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'notices.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/avisos'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['index']>>>
+    }
+  }
+  'notices.store': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/avisos'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/notice').saveNoticeValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/notice').saveNoticeValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'notices.update': {
+    methods: ["PATCH"]
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/notice').saveNoticeValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; noticeId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/notice').saveNoticeValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'notices.archive': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId/arquivar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; noticeId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['archive']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['archive']>>>
+    }
+  }
+  'notices.unarchive': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId/desarquivar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; noticeId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['unarchive']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/notices_controller').default['unarchive']>>>
+    }
+  }
   'schedules.update': {
     methods: ["PATCH"]
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId'

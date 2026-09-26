@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout.tsx'
 import { MinistryLayout } from './layouts/MinistryLayout.tsx'
+import { AvisosPage } from './pages/AvisosPage.tsx'
 import { CadastrarPage } from './pages/CadastrarPage.tsx'
 import { ConviteAdminPage } from './pages/ConviteAdminPage.tsx'
 import { ConvitePage } from './pages/ConvitePage.tsx'
@@ -48,6 +49,7 @@ export default function App() {
                 <Route path="repertorio" element={<RepertorioPage />} />
                 <Route path="repertorio/nova" element={<RepertorioFormPage />} />
                 <Route path="repertorio/:songId" element={<RepertorioFormPage />} />
+                <Route path="avisos" element={<AvisosPage />} />
                 <Route path="roteiros" element={<RoteirosPage />} />
                 <Route path="escalas" element={<EscalasPage />} />
                 <Route path="escalas/nova" element={<NovaEscalaPage />} />

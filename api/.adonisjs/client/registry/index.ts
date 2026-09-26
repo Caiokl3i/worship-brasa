@@ -300,6 +300,36 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/roteiros/:templateId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/roteiros/:templateId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/roteiros/:templateId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/roteiros/:templateId","type":0,"val":"roteiros","end":""},{"old":"/api/ministerios/:ministryId/roteiros/:templateId","type":1,"val":"templateId","end":""}],
     types: placeholder as Registry['scripts.update']['types'],
   },
+  'notices.index': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/avisos',
+    tokens: [{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"avisos","end":""}],
+    types: placeholder as Registry['notices.index']['types'],
+  },
+  'notices.store': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/avisos',
+    tokens: [{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos","type":0,"val":"avisos","end":""}],
+    types: placeholder as Registry['notices.store']['types'],
+  },
+  'notices.update': {
+    methods: ["PATCH"],
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId',
+    tokens: [{"old":"/api/ministerios/:ministryId/avisos/:noticeId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId","type":0,"val":"avisos","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId","type":1,"val":"noticeId","end":""}],
+    types: placeholder as Registry['notices.update']['types'],
+  },
+  'notices.archive': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId/arquivar',
+    tokens: [{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":0,"val":"avisos","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":1,"val":"noticeId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/arquivar","type":0,"val":"arquivar","end":""}],
+    types: placeholder as Registry['notices.archive']['types'],
+  },
+  'notices.unarchive': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/avisos/:noticeId/desarquivar',
+    tokens: [{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"avisos","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":1,"val":"noticeId","end":""},{"old":"/api/ministerios/:ministryId/avisos/:noticeId/desarquivar","type":0,"val":"desarquivar","end":""}],
+    types: placeholder as Registry['notices.unarchive']['types'],
+  },
   'schedules.update': {
     methods: ["PATCH"],
     pattern: '/api/ministerios/:ministryId/escalas/:scheduleId',

@@ -4,6 +4,7 @@ import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import { BRAZIL_TIMEZONES, type MinistryDetail } from '../lib/ministry.ts'
+import type { NoticeItem, NoticeLists } from '../lib/notice.ts'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 
 export function MinistryHomePage() {
@@ -15,12 +16,25 @@ export function MinistryHomePage() {
   const [errors, setErrors] = useState<FieldError[]>([])
   const [notice, setNotice] = useState('')
   const [leaveError, setLeaveError] = useState('')
+  const [pinnedNotices, setPinnedNotices] = useState<NoticeItem[]>([])
 
   useEffect(() => {
     setName(ministry.name)
     setTimezone(ministry.timezone)
     setColor(ministry.color)
   }, [ministry.id, ministry.name, ministry.timezone, ministry.color])
+
+  useEffect(() => {
+    let cancelled = false
+    void api<NoticeLists>(`/api/ministerios/${ministry.id}/avisos`).then((body) => {
+      if (!cancelled) {
+        setPinnedNotices(body.pinned)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [ministry.id])
 
   const zones = BRAZIL_TIMEZONES.includes(timezone)
     ? BRAZIL_TIMEZONES
@@ -70,11 +84,28 @@ export function MinistryHomePage() {
         {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}
         <Link to="repertorio">Repertório</Link>
         <Link to="escalas">Escalas</Link>
+        <Link to="avisos">Avisos</Link>
         {ministry.membership.isAdmin || ministry.membership.canManageSchedules ? (
           <Link to="roteiros">Roteiros</Link>
         ) : null}
         <Link to="indisponibilidades">Indisponibilidades</Link>
       </p>
+
+      <div>
+        <h2>Avisos</h2>
+        {pinnedNotices.length === 0 ? (
+          <p>Nenhum aviso em destaque.</p>
+        ) : (
+          <ul className="list">
+            {pinnedNotices.map((item) => (
+              <li key={item.id} className="card">
+                <strong>{item.title}</strong>
+                <p>{item.body}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {ministry.membership.isAdmin ? (
         <form onSubmit={(event) => void save(event)} className="form">

@@ -178,6 +178,42 @@ export class MinistryFunctionSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class NoticeSchema extends BaseModel {
+  static $columns = [
+    'archivedAt',
+    'body',
+    'createdAt',
+    'expiresAt',
+    'id',
+    'membershipId',
+    'ministryId',
+    'pinned',
+    'title',
+    'updatedAt',
+  ] as const
+  $columns = NoticeSchema.$columns
+  @column.dateTime()
+  declare archivedAt: DateTime | null
+  @column()
+  declare body: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column.date()
+  declare expiresAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare membershipId: string
+  @column()
+  declare ministryId: string
+  @column()
+  declare pinned: boolean
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class PasswordResetSchema extends BaseModel {
   static $columns = ['codeHash', 'createdAt', 'expiresAt', 'id', 'usedAt', 'userId'] as const
   $columns = PasswordResetSchema.$columns

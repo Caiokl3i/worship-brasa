@@ -46,6 +46,15 @@ export class ScriptTemplateNotFoundException extends Exception {
   }
 }
 
+export class NoticeNotFoundException extends Exception {
+  static status = 404
+  static code = 'E_NOTICE_NOT_FOUND'
+
+  constructor() {
+    super('Aviso não encontrado.', { status: 404, code: 'E_NOTICE_NOT_FOUND' })
+  }
+}
+
 export class ScheduleNotFoundException extends Exception {
   static status = 404
   static code = 'E_SCHEDULE_NOT_FOUND'

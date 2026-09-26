@@ -89,6 +89,13 @@ export interface ApiDefinition {
     store: typeof routes['scripts.store']
     update: typeof routes['scripts.update']
   }
+  notices: {
+    index: typeof routes['notices.index']
+    store: typeof routes['notices.store']
+    update: typeof routes['notices.update']
+    archive: typeof routes['notices.archive']
+    unarchive: typeof routes['notices.unarchive']
+  }
   unavailabilities: {
     index: typeof routes['unavailabilities.index']
     store: typeof routes['unavailabilities.store']
