@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError, type PublicUser } from '../lib/api.ts'
 import { useSession } from '../session.tsx'
 
 export function PerfilPage() {
+  const navigate = useNavigate()
   const { user, setUser } = useSession()
   const [name, setName] = useState(user?.name ?? '')
   const [birthDate, setBirthDate] = useState(user?.birthDate ?? '')
@@ -19,6 +20,8 @@ export function PerfilPage() {
   const [passwordNotice, setPasswordNotice] = useState('')
   const [calendarNotice, setCalendarNotice] = useState('')
   const [calendarError, setCalendarError] = useState('')
+  const [deletePassword, setDeletePassword] = useState('')
+  const [deleteErrors, setDeleteErrors] = useState<FieldError[]>([])
 
   async function saveProfile(event: React.FormEvent) {
     event.preventDefault()
@@ -62,6 +65,25 @@ export function PerfilPage() {
     } catch (error) {
       if (error instanceof ApiError) {
         setPasswordErrors(error.errors)
+        return
+      }
+      throw error
+    }
+  }
+
+  async function removeAccount(event: React.FormEvent) {
+    event.preventDefault()
+    setDeleteErrors([])
+    try {
+      await api('/api/perfil/apagar', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword: deletePassword }),
+      })
+      setUser(null)
+      navigate('/entrar', { replace: true })
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setDeleteErrors(error.errors)
         return
       }
       throw error
@@ -183,6 +205,21 @@ export function PerfilPage() {
           </button>
         )}
       </div>
+
+      <form onSubmit={(event) => void removeAccount(event)} className="form">
+        <h2>Apagar conta</h2>
+        <FieldErrors errors={deleteErrors} />
+        <TextField
+          label="Senha atual"
+          name="deletePassword"
+          type="password"
+          autoComplete="current-password"
+          value={deletePassword}
+          onChange={setDeletePassword}
+          message={fieldMessage(deleteErrors, 'currentPassword')}
+        />
+        <button type="submit">Apagar conta</button>
+      </form>
 
       <p className="row">
         <Link to="/notificacoes">Notificações</Link>

@@ -56,6 +56,11 @@ export const updateProfileValidator = vine.create({
 })
 updateProfileValidator.messagesProvider = messages
 
+export const deleteAccountValidator = vine.create({
+  currentPassword: vine.string(),
+})
+deleteAccountValidator.messagesProvider = messages
+
 export const changePasswordValidator = vine.create({
   currentPassword: vine.string(),
   password: password(),

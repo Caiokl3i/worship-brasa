@@ -948,6 +948,7 @@ export class UserSchema extends BaseModel {
     'authVersion',
     'birthDate',
     'createdAt',
+    'deletedAt',
     'email',
     'id',
     'name',
@@ -961,6 +962,8 @@ export class UserSchema extends BaseModel {
   declare birthDate: DateTime | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
+  @column.dateTime()
+  declare deletedAt: DateTime | null
   @column()
   declare email: string
   @column({ isPrimary: true })

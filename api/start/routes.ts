@@ -46,6 +46,7 @@ router
     router.delete('/agenda', [CalendarsController, 'destroy'])
     router.patch('/perfil', [ProfileController, 'update'])
     router.post('/perfil/senha', [ProfileController, 'updatePassword'])
+    router.post('/perfil/apagar', [ProfileController, 'destroy'])
     router.post('/sair', [SessionController, 'destroy'])
 
     router.get('/notificacoes', [NotificationsController, 'index'])

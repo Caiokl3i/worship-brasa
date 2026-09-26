@@ -1,5 +1,5 @@
 import { errors } from '@adonisjs/auth'
-import { type DateTime } from 'luxon'
+import { DateTime, type DateTime as DateTimeType } from 'luxon'
 import User from '#models/user'
 
 type RegisterInput = {
@@ -10,7 +10,7 @@ type RegisterInput = {
 
 type ProfileInput = {
   name: string
-  birthDate: DateTime | null
+  birthDate: DateTimeType | null
 }
 
 export default class AccountService {
@@ -30,7 +30,11 @@ export default class AccountService {
    */
   async authenticate(email: string, password: string) {
     try {
-      return await User.verifyCredentials(email, password)
+      const user = await User.verifyCredentials(email, password)
+      if (user.deletedAt) {
+        return null
+      }
+      return user
     } catch (error) {
       if (error instanceof errors.E_INVALID_CREDENTIALS) {
         return null
@@ -58,6 +62,20 @@ export default class AccountService {
     }
 
     user.password = nextPassword
+    user.authVersion += 1
+    await user.save()
+    return true
+  }
+
+  async deleteAccount(user: User, currentPassword: string) {
+    const matches = await user.verifyPassword(currentPassword)
+    if (!matches) {
+      return false
+    }
+
+    user.name = 'membro removido'
+    user.email = `removido-${user.id}@conta.invalid`
+    user.deletedAt = DateTime.utc()
     user.authVersion += 1
     await user.save()
     return true

@@ -66,7 +66,7 @@ export default class SessionController {
     const user = await User.query()
       .whereRaw('lower(email) = ?', [identity.email.toLowerCase()])
       .first()
-    if (!user) {
+    if (!user || user.deletedAt) {
       return response.redirect(googleLoginErrorUrl())
     }
 
