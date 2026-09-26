@@ -20,6 +20,53 @@ async function register(client: ApiClient, name: string, email: string) {
   response.assertStatus(201)
 }
 
+async function login(client: ApiClient, email: string) {
+  const response = await client.post('/api/entrar').json({ email, password })
+  response.assertStatus(200)
+}
+
+async function vocal(client: ApiClient, ministryId: string) {
+  const members = await client.get(`/api/ministerios/${ministryId}/membros`)
+  const functions = await client.get(`/api/ministerios/${ministryId}/funcoes`)
+  return {
+    membershipId: members.body().members[0].membershipId as string,
+    functionId: functions.body().functions[0].id as string,
+  }
+}
+
+async function fill(
+  client: ApiClient,
+  ministryId: string,
+  scheduleId: string,
+  membershipId: string,
+  functionId: string
+) {
+  const current = await client.get(`/api/ministerios/${ministryId}/escalas/${scheduleId}`)
+  current.assertStatus(200)
+  const saved = await client.patch(`/api/ministerios/${ministryId}/escalas/${scheduleId}`).json(
+    writeBody(current.body(), {
+      participants: [{ membershipId, functionIds: [functionId] }],
+    })
+  )
+  saved.assertStatus(200)
+}
+
+async function addMember(client: ApiClient, ministryId: string, adminEmail: string) {
+  const invite = await client.post(`/api/ministerios/${ministryId}/convite`)
+  invite.assertStatus(201)
+  const code = invite.body().invite.code as string
+  await register(client, 'Bia', 'bia@igreja.com')
+  const entered = await client.post('/api/convites/entrar').json({ code })
+  entered.assertStatus(200)
+  const membershipId = entered.body().membershipId as string
+  await login(client, adminEmail)
+  const approved = await client.post(
+    `/api/ministerios/${ministryId}/pedidos/${membershipId}/aprovar`
+  )
+  approved.assertStatus(204)
+  await login(client, 'bia@igreja.com')
+}
+
 async function createMinistry(client: ApiClient) {
   const response = await client
     .post('/api/ministerios')
@@ -368,6 +415,111 @@ test.group('Recorrência', (group) => {
 
     const missing = await client.get(`/api/ministerios/${ministryId}/escalas/${secondId}`)
     missing.assertStatus(404)
+  })
+
+  test('excluir esta e as seguintes preserva a segunda preenchida', async ({ client, assert }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client)
+    const { membershipId, functionId } = await vocal(client, ministryId)
+    const created = await createSeries(client, ministryId, '2026-10-04T18:00')
+    const seriesId = created.body().series.id as string
+    const upcoming = created.body().series.upcoming as Array<{ id: string }>
+    await fill(client, ministryId, upcoming[1].id, membershipId, functionId)
+
+    const removed = await client
+      .post(`/api/ministerios/${ministryId}/escalas/${upcoming[0].id}/excluir`)
+      .json({ scope: 'this_and_following' })
+    removed.assertStatus(204)
+
+    const second = await Schedule.findOrFail(upcoming[1].id)
+    assert.isNull(second.deletedAt)
+    const team = await ScheduleParticipant.query().where('scheduleId', second.id)
+    assert.lengthOf(team, 1)
+    const third = await Schedule.findOrFail(upcoming[2].id)
+    assert.isNotNull(third.deletedAt)
+    const fourth = await Schedule.findOrFail(upcoming[3].id)
+    assert.isNotNull(fourth.deletedAt)
+
+    await materializeSeries(seriesId)
+    const live = await Schedule.query().where('seriesId', seriesId).whereNull('deletedAt')
+    assert.lengthOf(live, 1)
+    assert.equal(live[0].id, upcoming[1].id)
+  })
+
+  test('excluir todas preserva a preenchida e não recria as vazias', async ({ client, assert }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client)
+    const { membershipId, functionId } = await vocal(client, ministryId)
+    const created = await createSeries(client, ministryId, '2026-10-04T18:00')
+    const seriesId = created.body().series.id as string
+    const upcoming = created.body().series.upcoming as Array<{ id: string }>
+    await fill(client, ministryId, upcoming[1].id, membershipId, functionId)
+
+    const removed = await client
+      .post(`/api/ministerios/${ministryId}/escalas/${upcoming[0].id}/excluir`)
+      .json({ scope: 'all' })
+    removed.assertStatus(204)
+
+    const second = await Schedule.findOrFail(upcoming[1].id)
+    assert.isNull(second.deletedAt)
+    assert.equal(second.title, 'Culto de domingo')
+    const third = await Schedule.findOrFail(upcoming[2].id)
+    assert.isNotNull(third.deletedAt)
+
+    await materializeSeries(seriesId)
+    const live = await Schedule.query().where('seriesId', seriesId).whereNull('deletedAt')
+    assert.lengthOf(live, 1)
+    assert.equal(live[0].id, upcoming[1].id)
+  })
+
+  test('substituir ocorrências com equipe reescreve a preenchida', async ({ client, assert }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client)
+    const { membershipId, functionId } = await vocal(client, ministryId)
+    const created = await createSeries(client, ministryId, '2026-10-04T18:00')
+    const upcoming = created.body().series.upcoming as Array<{ id: string }>
+    await fill(client, ministryId, upcoming[1].id, membershipId, functionId)
+
+    const first = await client.get(`/api/ministerios/${ministryId}/escalas/${upcoming[0].id}`)
+    const edited = await client
+      .patch(`/api/ministerios/${ministryId}/escalas/${upcoming[0].id}`)
+      .json(writeBody(first.body(), { title: 'Todas', scope: 'all', replaceFilled: true }))
+    edited.assertStatus(200)
+
+    const kept = await Schedule.findOrFail(upcoming[1].id)
+    assert.equal(kept.title, 'Todas')
+    assert.isNull(kept.deletedAt)
+    const team = await ScheduleParticipant.query().where('scheduleId', kept.id)
+    assert.lengthOf(team, 0)
+    const third = await Schedule.findOrFail(upcoming[2].id)
+    assert.equal(third.title, 'Todas')
+  })
+
+  test('membro comum não vê rascunho da série nem atualiza as datas', async ({
+    client,
+    assert,
+  }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client)
+    const created = await createSeries(client, ministryId, '2026-10-04T18:00')
+    const seriesId = created.body().series.id as string
+    const firstId = created.body().id as string
+    const published = await client
+      .post(`/api/ministerios/${ministryId}/escalas/${firstId}/publicar`)
+      .json(writeBody(created.body()))
+    published.assertStatus(200)
+
+    await addMember(client, ministryId, 'ana@igreja.com')
+    const seen = await client.get(`/api/ministerios/${ministryId}/escalas/${firstId}`)
+    seen.assertStatus(200)
+    const upcoming = seen.body().series.upcoming as Array<{ id: string }>
+    assert.lengthOf(upcoming, 1)
+    assert.equal(upcoming[0].id, firstId)
+
+    const refreshed = await client.post(
+      `/api/ministerios/${ministryId}/series/${seriesId}/materializar`
+    )
+    refreshed.assertStatus(403)
   })
 })
 

@@ -1070,7 +1070,7 @@ export function EscalaEditorPage() {
                   checked={replaceFilled}
                   onChange={(event) => setReplaceFilled(event.target.checked)}
                 />{' '}
-                Substituir ocorrências que já têm equipe
+                Substituir ocorrências que já têm equipe ou música
               </label>
             ) : null}
           </fieldset>

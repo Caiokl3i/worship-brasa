@@ -850,10 +850,13 @@ export default class ScheduleService {
       )
     }
 
-    return { schedule, conflicts, series: await this.#seriesSummary(schedule) }
+    return { schedule, conflicts, series: await this.#seriesSummary(schedule, includeDrafts) }
   }
 
-  async #seriesSummary(schedule: Schedule): Promise<ScheduleSeriesSummary | null> {
+  async #seriesSummary(
+    schedule: Schedule,
+    includeDrafts: boolean
+  ): Promise<ScheduleSeriesSummary | null> {
     if (!schedule.seriesId) {
       return null
     }
@@ -863,12 +866,16 @@ export default class ScheduleService {
       return null
     }
 
-    const upcoming = await Schedule.query()
+    const upcomingQuery = Schedule.query()
       .where('seriesId', series.id)
       .whereNull('deletedAt')
       .where('startsAt', '>=', DateTime.utc().toSQL()!)
       .orderBy('startsAt', 'asc')
       .limit(16)
+    if (!includeDrafts) {
+      upcomingQuery.where('status', 'published')
+    }
+    const upcoming = await upcomingQuery
 
     return {
       id: series.id,

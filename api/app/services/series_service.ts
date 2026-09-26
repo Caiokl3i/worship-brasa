@@ -333,7 +333,9 @@ export async function applySeriesEdit(input: {
       }
       continue
     }
-    await Schedule.query({ client: trx }).where('id', row.id).delete()
+    row.deletedAt = DateTime.utc()
+    row.useTransaction(trx)
+    await row.save()
   }
 
   if (pivotDate) {
