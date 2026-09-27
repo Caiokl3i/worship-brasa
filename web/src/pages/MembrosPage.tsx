@@ -79,8 +79,8 @@ export function MembrosPage() {
 
   return (
     <section>
-      <p className="eyebrow">Membros</p>
-      <h1>{ministry.name}</h1>
+      <h1>Ministério</h1>
+      <p className="eyebrow">{ministry.name}</p>
       <form
         className="form"
         onSubmit={(event) => {
@@ -136,7 +136,12 @@ export function MembrosPage() {
           </ul>
           <form onSubmit={(event) => void createFunction(event)} className="form">
             <FieldErrors errors={errors} />
-            <TextField label="Nova função" name="functionName" value={functionName} onChange={setFunctionName} />
+            <TextField
+              label="Nova função"
+              name="functionName"
+              value={functionName}
+              onChange={setFunctionName}
+            />
             <button type="submit">Incluir</button>
           </form>
         </section>

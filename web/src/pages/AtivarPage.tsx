@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthSplit } from '../components/AuthSplit.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
@@ -33,9 +34,13 @@ export function AtivarPage() {
   }
 
   return (
-    <main className="page">
-      <p className="eyebrow">Convite</p>
-      <h1>Criar senha</h1>
+    <AuthSplit
+      footer={
+        <p>
+          <Link to="/entrar">Voltar</Link>
+        </p>
+      }
+    >
       <form onSubmit={(event) => void confirm(event)} className="form">
         <FieldErrors errors={errors} />
         <TextField
@@ -82,9 +87,6 @@ export function AtivarPage() {
         />
         <button type="submit">Criar conta</button>
       </form>
-      <p>
-        <Link to="/entrar">Voltar</Link>
-      </p>
-    </main>
+    </AuthSplit>
   )
 }

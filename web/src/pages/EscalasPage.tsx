@@ -8,23 +8,38 @@ export function EscalasPage() {
   const { ministry } = useMinistry()
   const canManage = ministry.membership.isAdmin || ministry.membership.canManageSchedules
   const [lists, setLists] = useState<ScheduleLists | null>(null)
+  const [which, setWhich] = useState<'upcoming' | 'past'>('upcoming')
 
   useEffect(() => {
     void api<ScheduleLists>(`/api/ministerios/${ministry.id}/escalas`).then(setLists)
   }, [ministry.id])
 
-  const empty = lists && lists.upcoming.length === 0 && lists.past.length === 0
-
   return (
     <section>
-      <p className="eyebrow">Escalas</p>
-      <div className="row">
-        <h1>{ministry.name}</h1>
-        {canManage ? <Link to={`/m/${ministry.id}/escalas/nova`}>Nova escala</Link> : null}
-      </div>
+      <h1>Escalas</h1>
+      <p className="eyebrow">{ministry.name}</p>
+      {canManage ? (
+        <Link className="fab" to={`/m/${ministry.id}/escalas/nova`}>
+          +
+        </Link>
+      ) : null}
       {lists === null ? <p>Carregando…</p> : null}
-      {empty ? <p>Ainda não há escalas neste ministério.</p> : null}
-      {lists && lists.upcoming.length > 0 ? (
+      <div className="segment">
+        <button
+          type="button"
+          aria-selected={which === 'upcoming'}
+          onClick={() => setWhich('upcoming')}
+        >
+          Próximas
+        </button>
+        <button type="button" aria-selected={which === 'past'} onClick={() => setWhich('past')}>
+          Anteriores
+        </button>
+      </div>
+      {lists && (which === 'upcoming' ? lists.upcoming : lists.past).length === 0 ? (
+        <p className="empty-line">Lista vazia.</p>
+      ) : null}
+      {lists && which === 'upcoming' && lists.upcoming.length > 0 ? (
         <ScheduleGroup
           title="Próximas"
           items={lists.upcoming}
@@ -32,9 +47,9 @@ export function EscalasPage() {
           timeZone={ministry.timezone}
         />
       ) : null}
-      {lists && lists.past.length > 0 ? (
+      {lists && which === 'past' && lists.past.length > 0 ? (
         <ScheduleGroup
-          title="Passadas"
+          title="Anteriores"
           items={lists.past}
           ministryId={ministry.id}
           timeZone={ministry.timezone}

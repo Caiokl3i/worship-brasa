@@ -77,57 +77,42 @@ export function MinistryHomePage() {
 
   return (
     <section>
-      <p className="eyebrow">Ministério</p>
-      <h1>{ministry.name}</h1>
-      <div>
-        <h2>Aniversariantes do dia</h2>
-        {ministry.birthdays.length === 0 ? (
-          <p>Ninguém faz aniversário hoje.</p>
-        ) : (
-          <ul className="list">
-            {ministry.birthdays.map((name) => (
-              <li key={name}>{name}</li>
-            ))}
-          </ul>
-        )}
+      <h1>Início</h1>
+      <p className="eyebrow">{ministry.name}</p>
+      <div className="block-head">
+        <span>
+          Avisos <span className="count">{pinnedNotices.length}</span>
+        </span>
+        <Link to={`/m/${ministry.id}/avisos`}>Ver todos</Link>
       </div>
-      <p className="row">
-        <Link to="membros">Membros</Link>
-        {ministry.membership.isAdmin ? <Link to="convite">Convite</Link> : null}
-        {ministry.membership.isAdmin ? <Link to="integracao">Integrações</Link> : null}
-        {ministry.musicModuleEnabled ? <Link to="repertorio">Repertório</Link> : null}
-        <Link to="escalas">Escalas</Link>
-        <Link to="avisos">Avisos</Link>
-        <Link to="chat">Chat</Link>
-        {ministry.membership.isAdmin ||
-        ministry.membership.canManageSchedules ||
-        ministry.membership.canManageRepertoire ? (
-          <Link to="lixeira">Lixeira</Link>
-        ) : null}
-        {ministry.membership.isAdmin || ministry.membership.canManageSchedules ? (
-          <>
-            <Link to="roteiros">Roteiros</Link>
-            <Link to="relatorios">Relatórios</Link>
-          </>
-        ) : null}
-        <Link to="indisponibilidades">Indisponibilidades</Link>
-      </p>
-
-      <div>
-        <h2>Avisos</h2>
-        {pinnedNotices.length === 0 ? (
-          <p>Nenhum aviso em destaque.</p>
-        ) : (
-          <ul className="list">
-            {pinnedNotices.map((item) => (
-              <li key={item.id} className="card">
-                <strong>{item.title}</strong>
-                <p>{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
+      {pinnedNotices.length === 0 ? (
+        <p className="empty-line">Lista vazia.</p>
+      ) : (
+        <ul className="list">
+          {pinnedNotices.map((item) => (
+            <li key={item.id} className="card">
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="block-head">
+        <span>
+          Aniversariantes <span className="count">{ministry.birthdays.length}</span>
+        </span>
       </div>
+      {ministry.birthdays.length === 0 ? (
+        <p className="empty-line">Lista vazia.</p>
+      ) : (
+        <ul className="list">
+          {ministry.birthdays.map((person) => (
+            <li key={person} className="card">
+              {person}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {ministry.membership.isAdmin ? (
         <form onSubmit={(event) => void save(event)} className="form">

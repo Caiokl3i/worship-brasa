@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { AuthSplit } from '../components/AuthSplit.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError, type PublicUser } from '../lib/api.ts'
@@ -52,9 +53,13 @@ export function EntrarPage() {
   }
 
   return (
-    <main className="page">
-      <p className="eyebrow">Conta</p>
-      <h1>Entrar</h1>
+    <AuthSplit
+      footer={
+        <p>
+          Não tem conta? <Link to="/cadastrar">Cadastre-se</Link>
+        </p>
+      }
+    >
       <form onSubmit={(event) => void submit(event)} className="form">
         <FieldErrors errors={errors} />
         {googleNotice ? <p className="notice">{googleNotice}</p> : null}
@@ -76,16 +81,14 @@ export function EntrarPage() {
           onChange={setPassword}
           message={fieldMessage(errors, 'password')}
         />
+        <p className="auth-forgot">
+          <Link to="/recuperar-senha">Esqueceu a senha?</Link>
+        </p>
         <button type="submit">Entrar</button>
-        <button type="button" onClick={() => void google()}>
+        <button type="button" className="button-outline" onClick={() => void google()}>
           Entrar com Google
         </button>
       </form>
-      <p>
-        <Link to="/cadastrar">Criar conta</Link>
-        {' · '}
-        <Link to="/recuperar-senha">Esqueci a senha</Link>
-      </p>
-    </main>
+    </AuthSplit>
   )
 }

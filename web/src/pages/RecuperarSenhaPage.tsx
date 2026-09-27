@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthSplit } from '../components/AuthSplit.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
@@ -54,9 +55,13 @@ export function RecuperarSenhaPage() {
   }
 
   return (
-    <main className="page">
-      <p className="eyebrow">Conta</p>
-      <h1>Esqueci a senha</h1>
+    <AuthSplit
+      footer={
+        <p>
+          <Link to="/entrar">Voltar</Link>
+        </p>
+      }
+    >
       {notice ? <p>{notice}</p> : null}
       {step === 'email' ? (
         <form onSubmit={(event) => void askCode(event)} className="form">
@@ -104,9 +109,6 @@ export function RecuperarSenhaPage() {
           <button type="submit">Salvar senha</button>
         </form>
       )}
-      <p>
-        <Link to="/entrar">Voltar</Link>
-      </p>
-    </main>
+    </AuthSplit>
   )
 }

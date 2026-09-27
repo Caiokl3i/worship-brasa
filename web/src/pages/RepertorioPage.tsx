@@ -63,8 +63,8 @@ export function RepertorioPage() {
 
   return (
     <section>
-      <p className="eyebrow">Repertório</p>
-      <h1>{ministry.name}</h1>
+      <h1>Repertório</h1>
+      <p className="eyebrow">{ministry.name}</p>
 
       <form
         className="form"

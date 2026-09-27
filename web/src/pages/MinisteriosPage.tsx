@@ -56,17 +56,23 @@ export function MinisteriosPage() {
 
   return (
     <section>
-      <p className="eyebrow">Ministérios</p>
-      <h1>Seus ministérios</h1>
+      <div className="block-head">
+        <span>
+          Ministérios <span className="count">{list.active.length}</span>
+        </span>
+        <Link to="/ministerios/novo">Adicionar +</Link>
+      </div>
       {empty ? (
         <p>Você ainda não participa de um ministério. Crie um ou entre com um código de convite.</p>
       ) : null}
 
       {list.active.length > 0 ? (
-        <ul className="list">
+        <ul className="ministry-row">
           {list.active.map((ministry) => (
             <li key={ministry.id}>
-              <Link to={`/m/${ministry.id}`}>{ministry.name}</Link>
+              <Link className="ministry-card" to={`/m/${ministry.id}`}>
+                {ministry.name}
+              </Link>
             </li>
           ))}
         </ul>
@@ -84,10 +90,6 @@ export function MinisteriosPage() {
           ))}
         </ul>
       ) : null}
-
-      <p>
-        <Link to="/ministerios/novo">Criar ministério</Link>
-      </p>
 
       <form onSubmit={(event) => void enter(event)} className="form">
         <FieldErrors errors={errors} />

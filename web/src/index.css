@@ -1,32 +1,63 @@
 :root {
   color-scheme: light;
-  --ink: #1c1917;
-  --paper: #faf7f2;
-  --line: #d6d3d1;
-  --card: #e7e5e4;
-  --field: #fff;
-  font-family: Georgia, 'Times New Roman', serif;
+  --brand: #0084f7;
+  --accent: #ffcc00;
+  --action: #445e91;
+  --action-ink: #ffffff;
+  --wash: #d1e4ff;
+  --ink: #1a1c1e;
+  --muted: #5c6470;
+  --paper: #f4f7fb;
+  --surface: #ffffff;
+  --line: #c5c6d0;
+  --card: #ffffff;
+  --field: #ffffff;
+  --danger: #ba1a1a;
+  font-family: 'Roboto', system-ui, sans-serif;
   color: var(--ink);
   background: var(--paper);
 }
 
+:root {
+  --sidebar: #ffffff;
+  --selected: #d1e4ff;
+}
+
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --ink: #faf7f2;
-  --paper: #1c1917;
-  --line: #44403c;
-  --card: #292524;
-  --field: #292524;
+  --brand: #adc6ff;
+  --accent: #ffcc00;
+  --action: #2b4678;
+  --action-ink: #e2e2e9;
+  --wash: #2b4678;
+  --ink: #e2e2e9;
+  --muted: #8e9099;
+  --paper: #121212;
+  --sidebar: #111318;
+  --surface: #1a1b20;
+  --line: #2a2d34;
+  --card: #1a1b20;
+  --field: #1a1b20;
+  --selected: #2b4678;
 }
 
 @media (prefers-color-scheme: dark) {
   :root[data-theme='system'] {
     color-scheme: dark;
-    --ink: #faf7f2;
-    --paper: #1c1917;
-    --line: #44403c;
-    --card: #292524;
-    --field: #292524;
+    --brand: #adc6ff;
+    --accent: #ffcc00;
+    --action: #2b4678;
+    --action-ink: #e2e2e9;
+    --wash: #2b4678;
+    --ink: #e2e2e9;
+    --muted: #8e9099;
+    --paper: #121212;
+    --sidebar: #111318;
+    --surface: #1a1b20;
+    --line: #2a2d34;
+    --card: #1a1b20;
+    --field: #1a1b20;
+    --selected: #2b4678;
   }
 }
 
@@ -35,42 +66,414 @@ body {
 }
 
 .page {
-  max-width: 36rem;
   margin: 4rem auto;
+  max-width: 36rem;
   padding: 0 1.5rem;
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 1.75rem;
+  margin: 0.25rem 0 1rem;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 1.15rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.mark {
+  position: relative;
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.mark-stem {
+  position: absolute;
+  left: 22px;
+  top: 14px;
+  width: 16px;
+  height: 36px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mark-foot {
+  position: absolute;
+  left: 34px;
+  top: 38px;
+  width: 20px;
+  height: 16px;
+  border-radius: 6px;
+  background: var(--accent);
+}
+
+.mark-large {
+  width: 220px;
+  height: 220px;
+}
+
+.mark-large .mark-stem {
+  left: 68px;
+  top: 42px;
+  width: 48px;
+  height: 110px;
+  border-radius: 24px;
+}
+
+.mark-large .mark-foot {
+  left: 104px;
+  top: 118px;
+  width: 62px;
+  height: 48px;
+  border-radius: 16px;
+}
+
+.auth {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 100vh;
+  background: var(--surface);
+}
+
+.auth-hero {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  background: var(--wash);
+  text-align: center;
+}
+
+.auth-hero h1 {
+  margin: 1.5rem 0 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.auth-hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.verse {
+  font-style: italic;
+}
+
+.auth-panel {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.auth-tools {
+  justify-self: end;
+  margin-bottom: 1rem;
+}
+
+.auth-name {
+  margin: 0.75rem 0 1.25rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.auth-panel .form {
+  width: min(100%, 24rem);
+}
+
+.auth-panel .form button {
+  width: 100%;
+  border-radius: 28px;
+  padding: 0.85rem 1rem;
+}
+
+.auth-forgot {
+  justify-self: end;
+  margin: 0;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100vh;
+  padding: 0.85rem 0.75rem;
+  background: var(--sidebar);
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+}
+
+.side-user {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.6rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  background: var(--selected);
+  color: var(--ink);
+}
+
+.side-user strong,
+.side-user span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.side-user span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.side nav {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.side a {
+  display: block;
+  padding: 0.62rem 0.8rem;
+  border-radius: 12px;
+  color: var(--ink);
+}
+
+.side a.active {
+  background: var(--selected);
+  font-weight: 600;
+}
+
+.side-gap {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+}
+
+.side-bottom {
+  margin-top: auto;
+}
+
+.workspace {
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 64px;
+  padding: 0 1.25rem;
+  background: transparent;
+  border: 0;
+}
+
+.wordmark {
+  color: var(--brand);
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.topbar-tools {
+  position: absolute;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.brand .mark {
+  width: 36px;
+  height: 36px;
+}
+
+.brand .mark-stem {
+  left: 11px;
+  top: 7px;
+  width: 8px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.brand .mark-foot {
+  left: 17px;
+  top: 19px;
+  width: 10px;
+  height: 8px;
+  border-radius: 3px;
+}
+
+.topbar select,
+.auth-tools select {
+  font: inherit;
+  max-width: 14rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--field);
+  color: inherit;
+}
+
+.topbar-spacer {
+  margin-left: auto;
+}
+
+.shell-main {
+  padding: 0.25rem 1.5rem 3rem;
+}
+
+.tabbar {
+  display: none;
+}
+
+.block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.4rem 0 0.45rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.block-head a {
+  letter-spacing: 0;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: var(--line);
+  color: var(--ink);
+  font-size: 0.7rem;
+}
+
+.empty-line,
+.ministry-card {
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.empty-line {
+  margin: 0;
+  padding: 0.95rem 1rem;
+  color: var(--muted);
+}
+
+.ministry-row {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.ministry-card {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 210px;
+  padding: 1rem;
+  background: var(--selected);
+  color: var(--ink);
+}
+
+.segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0.5rem 0 1rem;
+  padding: 0.25rem;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.segment button {
+  width: 100%;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.segment button[aria-selected='true'] {
+  background: var(--selected);
+  color: var(--ink);
+}
+
+.fab {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 16px;
+  background: var(--action);
+  color: var(--action-ink);
+  font-weight: 600;
 }
 
 .eyebrow {
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: system-ui, sans-serif;
   font-size: 0.75rem;
-}
-
-h1 {
-  font-weight: 500;
-  font-size: 3rem;
-  margin: 0.25rem 0 1rem;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  font-family: system-ui, sans-serif;
+  color: var(--muted);
 }
 
 .form {
   display: grid;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
+  gap: 0.85rem;
+  margin: 1rem 0;
 }
 
 .field {
   display: grid;
-  gap: 0.25rem;
-  font-family: system-ui, sans-serif;
+  gap: 0.3rem;
   font-size: 0.9rem;
 }
 
@@ -78,9 +481,9 @@ h1 {
 .field select,
 .field textarea {
   font: inherit;
-  padding: 0.5rem 0.6rem;
+  padding: 0.75rem 0.85rem;
   border: 1px solid var(--line);
-  border-radius: 0.25rem;
+  border-radius: 12px;
   background: var(--field);
   color: inherit;
 }
@@ -88,35 +491,35 @@ h1 {
 .errors {
   margin: 0;
   padding-left: 1.1rem;
-  color: #9f1239;
-  font-family: system-ui, sans-serif;
+  color: var(--danger);
 }
 
-button {
+button,
+.button-outline {
   font: inherit;
   width: fit-content;
-  padding: 0.5rem 0.9rem;
+  padding: 0.65rem 1rem;
   border: 0;
-  border-radius: 0.25rem;
-  background: var(--ink);
-  color: var(--paper);
+  border-radius: 28px;
+  background: var(--action);
+  color: var(--action-ink);
   cursor: pointer;
 }
 
-a {
-  color: inherit;
+.button-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
 }
 
-h2 {
-  font-weight: 500;
-  font-size: 1.4rem;
-  margin: 2rem 0 0;
+.notice {
+  color: var(--muted);
 }
 
 .list {
   display: grid;
   gap: 0.75rem;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   padding: 0;
   list-style: none;
 }
@@ -125,9 +528,10 @@ h2 {
   display: grid;
   gap: 0.35rem;
   padding: 0.9rem 1rem;
-  border: 1px solid var(--card);
-  border-radius: 0.25rem;
-  font-family: system-ui, sans-serif;
+  border: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.08);
 }
 
 .row {
@@ -140,17 +544,6 @@ h2 {
 .checks {
   display: grid;
   gap: 0.35rem;
-  font-family: system-ui, sans-serif;
-}
-
-.notice {
-  font-family: system-ui, sans-serif;
-}
-
-.topbar select {
-  font: inherit;
-  max-width: 14rem;
-  padding: 0.35rem 0.4rem;
 }
 
 .tabs {
@@ -166,20 +559,20 @@ h2 {
 }
 
 .tabs button[aria-selected='true'] {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--action);
+  color: var(--action-ink);
+  border-color: transparent;
 }
 
 .panorama {
   overflow-x: auto;
   margin: 1rem 0 2rem;
-  font-family: system-ui, sans-serif;
   font-size: 0.9rem;
 }
 
 .panorama th,
 .panorama td {
-  border: 1px solid var(--card);
+  border: 1px solid var(--line);
   padding: 0.4rem 0.6rem;
   text-align: left;
   vertical-align: top;
@@ -189,9 +582,121 @@ h2 {
   display: inline-block;
   width: fit-content;
   margin: 0;
-  padding: 0.15rem 0.45rem;
-  border-radius: 0.25rem;
-  background: var(--card);
-  font-family: system-ui, sans-serif;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--wash);
+  color: var(--action);
   font-size: 0.8rem;
+}
+
+:root[data-theme='dark'] .auth {
+  grid-template-columns: 1fr;
+  background: #121212;
+}
+
+:root[data-theme='dark'] .auth-hero {
+  display: none;
+}
+
+:root[data-theme='dark'] .auth-panel {
+  background: #121212;
+}
+
+:root[data-theme='dark'] .auth-panel .field > span {
+  position: absolute;
+  top: -0.45rem;
+  left: 0.7rem;
+  padding: 0 0.25rem;
+  background: #121212;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+:root[data-theme='dark'] .auth-panel .field {
+  position: relative;
+}
+
+:root[data-theme='dark'] .auth-panel .field input {
+  background: transparent;
+  border-radius: 12px;
+  padding-left: 2.4rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] .auth {
+    grid-template-columns: 1fr;
+    background: #121212;
+  }
+
+  :root[data-theme='system'] .auth-hero {
+    display: none;
+  }
+
+  :root[data-theme='system'] .auth-panel {
+    background: #121212;
+  }
+}
+
+@media (max-width: 800px) {
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero {
+    display: none;
+  }
+
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    display: none;
+    position: fixed;
+    z-index: 20;
+    width: 280px;
+  }
+
+  .shell.side-open .side {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    position: absolute;
+    left: 0.75rem;
+  }
+
+  .tabbar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0.35rem 0.2rem 0.7rem;
+    background: var(--sidebar);
+  }
+
+  .tabbar a {
+    padding: 0.35rem 0.1rem;
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 0.68rem;
+    text-align: center;
+  }
+
+  .tabbar a.active {
+    background: var(--selected);
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .shell-main {
+    padding-bottom: 5.5rem;
+  }
+
+  .fab {
+    bottom: 5.2rem;
+  }
 }

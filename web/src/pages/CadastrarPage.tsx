@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthSplit } from '../components/AuthSplit.tsx'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { api, ApiError, type FieldError, type PublicUser } from '../lib/api.ts'
@@ -35,9 +36,13 @@ export function CadastrarPage() {
   }
 
   return (
-    <main className="page">
-      <p className="eyebrow">Conta</p>
-      <h1>Cadastrar</h1>
+    <AuthSplit
+      footer={
+        <p>
+          Já tem conta? <Link to="/entrar">Entrar</Link>
+        </p>
+      }
+    >
       <form onSubmit={(event) => void submit(event)} className="form">
         <FieldErrors errors={errors} />
         <TextField
@@ -77,9 +82,6 @@ export function CadastrarPage() {
         />
         <button type="submit">Criar conta</button>
       </form>
-      <p>
-        <Link to="/entrar">Já tenho conta</Link>
-      </p>
-    </main>
+    </AuthSplit>
   )
 }
