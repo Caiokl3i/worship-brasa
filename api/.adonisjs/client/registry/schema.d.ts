@@ -43,6 +43,30 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'session.google': {
+    methods: ["POST"]
+    pattern: '/api/entrar/google'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['google']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['google']>>>
+    }
+  }
+  'session.google_callback': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/entrar/google/retorno'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['googleCallback']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['googleCallback']>>>
+    }
+  }
   'password_reset.store': {
     methods: ["POST"]
     pattern: '/api/recuperar-senha'
@@ -185,6 +209,18 @@ export interface Registry {
       query: ExtractQuery<InferInput<(typeof import('#validators/user').changePasswordValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['updatePassword']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['updatePassword']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'profile.destroy': {
+    methods: ["POST"]
+    pattern: '/api/perfil/apagar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/user').deleteAccountValidator)>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#validators/user').deleteAccountValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/profile_controller').default['destroy']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'session.destroy': {
@@ -595,6 +631,78 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['destroy']>>>
     }
   }
+  'spreadsheets.template': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/repertorio/modelo'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['template']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['template']>>>
+    }
+  }
+  'spreadsheets.preview': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/repertorio/previa'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/spreadsheet').spreadsheetValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/spreadsheet').spreadsheetValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['preview']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['preview']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'spreadsheets.import': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/repertorio/importar'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/spreadsheet').spreadsheetValidator)>>
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/spreadsheet').spreadsheetValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['import']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['import']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'spreadsheets.export': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/repertorio/exportar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['export']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/spreadsheets_controller').default['export']>>>
+    }
+  }
+  'songs.trash': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/lixeira/musicas'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['trash']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['trash']>>>
+    }
+  }
+  'songs.restore': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; songId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['restore']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/songs_controller').default['restore']>>>
+    }
+  }
   'folders.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios/:ministryId/pastas'
@@ -677,6 +785,30 @@ export interface Registry {
       query: {}
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['archive']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/classifications_controller').default['archive']>>>
+    }
+  }
+  'schedules.trash': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/ministerios/:ministryId/lixeira/escalas'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { ministryId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['trash']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['trash']>>>
+    }
+  }
+  'schedules.restore': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; scheduleId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['restore']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/schedules_controller').default['restore']>>>
     }
   }
   'schedules.index': {

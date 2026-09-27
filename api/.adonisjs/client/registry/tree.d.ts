@@ -10,6 +10,8 @@ export interface ApiDefinition {
   }
   session: {
     store: typeof routes['session.store']
+    google: typeof routes['session.google']
+    googleCallback: typeof routes['session.google_callback']
     destroy: typeof routes['session.destroy']
   }
   passwordReset: {
@@ -34,6 +36,7 @@ export interface ApiDefinition {
     show: typeof routes['profile.show']
     update: typeof routes['profile.update']
     updatePassword: typeof routes['profile.update_password']
+    destroy: typeof routes['profile.destroy']
   }
   calendars: {
     show: typeof routes['calendars.show']
@@ -76,6 +79,14 @@ export interface ApiDefinition {
     show: typeof routes['songs.show']
     update: typeof routes['songs.update']
     destroy: typeof routes['songs.destroy']
+    trash: typeof routes['songs.trash']
+    restore: typeof routes['songs.restore']
+  }
+  spreadsheets: {
+    template: typeof routes['spreadsheets.template']
+    preview: typeof routes['spreadsheets.preview']
+    import: typeof routes['spreadsheets.import']
+    export: typeof routes['spreadsheets.export']
   }
   folders: {
     index: typeof routes['folders.index']
@@ -89,6 +100,8 @@ export interface ApiDefinition {
     archive: typeof routes['classifications.archive']
   }
   schedules: {
+    trash: typeof routes['schedules.trash']
+    restore: typeof routes['schedules.restore']
     index: typeof routes['schedules.index']
     store: typeof routes['schedules.store']
     show: typeof routes['schedules.show']

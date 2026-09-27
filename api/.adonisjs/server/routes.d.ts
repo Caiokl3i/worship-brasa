@@ -7,6 +7,8 @@ export type ScannedRoutes = {
     'health.show': { paramsTuple?: []; params?: {} }
     'account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
+    'session.google': { paramsTuple?: []; params?: {} }
+    'session.google_callback': { paramsTuple?: []; params?: {} }
     'password_reset.store': { paramsTuple?: []; params?: {} }
     'password_reset.update': { paramsTuple?: []; params?: {} }
     'invites.activate': { paramsTuple?: []; params?: {} }
@@ -19,6 +21,7 @@ export type ScannedRoutes = {
     'calendars.destroy': { paramsTuple?: []; params?: {} }
     'profile.update': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
+    'profile.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'notifications.index': { paramsTuple?: []; params?: {} }
     'notifications.read': { paramsTuple: [ParamValue]; params: {'notificationId': ParamValue} }
@@ -53,6 +56,12 @@ export type ScannedRoutes = {
     'songs.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'songs.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'songs.destroy': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
+    'spreadsheets.template': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.preview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.import': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.export': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.restore': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'folders.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'folders.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'folderId': ParamValue} }
@@ -60,6 +69,8 @@ export type ScannedRoutes = {
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
+    'schedules.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.restore': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
@@ -102,6 +113,7 @@ export type ScannedRoutes = {
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'session.google_callback': { paramsTuple?: []; params?: {} }
     'integrations.index': { paramsTuple?: []; params?: {} }
     'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
@@ -118,8 +130,12 @@ export type ScannedRoutes = {
     'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'songs.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'songs.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
+    'spreadsheets.template': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.export': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'folders.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -134,6 +150,7 @@ export type ScannedRoutes = {
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'session.google_callback': { paramsTuple?: []; params?: {} }
     'integrations.index': { paramsTuple?: []; params?: {} }
     'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
     'profile.show': { paramsTuple?: []; params?: {} }
@@ -150,8 +167,12 @@ export type ScannedRoutes = {
     'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'songs.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'songs.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
+    'spreadsheets.template': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.export': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'folders.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'schedules.trash': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'schedules.show': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'generations.show': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -167,11 +188,13 @@ export type ScannedRoutes = {
   POST: {
     'account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
+    'session.google': { paramsTuple?: []; params?: {} }
     'password_reset.store': { paramsTuple?: []; params?: {} }
     'password_reset.update': { paramsTuple?: []; params?: {} }
     'invites.activate': { paramsTuple?: []; params?: {} }
     'calendars.store': { paramsTuple?: []; params?: {} }
     'profile.update_password': { paramsTuple?: []; params?: {} }
+    'profile.destroy': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'notifications.read': { paramsTuple: [ParamValue]; params: {'notificationId': ParamValue} }
     'ministries.store': { paramsTuple?: []; params?: {} }
@@ -186,9 +209,13 @@ export type ScannedRoutes = {
     'ministry_functions.reorder': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }
     'songs.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.preview': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'spreadsheets.import': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
+    'songs.restore': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'songId': ParamValue} }
     'folders.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'classifications.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'classificationId': ParamValue} }
+    'schedules.restore': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'schedules.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'scripts.apply': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }
     'generations.suggest': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'scheduleId': ParamValue} }

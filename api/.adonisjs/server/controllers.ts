@@ -26,5 +26,6 @@ export const controllers = {
   Session: () => import('#controllers/session_controller'),
   Shares: () => import('#controllers/shares_controller'),
   Songs: () => import('#controllers/songs_controller'),
+  Spreadsheets: () => import('#controllers/spreadsheets_controller'),
   Unavailabilities: () => import('#controllers/unavailabilities_controller'),
 }

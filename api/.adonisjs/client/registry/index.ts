@@ -24,6 +24,18 @@ const routes = {
     tokens: [{"old":"/api/entrar","type":0,"val":"api","end":""},{"old":"/api/entrar","type":0,"val":"entrar","end":""}],
     types: placeholder as Registry['session.store']['types'],
   },
+  'session.google': {
+    methods: ["POST"],
+    pattern: '/api/entrar/google',
+    tokens: [{"old":"/api/entrar/google","type":0,"val":"api","end":""},{"old":"/api/entrar/google","type":0,"val":"entrar","end":""},{"old":"/api/entrar/google","type":0,"val":"google","end":""}],
+    types: placeholder as Registry['session.google']['types'],
+  },
+  'session.google_callback': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/entrar/google/retorno',
+    tokens: [{"old":"/api/entrar/google/retorno","type":0,"val":"api","end":""},{"old":"/api/entrar/google/retorno","type":0,"val":"entrar","end":""},{"old":"/api/entrar/google/retorno","type":0,"val":"google","end":""},{"old":"/api/entrar/google/retorno","type":0,"val":"retorno","end":""}],
+    types: placeholder as Registry['session.google_callback']['types'],
+  },
   'password_reset.store': {
     methods: ["POST"],
     pattern: '/api/recuperar-senha',
@@ -95,6 +107,12 @@ const routes = {
     pattern: '/api/perfil/senha',
     tokens: [{"old":"/api/perfil/senha","type":0,"val":"api","end":""},{"old":"/api/perfil/senha","type":0,"val":"perfil","end":""},{"old":"/api/perfil/senha","type":0,"val":"senha","end":""}],
     types: placeholder as Registry['profile.update_password']['types'],
+  },
+  'profile.destroy': {
+    methods: ["POST"],
+    pattern: '/api/perfil/apagar',
+    tokens: [{"old":"/api/perfil/apagar","type":0,"val":"api","end":""},{"old":"/api/perfil/apagar","type":0,"val":"perfil","end":""},{"old":"/api/perfil/apagar","type":0,"val":"apagar","end":""}],
+    types: placeholder as Registry['profile.destroy']['types'],
   },
   'session.destroy': {
     methods: ["POST"],
@@ -300,6 +318,42 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":0,"val":"musicas","end":""},{"old":"/api/ministerios/:ministryId/musicas/:songId","type":1,"val":"songId","end":""}],
     types: placeholder as Registry['songs.destroy']['types'],
   },
+  'spreadsheets.template': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/repertorio/modelo',
+    tokens: [{"old":"/api/ministerios/:ministryId/repertorio/modelo","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/repertorio/modelo","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/repertorio/modelo","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/repertorio/modelo","type":0,"val":"repertorio","end":""},{"old":"/api/ministerios/:ministryId/repertorio/modelo","type":0,"val":"modelo","end":""}],
+    types: placeholder as Registry['spreadsheets.template']['types'],
+  },
+  'spreadsheets.preview': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/repertorio/previa',
+    tokens: [{"old":"/api/ministerios/:ministryId/repertorio/previa","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/repertorio/previa","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/repertorio/previa","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/repertorio/previa","type":0,"val":"repertorio","end":""},{"old":"/api/ministerios/:ministryId/repertorio/previa","type":0,"val":"previa","end":""}],
+    types: placeholder as Registry['spreadsheets.preview']['types'],
+  },
+  'spreadsheets.import': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/repertorio/importar',
+    tokens: [{"old":"/api/ministerios/:ministryId/repertorio/importar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/repertorio/importar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/repertorio/importar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/repertorio/importar","type":0,"val":"repertorio","end":""},{"old":"/api/ministerios/:ministryId/repertorio/importar","type":0,"val":"importar","end":""}],
+    types: placeholder as Registry['spreadsheets.import']['types'],
+  },
+  'spreadsheets.export': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/repertorio/exportar',
+    tokens: [{"old":"/api/ministerios/:ministryId/repertorio/exportar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/repertorio/exportar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/repertorio/exportar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/repertorio/exportar","type":0,"val":"repertorio","end":""},{"old":"/api/ministerios/:ministryId/repertorio/exportar","type":0,"val":"exportar","end":""}],
+    types: placeholder as Registry['spreadsheets.export']['types'],
+  },
+  'songs.trash': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/lixeira/musicas',
+    tokens: [{"old":"/api/ministerios/:ministryId/lixeira/musicas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas","type":0,"val":"lixeira","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas","type":0,"val":"musicas","end":""}],
+    types: placeholder as Registry['songs.trash']['types'],
+  },
+  'songs.restore': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar',
+    tokens: [{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":0,"val":"lixeira","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":0,"val":"musicas","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":1,"val":"songId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/musicas/:songId/restaurar","type":0,"val":"restaurar","end":""}],
+    types: placeholder as Registry['songs.restore']['types'],
+  },
   'folders.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios/:ministryId/pastas',
@@ -341,6 +395,18 @@ const routes = {
     pattern: '/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar',
     tokens: [{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"classificacoes","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":1,"val":"classificationId","end":""},{"old":"/api/ministerios/:ministryId/classificacoes/:classificationId/arquivar","type":0,"val":"arquivar","end":""}],
     types: placeholder as Registry['classifications.archive']['types'],
+  },
+  'schedules.trash': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/ministerios/:ministryId/lixeira/escalas',
+    tokens: [{"old":"/api/ministerios/:ministryId/lixeira/escalas","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas","type":0,"val":"lixeira","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas","type":0,"val":"escalas","end":""}],
+    types: placeholder as Registry['schedules.trash']['types'],
+  },
+  'schedules.restore': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar',
+    tokens: [{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":0,"val":"lixeira","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":0,"val":"escalas","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":1,"val":"scheduleId","end":""},{"old":"/api/ministerios/:ministryId/lixeira/escalas/:scheduleId/restaurar","type":0,"val":"restaurar","end":""}],
+    types: placeholder as Registry['schedules.restore']['types'],
   },
   'schedules.index': {
     methods: ["GET","HEAD"],
