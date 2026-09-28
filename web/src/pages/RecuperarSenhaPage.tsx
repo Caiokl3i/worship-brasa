@@ -58,55 +58,63 @@ export function RecuperarSenhaPage() {
     <AuthSplit
       footer={
         <p>
-          <Link to="/entrar">Voltar</Link>
+          <Link to="/entrar">← Voltar para o login</Link>
         </p>
       }
     >
-      {notice ? <p>{notice}</p> : null}
+      {notice ? <p className="notice-success">{notice}</p> : null}
       {step === 'email' ? (
-        <form onSubmit={(event) => void askCode(event)} className="form">
+        <form onSubmit={(event) => void askCode(event)} className="form auth-form">
           <FieldErrors errors={errors} />
           <TextField
-            label="E-mail"
+            label="E-mail cadastrado"
             name="email"
             type="email"
             autoComplete="email"
             value={email}
             onChange={setEmail}
+            icon="mail"
             message={fieldMessage(errors, 'email')}
           />
-          <button type="submit">Enviar código</button>
+          <button type="submit" className="button-primary auth-submit-btn">
+            Enviar código
+          </button>
         </form>
       ) : (
-        <form onSubmit={(event) => void confirm(event)} className="form">
+        <form onSubmit={(event) => void confirm(event)} className="form auth-form">
           <FieldErrors errors={errors} />
           <TextField
-            label="Código"
+            label="Código recebido"
             name="code"
             autoComplete="one-time-code"
             value={code}
             onChange={setCode}
+            icon="key"
             message={fieldMessage(errors, 'code')}
           />
           <TextField
-            label="Senha nova"
+            label="Nova senha"
             name="password"
             type="password"
             autoComplete="new-password"
             value={password}
             onChange={setPassword}
+            icon="lock"
             message={fieldMessage(errors, 'password')}
           />
           <TextField
-            label="Confirmar senha"
+            label="Confirmar nova senha"
             name="passwordConfirmation"
             type="password"
             autoComplete="new-password"
             value={passwordConfirmation}
             onChange={setPasswordConfirmation}
+            icon="lock"
             message={fieldMessage(errors, 'passwordConfirmation')}
           />
-          <button type="submit">Salvar senha</button>
+          <button type="submit" className="button-primary auth-submit-btn">
+            Salvar nova senha
+          </button>
         </form>
       )}
     </AuthSplit>

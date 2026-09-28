@@ -5,6 +5,8 @@ import type { MinistryDetail, MinistryList } from '../lib/ministry.ts'
 import type { NotificationList } from '../lib/notification.ts'
 import { useSession } from '../session.tsx'
 import { ThemeSelect } from '../components/ThemeSelect.tsx'
+import { Icon } from '../components/Icon.tsx'
+import { BrandMark } from '../components/BrandMark.tsx'
 
 export function AppLayout() {
   const { user, setUser } = useSession()
@@ -71,135 +73,182 @@ export function AppLayout() {
     setMenuOpen(false)
   }
 
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((p) => p[0]?.toUpperCase())
+        .join('')
+    : 'U'
+
   return (
     <div className={menuOpen ? 'shell side-open' : 'shell'}>
       <aside className="side">
         <Link to="/perfil" className="side-user" onClick={closeMenu}>
-          <strong>{user?.name}</strong>
-          <span>{user?.email}</span>
+          <div className="side-user-avatar">{initials}</div>
+          <div className="side-user-info">
+            <strong>{user?.name || 'Usuário'}</strong>
+            <span>{user?.email}</span>
+          </div>
+          <Icon name="chevron-right" size={16} className="side-user-chevron" />
         </Link>
-        <nav>
-          <NavLink to={home} end onClick={closeMenu}>
-            Início
+        <nav className="side-nav">
+          <NavLink to={home} end onClick={closeMenu} className="side-link">
+            <Icon name="home" size={20} className="side-link-icon" />
+            <span className="side-link-label">Início</span>
+            <Icon name="chevron-right" size={14} className="side-link-arrow" />
           </NavLink>
           {currentId ? (
             <>
-              <NavLink to={`/m/${currentId}/escalas`} onClick={closeMenu}>
-                Escalas
+              <NavLink to={`/m/${currentId}/escalas`} onClick={closeMenu} className="side-link">
+                <Icon name="schedules" size={20} className="side-link-icon" />
+                <span className="side-link-label">Escalas</span>
+                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
               {selected && !selected.musicModuleEnabled ? null : (
-                <NavLink to={`/m/${currentId}/repertorio`} onClick={closeMenu}>
-                  Repertório
+                <NavLink to={`/m/${currentId}/repertorio`} onClick={closeMenu} className="side-link">
+                  <Icon name="repertoire" size={20} className="side-link-icon" />
+                  <span className="side-link-label">Repertório</span>
+                  <Icon name="chevron-right" size={14} className="side-link-arrow" />
                 </NavLink>
               )}
-              <NavLink to={`/m/${currentId}/chat`} onClick={closeMenu}>
-                Mensagens
+              <NavLink to={`/m/${currentId}/chat`} onClick={closeMenu} className="side-link">
+                <Icon name="posts" size={20} className="side-link-icon" />
+                <span className="side-link-label">Mensagens</span>
+                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
-              <NavLink to={`/m/${currentId}/membros`} onClick={closeMenu}>
-                Ministério
+              <NavLink to={`/m/${currentId}/membros`} onClick={closeMenu} className="side-link">
+                <Icon name="ministry" size={20} className="side-link-icon" />
+                <span className="side-link-label">Ministério</span>
+                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
               <div className="side-gap">
-                <NavLink to={`/m/${currentId}/avisos`} onClick={closeMenu}>
-                  Avisos
+                <NavLink to={`/m/${currentId}/avisos`} onClick={closeMenu} className="side-link side-link-sub">
+                  <Icon name="announcements" size={18} className="side-link-icon" />
+                  <span className="side-link-label">Avisos</span>
                 </NavLink>
-                <NavLink to={`/m/${currentId}/indisponibilidades`} onClick={closeMenu}>
-                  Indisponibilidades
+                <NavLink to={`/m/${currentId}/indisponibilidades`} onClick={closeMenu} className="side-link side-link-sub">
+                  <Icon name="unavailability" size={18} className="side-link-icon" />
+                  <span className="side-link-label">Indisponibilidades</span>
                 </NavLink>
                 {manages ? (
-                  <NavLink to={`/m/${currentId}/relatorios`} onClick={closeMenu}>
-                    Panorama de escalas
+                  <NavLink to={`/m/${currentId}/relatorios`} onClick={closeMenu} className="side-link side-link-sub">
+                    <Icon name="reports" size={18} className="side-link-icon" />
+                    <span className="side-link-label">Panorama de escalas</span>
                   </NavLink>
                 ) : null}
                 {manages ? (
-                  <NavLink to={`/m/${currentId}/roteiros`} onClick={closeMenu}>
-                    Modelos de roteiro
+                  <NavLink to={`/m/${currentId}/roteiros`} onClick={closeMenu} className="side-link side-link-sub">
+                    <Icon name="scripts" size={18} className="side-link-icon" />
+                    <span className="side-link-label">Modelos de roteiro</span>
                   </NavLink>
                 ) : null}
                 {member?.isAdmin ? (
-                  <NavLink to={`/m/${currentId}/convite`} onClick={closeMenu}>
-                    Convidar membros
+                  <NavLink to={`/m/${currentId}/convite`} onClick={closeMenu} className="side-link side-link-sub">
+                    <Icon name="invite" size={18} className="side-link-icon" />
+                    <span className="side-link-label">Convidar membros</span>
                   </NavLink>
                 ) : null}
                 {member?.isAdmin ? (
-                  <NavLink to={`/m/${currentId}/integracao`} onClick={closeMenu}>
-                    Tokens de API
+                  <NavLink to={`/m/${currentId}/integracao`} onClick={closeMenu} className="side-link side-link-sub">
+                    <Icon name="tokens" size={18} className="side-link-icon" />
+                    <span className="side-link-label">Tokens de API</span>
                   </NavLink>
                 ) : null}
                 {member?.isAdmin || member?.canManageSchedules || member?.canManageRepertoire ? (
-                  <NavLink to={`/m/${currentId}/lixeira`} onClick={closeMenu}>
-                    Lixeira
+                  <NavLink to={`/m/${currentId}/lixeira`} onClick={closeMenu} className="side-link side-link-sub">
+                    <Icon name="trash" size={18} className="side-link-icon" />
+                    <span className="side-link-label">Lixeira</span>
                   </NavLink>
                 ) : null}
               </div>
             </>
           ) : null}
         </nav>
-        <nav className="side-bottom">
-          <NavLink to="/perfil" onClick={closeMenu}>
-            Configurações
+        <div className="side-bottom">
+          <NavLink to="/perfil" onClick={closeMenu} className="side-link side-link-bottom">
+            <Icon name="settings" size={18} className="side-link-icon" />
+            <span className="side-link-label">Configurações</span>
           </NavLink>
-          <button type="button" className="button-outline" onClick={() => void logout()}>
-            Sair
+          <button type="button" className="side-logout-btn" onClick={() => void logout()}>
+            <Icon name="logout" size={18} className="side-link-icon" />
+            <span>Sair</span>
           </button>
-        </nav>
+        </div>
       </aside>
       <div className="workspace">
         <header className="topbar">
           <button
             type="button"
             className="menu-toggle"
+            aria-label="Abrir menu"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            Menu
+            <span className="menu-bar" />
+            <span className="menu-bar" />
+            <span className="menu-bar" />
           </button>
           <Link to={home} className="wordmark">
-            LouveApp
+            <BrandMark />
+            <span className="wordmark-text">LouveApp</span>
           </Link>
           <div className="topbar-tools">
             {ministries.length > 0 ? (
-              <select
-                aria-label="Ministério"
-                value={ministries.some((item) => item.id === currentId) ? currentId : ''}
-                onChange={(event) => {
-                  if (event.target.value) {
-                    navigate(`/m/${event.target.value}`)
-                  }
-                }}
-              >
-                <option value="">Ministérios</option>
-                {ministries.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
+              <div className="topbar-select-wrapper">
+                <select
+                  aria-label="Ministério"
+                  className="topbar-select"
+                  value={ministries.some((item) => item.id === currentId) ? currentId : ''}
+                  onChange={(event) => {
+                    if (event.target.value) {
+                      navigate(`/m/${event.target.value}`)
+                    }
+                  }}
+                >
+                  <option value="">Alternar Ministério</option>
+                  {ministries.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             ) : null}
             <ThemeSelect />
-            <Link to="/notificacoes">Notificações{unread > 0 ? ` (${unread})` : ''}</Link>
+            <Link to="/notificacoes" className="topbar-notify-btn" aria-label="Notificações">
+              <Icon name="bell" size={19} />
+              {unread > 0 ? <span className="topbar-badge">{unread}</span> : null}
+            </Link>
           </div>
         </header>
-        <div className="shell-main">
+        <main className="shell-main">
           <Outlet />
-        </div>
+        </main>
       </div>
       {currentId ? (
         <nav className="tabbar">
-          <NavLink to={home} end onClick={closeMenu}>
-            Início
+          <NavLink to={home} end onClick={closeMenu} className="tab-item">
+            <Icon name="home" size={20} />
+            <span>Início</span>
           </NavLink>
-          <NavLink to={`/m/${currentId}/escalas`} onClick={closeMenu}>
-            Escalas
+          <NavLink to={`/m/${currentId}/escalas`} onClick={closeMenu} className="tab-item">
+            <Icon name="schedules" size={20} />
+            <span>Escalas</span>
           </NavLink>
           {selected && !selected.musicModuleEnabled ? null : (
-            <NavLink to={`/m/${currentId}/repertorio`} onClick={closeMenu}>
-              Repertório
+            <NavLink to={`/m/${currentId}/repertorio`} onClick={closeMenu} className="tab-item">
+              <Icon name="repertoire" size={20} />
+              <span>Repertório</span>
             </NavLink>
           )}
-          <NavLink to={`/m/${currentId}/chat`} onClick={closeMenu}>
-            Mensagens
+          <NavLink to={`/m/${currentId}/chat`} onClick={closeMenu} className="tab-item">
+            <Icon name="posts" size={20} />
+            <span>Mensagens</span>
           </NavLink>
-          <NavLink to={`/m/${currentId}/membros`} onClick={closeMenu}>
-            Ministério
+          <NavLink to={`/m/${currentId}/membros`} onClick={closeMenu} className="tab-item">
+            <Icon name="ministry" size={20} />
+            <span>Ministério</span>
           </NavLink>
         </nav>
       ) : null}

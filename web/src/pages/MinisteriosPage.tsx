@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
+import { Icon } from '../components/Icon.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import type { MinistryList } from '../lib/ministry.ts'
 
 export function MinisteriosPage() {
-  const navigate = useNavigate()
   const [list, setList] = useState<MinistryList | null>(null)
   const [code, setCode] = useState('')
   const [errors, setErrors] = useState<FieldError[]>([])
@@ -49,66 +49,101 @@ export function MinisteriosPage() {
   }
 
   if (!list) {
-    return <p>Carregando…</p>
+    return (
+      <div className="page-loading">
+        <p>Carregando ministérios…</p>
+      </div>
+    )
   }
 
   const empty = list.active.length === 0 && list.pending.length === 0
 
   return (
-    <section>
+    <div className="dashboard-container">
       <div className="block-head">
-        <span>
-          Ministérios <span className="count">{list.active.length}</span>
-        </span>
-        <Link to="/ministerios/novo">Adicionar +</Link>
+        <div className="block-title-group">
+          <span className="block-label">Meus Ministérios</span>
+          <span className="count">{list.active.length}</span>
+        </div>
+        <Link to="/ministerios/novo" className="button-add-link">
+          <Icon name="plus" size={14} /> Novo Ministério
+        </Link>
       </div>
+
       {empty ? (
-        <p>Você ainda não participa de um ministério. Crie um ou entre com um código de convite.</p>
+        <div className="empty-state-card empty-state-large">
+          <Icon name="ministry" size={32} className="empty-icon" />
+          <p>Você ainda não participa de um ministério. Crie um novo ou solicite entrada via código de convite.</p>
+        </div>
       ) : null}
 
       {list.active.length > 0 ? (
-        <ul className="ministry-row">
+        <div className="ministry-grid">
           {list.active.map((ministry) => (
-            <li key={ministry.id}>
-              <Link className="ministry-card" to={`/m/${ministry.id}`}>
-                {ministry.name}
-              </Link>
-            </li>
+            <Link key={ministry.id} className="ministry-card-item" to={`/m/${ministry.id}`}>
+              <div className="ministry-avatar" style={{ backgroundColor: ministry.color || '#2b4678' }}>
+                <span>{ministry.name.slice(0, 2).toUpperCase()}</span>
+              </div>
+              <div className="ministry-card-info">
+                <h4>{ministry.name}</h4>
+                <span className="ministry-card-role">{ministry.musicModuleEnabled ? 'Música e Escalas' : 'Escalas'}</span>
+              </div>
+              <Icon name="chevron-right" size={18} className="ministry-card-arrow" />
+            </Link>
           ))}
-        </ul>
+        </div>
       ) : null}
 
       {list.pending.length > 0 ? (
-        <ul className="list">
-          {list.pending.map((request) => (
-            <li key={request.membershipId} className="card">
-              <span>Aguardando aprovação em {request.ministryName}.</span>
-              <button type="button" onClick={() => void cancel(request.membershipId)}>
-                Cancelar pedido
-              </button>
-            </li>
-          ))}
-        </ul>
+        <section className="pending-section">
+          <div className="block-head">
+            <span className="block-label">Solicitações Pendentes</span>
+            <span className="count">{list.pending.length}</span>
+          </div>
+          <ul className="dashboard-card-list">
+            {list.pending.map((request) => (
+              <li key={request.membershipId} className="card pending-card">
+                <div className="pending-info">
+                  <Icon name="clock" size={18} />
+                  <span>Aguardando aprovação em <strong>{request.ministryName}</strong></span>
+                </div>
+                <button
+                  type="button"
+                  className="button-outline button-small"
+                  onClick={() => void cancel(request.membershipId)}
+                >
+                  Cancelar pedido
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
 
-      <form onSubmit={(event) => void enter(event)} className="form">
-        <FieldErrors errors={errors} />
-        {notice ? <p className="notice">{notice}</p> : null}
-        <TextField
-          label="Código do convite"
-          name="code"
-          value={code}
-          onChange={setCode}
-          message={fieldMessage(errors, 'code')}
-        />
-        <button type="submit">Solicitar entrada</button>
-      </form>
+      <section className="invite-section card">
+        <div className="invite-header">
+          <Icon name="invite" size={20} className="invite-icon" />
+          <div>
+            <h3>Entrar com Código de Convite</h3>
+            <p className="muted-text">Recebeu um código da liderança? Digite abaixo para solicitar acesso.</p>
+          </div>
+        </div>
 
-      <p>
-        <button type="button" onClick={() => navigate('/perfil')}>
-          Abrir perfil
-        </button>
-      </p>
-    </section>
+        <form onSubmit={(event) => void enter(event)} className="invite-form">
+          <FieldErrors errors={errors} />
+          {notice ? <p className="notice-success">{notice}</p> : null}
+          <div className="invite-input-row">
+            <TextField
+              label="Código de convite"
+              name="code"
+              value={code}
+              onChange={setCode}
+              message={fieldMessage(errors, 'code')}
+            />
+            <button type="submit" className="button-primary">Solicitar entrada</button>
+          </div>
+        </form>
+      </section>
+    </div>
   )
 }

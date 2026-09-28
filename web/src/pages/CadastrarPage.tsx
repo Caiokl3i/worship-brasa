@@ -43,14 +43,15 @@ export function CadastrarPage() {
         </p>
       }
     >
-      <form onSubmit={(event) => void submit(event)} className="form">
+      <form onSubmit={(event) => void submit(event)} className="form auth-form">
         <FieldErrors errors={errors} />
         <TextField
-          label="Nome"
+          label="Nome completo"
           name="name"
           autoComplete="name"
           value={name}
           onChange={setName}
+          icon="users"
           message={fieldMessage(errors, 'name')}
         />
         <TextField
@@ -60,6 +61,7 @@ export function CadastrarPage() {
           autoComplete="email"
           value={email}
           onChange={setEmail}
+          icon="mail"
           message={fieldMessage(errors, 'email')}
         />
         <TextField
@@ -69,6 +71,7 @@ export function CadastrarPage() {
           autoComplete="new-password"
           value={password}
           onChange={setPassword}
+          icon="lock"
           message={fieldMessage(errors, 'password')}
         />
         <TextField
@@ -78,9 +81,12 @@ export function CadastrarPage() {
           autoComplete="new-password"
           value={passwordConfirmation}
           onChange={setPasswordConfirmation}
+          icon="lock"
           message={fieldMessage(errors, 'passwordConfirmation')}
         />
-        <button type="submit">Criar conta</button>
+        <button type="submit" className="button-primary auth-submit-btn">
+          Criar conta
+        </button>
       </form>
     </AuthSplit>
   )
