@@ -45,9 +45,9 @@ export function MinistryLayout() {
 
   if (missing) {
     return (
-      <section>
-        <h1>Ministério não encontrado.</h1>
-        <p>
+      <section className="page">
+        <h1>Ministério não encontrado</h1>
+        <p className="row">
           <Link to="/ministerios">Voltar</Link>
         </p>
       </section>
@@ -55,7 +55,7 @@ export function MinistryLayout() {
   }
 
   if (!ministry) {
-    return <p>Carregando…</p>
+    return <p className="page-loading">Carregando…</p>
   }
 
   return (

@@ -27,6 +27,7 @@ const CalendarsController = () => import('#controllers/calendars_controller')
 const IntegrationsController = () => import('#controllers/integrations_controller')
 
 router.get('/health', [HealthController, 'show'])
+router.get('/api/eu', [ProfileController, 'show'])
 
 router.post('/api/cadastrar', [AccountController, 'store'])
 router.post('/api/entrar', [SessionController, 'store'])
@@ -40,7 +41,6 @@ router.get('/api/integracao/escalas/:scheduleId', [IntegrationsController, 'show
 
 router
   .group(() => {
-    router.get('/eu', [ProfileController, 'show'])
     router.get('/agenda', [CalendarsController, 'show'])
     router.post('/agenda/conectar', [CalendarsController, 'store'])
     router.get('/agenda/retorno', [CalendarsController, 'callback'])

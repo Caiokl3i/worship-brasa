@@ -114,9 +114,11 @@ export function AvisosPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Ministério</p>
-      <h1>Avisos</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Ministério</p>
+        <h1>Avisos</h1>
+      </header>
       <p className="row">
         <Link to={`/m/${ministry.id}`}>Voltar</Link>
         {canManage ? (
@@ -130,7 +132,7 @@ export function AvisosPage() {
         {lists.notices.map((item) => (
           <li key={item.id} className="card">
             <strong>{item.title}</strong>
-            {item.pinned ? <span> Destaque</span> : null}
+            {item.pinned ? <span className="badge">Destaque</span> : null}
             <p>{item.body}</p>
             <p>
               {item.author.name}
@@ -149,7 +151,7 @@ export function AvisosPage() {
           </li>
         ))}
       </ul>
-      {lists.notices.length === 0 ? <p>Nenhum aviso no momento.</p> : null}
+      {lists.notices.length === 0 ? <p className="empty-state-card">Nenhum aviso no momento.</p> : null}
 
       {canManage ? (
         <form className="form" onSubmit={(event) => void save(event)}>
@@ -202,7 +204,9 @@ export function AvisosPage() {
               </li>
             ))}
           </ul>
-          {lists.archived.length === 0 ? <p>Nenhum aviso arquivado.</p> : null}
+          {lists.archived.length === 0 ? (
+            <p className="empty-state-card">Nenhum aviso arquivado.</p>
+          ) : null}
         </div>
       ) : null}
     </section>

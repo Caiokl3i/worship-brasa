@@ -62,12 +62,21 @@ export function RepertorioPage() {
   const emptyCatalog = songs?.length === 0 && !query && !folderId && !classificationId
 
   return (
-    <section>
-      <h1>Repertório</h1>
-      <p className="eyebrow">{ministry.name}</p>
+    <section className="page">
+      <header className="page-header-row">
+        <div>
+          <p className="eyebrow">{ministry.name}</p>
+          <h1>Repertório</h1>
+        </div>
+        {canManage ? (
+          <Link className="button-primary-compact" to={`/m/${ministry.id}/repertorio/nova`}>
+            Cadastrar música
+          </Link>
+        ) : null}
+      </header>
 
       <form
-        className="form"
+        className="form toolbar"
         onSubmit={(event) => {
           event.preventDefault()
           setQuery(draft)
@@ -210,19 +219,15 @@ export function RepertorioPage() {
         </form>
       ) : null}
 
-      {songs === null ? <p>Carregando…</p> : null}
+      {songs === null ? <p className="page-loading">Carregando…</p> : null}
       {emptyCatalog ? (
-        <p>
+        <p className="empty-state-card empty-state-large">
           Ainda não há músicas neste repertório.
-          {canManage ? (
-            <>
-              {' '}
-              <Link to={`/m/${ministry.id}/repertorio/nova`}>Cadastrar música</Link>
-            </>
-          ) : null}
         </p>
       ) : null}
-      {songs && songs.length === 0 && !emptyCatalog ? <p>Nenhuma música encontrada.</p> : null}
+      {songs && songs.length === 0 && !emptyCatalog ? (
+        <p className="empty-state-card">Nenhuma música encontrada.</p>
+      ) : null}
 
       {songs && songs.length > 0 ? (
         <ul className="list">
@@ -244,12 +249,6 @@ export function RepertorioPage() {
         </ul>
       ) : null}
 
-      {canManage && songs && songs.length > 0 ? (
-        <p>
-          <Link to={`/m/${ministry.id}/repertorio/nova`}>Cadastrar música</Link>
-        </p>
-      ) : null}
-
       {canManage ? (
         <CatalogSettings
           ministryId={ministry.id}
@@ -259,7 +258,7 @@ export function RepertorioPage() {
         />
       ) : null}
 
-      <p>
+      <p className="row">
         <Link to={`/m/${ministry.id}`}>Voltar</Link>
       </p>
     </section>
@@ -435,7 +434,7 @@ function FolderRow({
       >
         <TextField label="Nome" name={`folder-${folder.id}`} value={name} onChange={setName} />
         <button type="submit">Renomear</button>
-        <button type="button" onClick={onDelete}>
+        <button type="button" className="button-danger-outline" onClick={onDelete}>
           Excluir
         </button>
       </form>

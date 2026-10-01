@@ -84,7 +84,7 @@ test.group('Apagar conta', (group) => {
     const removed = await client.post('/api/perfil/apagar').json({ currentPassword: password })
     removed.assertStatus(204)
     const gone = await client.get('/api/eu')
-    gone.assertStatus(401)
+    gone.assertStatus(204)
     const again = await client.post('/api/entrar').json({ email: 'ana@igreja.com', password })
     again.assertStatus(422)
 

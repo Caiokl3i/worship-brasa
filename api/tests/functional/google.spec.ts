@@ -65,7 +65,7 @@ test.group('Entrar com Google', (group) => {
     unknown.assertStatus(302)
     assert.include(unknown.header('location'), 'google=desconhecido')
     const stillOut = await client.get('/api/eu')
-    stillOut.assertStatus(401)
+    stillOut.assertStatus(204)
 
     const unverified = await client
       .get(`/api/entrar/google/retorno?code=aberto&state=${await start(client)}`)
@@ -73,7 +73,7 @@ test.group('Entrar com Google', (group) => {
     unverified.assertStatus(302)
     assert.include(unverified.header('location'), 'google=desconhecido')
     const stillOutAgain = await client.get('/api/eu')
-    stillOutAgain.assertStatus(401)
+    stillOutAgain.assertStatus(204)
     assert.equal((await User.all()).length, before)
   })
 })

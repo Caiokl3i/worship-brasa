@@ -814,9 +814,9 @@ export function EscalaEditorPage() {
 
   if (missing) {
     return (
-      <section>
+      <section className="page">
         <h1>{missing}</h1>
-        <p>
+        <p className="row">
           <Link to={`/m/${ministry.id}/escalas`}>Voltar</Link>
         </p>
       </section>
@@ -824,7 +824,7 @@ export function EscalaEditorPage() {
   }
 
   if (!ready) {
-    return <p>Carregando…</p>
+    return <p className="page-loading">Carregando…</p>
   }
 
   const availableFunctions = functions.filter(
@@ -839,10 +839,14 @@ export function EscalaEditorPage() {
   )
 
   return (
-    <section>
-      <p className="eyebrow">Escalas</p>
-      <h1>{title || 'Escala'}</h1>
-      <p className="badge">{status === 'draft' ? 'Rascunho' : 'Publicada'}</p>
+    <section className="page page-wide">
+      <header className="page-header">
+        <p className="eyebrow">Escalas</p>
+        <h1>{title || 'Escala'}</h1>
+      </header>
+      <p className={status === 'draft' ? 'badge badge-draft' : 'badge badge-published'}>
+        {status === 'draft' ? 'Rascunho' : 'Publicada'}
+      </p>
       {changes.length > 0 ? (
         <div>
           <h2>Alterações</h2>
@@ -866,12 +870,12 @@ export function EscalaEditorPage() {
           <button type="button" onClick={() => void confirmAttendance('confirmed')}>
             Confirmar
           </button>
-          <button type="button" onClick={() => void confirmAttendance('declined')}>
+          <button type="button" className="button-danger-outline" onClick={() => void confirmAttendance('declined')}>
             Não participarei
           </button>
         </div>
       ) : null}
-      {mine?.absent ? <p className="notice">Falta</p> : null}
+      {mine?.absent ? <p className="notice notice-warning">Falta</p> : null}
       <div className="tabs" role="tablist">
         <button type="button" aria-selected={tab === 'dados'} onClick={() => setTab('dados')}>
           Dados

@@ -5,6 +5,12 @@ export interface ApiDefinition {
   health: {
     show: typeof routes['health.show']
   }
+  profile: {
+    show: typeof routes['profile.show']
+    update: typeof routes['profile.update']
+    updatePassword: typeof routes['profile.update_password']
+    destroy: typeof routes['profile.destroy']
+  }
   account: {
     store: typeof routes['account.store']
   }
@@ -31,12 +37,6 @@ export interface ApiDefinition {
     current: typeof routes['integrations.current']
     store: typeof routes['integrations.store']
     destroy: typeof routes['integrations.destroy']
-  }
-  profile: {
-    show: typeof routes['profile.show']
-    update: typeof routes['profile.update']
-    updatePassword: typeof routes['profile.update_password']
-    destroy: typeof routes['profile.destroy']
   }
   calendars: {
     show: typeof routes['calendars.show']

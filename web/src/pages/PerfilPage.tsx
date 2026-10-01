@@ -127,13 +127,16 @@ export function PerfilPage() {
   const agendaQuery = new URLSearchParams(window.location.search).get('agenda')
 
   return (
-    <section>
-      <p className="eyebrow">Conta</p>
-      <h1>Perfil</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Conta</p>
+        <h1>Perfil</h1>
+      </header>
 
       <form onSubmit={(event) => void saveProfile(event)} className="form">
+        <h2>Dados pessoais</h2>
         <FieldErrors errors={profileErrors} />
-        {profileNotice ? <p>{profileNotice}</p> : null}
+        {profileNotice ? <p className="notice-success">{profileNotice}</p> : null}
         <TextField
           label="Nome"
           name="name"
@@ -156,7 +159,7 @@ export function PerfilPage() {
       <form onSubmit={(event) => void savePassword(event)} className="form">
         <h2>Alterar senha</h2>
         <FieldErrors errors={passwordErrors} />
-        {passwordNotice ? <p>{passwordNotice}</p> : null}
+        {passwordNotice ? <p className="notice-success">{passwordNotice}</p> : null}
         <TextField
           label="Senha atual"
           name="currentPassword"
@@ -206,7 +209,7 @@ export function PerfilPage() {
         )}
       </div>
 
-      <form onSubmit={(event) => void removeAccount(event)} className="form">
+      <form onSubmit={(event) => void removeAccount(event)} className="form panel-danger">
         <h2>Apagar conta</h2>
         <FieldErrors errors={deleteErrors} />
         <TextField
@@ -218,7 +221,7 @@ export function PerfilPage() {
           onChange={setDeletePassword}
           message={fieldMessage(deleteErrors, 'currentPassword')}
         />
-        <button type="submit">Apagar conta</button>
+        <button type="submit" className="button-danger">Apagar conta</button>
       </form>
 
       <p className="row">

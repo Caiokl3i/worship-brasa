@@ -69,10 +69,10 @@ export function LixeiraPage() {
 
   if (!canSchedules && !canSongs) {
     return (
-      <section>
+      <section className="page">
         <h1>Lixeira</h1>
-        <p>Você não pode fazer isso.</p>
-        <p>
+        <p className="empty-state-card">Você não pode fazer isso.</p>
+        <p className="row">
           <Link to="..">Voltar</Link>
         </p>
       </section>
@@ -80,9 +80,11 @@ export function LixeiraPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Lixeira</p>
-      <h1>{ministry.name}</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Lixeira</h1>
+      </header>
       <p>Itens excluídos nos últimos 30 dias. Depois disso continuam ocultos.</p>
       {error ? <p className="errors">{error}</p> : null}
       {canSchedules ? (
@@ -121,7 +123,7 @@ export function LixeiraPage() {
           </ul>
         </>
       ) : null}
-      <p>
+      <p className="row">
         <Link to="..">Voltar</Link>
       </p>
     </section>

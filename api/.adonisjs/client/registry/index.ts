@@ -12,6 +12,12 @@ const routes = {
     tokens: [{"old":"/health","type":0,"val":"health","end":""}],
     types: placeholder as Registry['health.show']['types'],
   },
+  'profile.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/eu',
+    tokens: [{"old":"/api/eu","type":0,"val":"api","end":""},{"old":"/api/eu","type":0,"val":"eu","end":""}],
+    types: placeholder as Registry['profile.show']['types'],
+  },
   'account.store': {
     methods: ["POST"],
     pattern: '/api/cadastrar',
@@ -65,12 +71,6 @@ const routes = {
     pattern: '/api/integracao/escalas/:scheduleId',
     tokens: [{"old":"/api/integracao/escalas/:scheduleId","type":0,"val":"api","end":""},{"old":"/api/integracao/escalas/:scheduleId","type":0,"val":"integracao","end":""},{"old":"/api/integracao/escalas/:scheduleId","type":0,"val":"escalas","end":""},{"old":"/api/integracao/escalas/:scheduleId","type":1,"val":"scheduleId","end":""}],
     types: placeholder as Registry['integrations.show']['types'],
-  },
-  'profile.show': {
-    methods: ["GET","HEAD"],
-    pattern: '/api/eu',
-    tokens: [{"old":"/api/eu","type":0,"val":"api","end":""},{"old":"/api/eu","type":0,"val":"eu","end":""}],
-    types: placeholder as Registry['profile.show']['types'],
   },
   'calendars.show': {
     methods: ["GET","HEAD"],

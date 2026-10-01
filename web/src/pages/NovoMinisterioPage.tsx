@@ -59,9 +59,11 @@ export function NovoMinisterioPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Ministério</p>
-      <h1>Criar</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Ministério</p>
+        <h1>Criar ministério</h1>
+      </header>
       <form onSubmit={(event) => void submit(event)} className="form">
         <FieldErrors errors={errors} />
         <TextField
@@ -118,7 +120,7 @@ export function NovoMinisterioPage() {
         <TextField label="Outra função" name="extra" value={extra} onChange={setExtra} />
         <button type="submit">Acrescentar</button>
       </form>
-      <p>
+      <p className="row">
         <Link to="/ministerios">Voltar</Link>
       </p>
     </section>

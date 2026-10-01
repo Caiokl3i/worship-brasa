@@ -97,31 +97,26 @@ export function AppLayout() {
           <NavLink to={home} end onClick={closeMenu} className="side-link">
             <Icon name="home" size={20} className="side-link-icon" />
             <span className="side-link-label">Início</span>
-            <Icon name="chevron-right" size={14} className="side-link-arrow" />
           </NavLink>
           {currentId ? (
             <>
               <NavLink to={`/m/${currentId}/escalas`} onClick={closeMenu} className="side-link">
                 <Icon name="schedules" size={20} className="side-link-icon" />
                 <span className="side-link-label">Escalas</span>
-                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
               {selected && !selected.musicModuleEnabled ? null : (
                 <NavLink to={`/m/${currentId}/repertorio`} onClick={closeMenu} className="side-link">
                   <Icon name="repertoire" size={20} className="side-link-icon" />
                   <span className="side-link-label">Repertório</span>
-                  <Icon name="chevron-right" size={14} className="side-link-arrow" />
                 </NavLink>
               )}
               <NavLink to={`/m/${currentId}/chat`} onClick={closeMenu} className="side-link">
                 <Icon name="posts" size={20} className="side-link-icon" />
                 <span className="side-link-label">Mensagens</span>
-                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
               <NavLink to={`/m/${currentId}/membros`} onClick={closeMenu} className="side-link">
                 <Icon name="ministry" size={20} className="side-link-icon" />
                 <span className="side-link-label">Ministério</span>
-                <Icon name="chevron-right" size={14} className="side-link-arrow" />
               </NavLink>
               <div className="side-gap">
                 <NavLink to={`/m/${currentId}/avisos`} onClick={closeMenu} className="side-link side-link-sub">
@@ -226,6 +221,9 @@ export function AppLayout() {
           <Outlet />
         </main>
       </div>
+      {menuOpen ? (
+        <button type="button" className="side-backdrop" aria-label="Fechar menu" onClick={closeMenu} />
+      ) : null}
       {currentId ? (
         <nav className="tabbar">
           <NavLink to={home} end onClick={closeMenu} className="tab-item">

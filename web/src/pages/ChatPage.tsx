@@ -5,9 +5,11 @@ export function ChatPage() {
   const { ministry } = useMinistry()
 
   return (
-    <section>
-      <h1>Mensagens</h1>
-      <p className="eyebrow">{ministry.name}</p>
+    <section className="page page-chat">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Mensagens</h1>
+      </header>
       <ChatPanel path={`/api/ministerios/${ministry.id}/chat`} timeZone={ministry.timezone} />
     </section>
   )

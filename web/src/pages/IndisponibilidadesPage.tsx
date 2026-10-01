@@ -96,11 +96,15 @@ export function IndisponibilidadesPage() {
   const others = rows?.filter((row) => row.membershipId !== ministry.membership.id) ?? []
 
   return (
-    <section>
-      <p className="eyebrow">Indisponibilidades</p>
-      <h1>{ministry.name}</h1>
-      {rows === null ? <p>Carregando…</p> : null}
-      {rows && rows.length === 0 ? <p>Nenhuma indisponibilidade.</p> : null}
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Indisponibilidades</h1>
+      </header>
+      {rows === null ? <p className="page-loading">Carregando…</p> : null}
+      {rows && rows.length === 0 ? (
+        <p className="empty-state-card">Nenhuma indisponibilidade.</p>
+      ) : null}
 
       {mine.length > 0 ? (
         <>
@@ -125,7 +129,7 @@ export function IndisponibilidadesPage() {
                   >
                     Editar
                   </button>
-                  <button type="button" onClick={() => void remove(row.id)}>
+                  <button type="button" className="button-danger-outline" onClick={() => void remove(row.id)}>
                     Remover
                   </button>
                 </div>
@@ -159,7 +163,7 @@ export function IndisponibilidadesPage() {
                   >
                     Editar
                   </button>
-                  <button type="button" onClick={() => void remove(row.id)}>
+                  <button type="button" className="button-danger-outline" onClick={() => void remove(row.id)}>
                     Remover
                   </button>
                 </div>

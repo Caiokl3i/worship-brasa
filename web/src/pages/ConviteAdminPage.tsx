@@ -86,10 +86,10 @@ export function ConviteAdminPage() {
 
   if (!ministry.membership.isAdmin) {
     return (
-      <section>
+      <section className="page">
         <h1>Convite</h1>
-        <p>Você não pode fazer isso.</p>
-        <p>
+        <p className="empty-state-card">Você não pode fazer isso.</p>
+        <p className="row">
           <Link to="..">Voltar</Link>
         </p>
       </section>
@@ -97,9 +97,11 @@ export function ConviteAdminPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Convite</p>
-      <h1>{ministry.name}</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Convidar membros</h1>
+      </header>
       {error ? <p className="errors">{error}</p> : null}
       {notice ? <p className="notice">{notice}</p> : null}
       {invite ? (
@@ -142,17 +144,17 @@ export function ConviteAdminPage() {
             <strong>{request.name}</strong>
             <span>{request.email}</span>
             <div className="row">
-              <button type="button" onClick={() => void decide(request.membershipId, 'aprovar')}>
+              <button type="button" className="button-primary" onClick={() => void decide(request.membershipId, 'aprovar')}>
                 Aprovar
               </button>
-              <button type="button" onClick={() => void decide(request.membershipId, 'rejeitar')}>
+              <button type="button" className="button-danger-outline" onClick={() => void decide(request.membershipId, 'rejeitar')}>
                 Rejeitar
               </button>
             </div>
           </li>
         ))}
       </ul>
-      <p>
+      <p className="row">
         <Link to="..">Voltar</Link>
       </p>
     </section>

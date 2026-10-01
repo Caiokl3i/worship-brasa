@@ -74,9 +74,9 @@ test.group('Conta', (group) => {
     })
   })
 
-  test('rota interna sem cookie responde 401', async ({ client }) => {
+  test('consulta de sessão sem cookie não é erro', async ({ client }) => {
     const me = await client.get('/api/eu')
-    me.assertStatus(401)
+    me.assertStatus(204)
   })
 
   test('troca a senha e mantém esta sessão', async ({ client }) => {
@@ -114,7 +114,7 @@ test.group('Conta', (group) => {
     await user.save()
 
     const me = await client.get('/api/eu')
-    me.assertStatus(401)
+    me.assertStatus(204)
   })
 
   test('código novo funciona uma vez e não volta no json', async ({ client, assert }) => {

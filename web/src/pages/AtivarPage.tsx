@@ -41,7 +41,7 @@ export function AtivarPage() {
         </p>
       }
     >
-      <form onSubmit={(event) => void confirm(event)} className="form">
+      <form onSubmit={(event) => void confirm(event)} className="form auth-form">
         <FieldErrors errors={errors} />
         <TextField
           label="Nome"
@@ -85,7 +85,7 @@ export function AtivarPage() {
           onChange={setPasswordConfirmation}
           message={fieldMessage(errors, 'passwordConfirmation')}
         />
-        <button type="submit">Criar conta</button>
+        <button type="submit" className="button-primary auth-submit-btn">Criar conta</button>
       </form>
     </AuthSplit>
   )

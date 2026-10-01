@@ -5,6 +5,7 @@ type ParamValue = string | number | bigint | boolean
 export type ScannedRoutes = {
   ALL: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'profile.show': { paramsTuple?: []; params?: {} }
     'account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.google': { paramsTuple?: []; params?: {} }
@@ -14,7 +15,6 @@ export type ScannedRoutes = {
     'invites.activate': { paramsTuple?: []; params?: {} }
     'integrations.index': { paramsTuple?: []; params?: {} }
     'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
-    'profile.show': { paramsTuple?: []; params?: {} }
     'calendars.show': { paramsTuple?: []; params?: {} }
     'calendars.store': { paramsTuple?: []; params?: {} }
     'calendars.callback': { paramsTuple?: []; params?: {} }
@@ -113,10 +113,10 @@ export type ScannedRoutes = {
   }
   GET: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'profile.show': { paramsTuple?: []; params?: {} }
     'session.google_callback': { paramsTuple?: []; params?: {} }
     'integrations.index': { paramsTuple?: []; params?: {} }
     'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
-    'profile.show': { paramsTuple?: []; params?: {} }
     'calendars.show': { paramsTuple?: []; params?: {} }
     'calendars.callback': { paramsTuple?: []; params?: {} }
     'notifications.index': { paramsTuple?: []; params?: {} }
@@ -150,10 +150,10 @@ export type ScannedRoutes = {
   }
   HEAD: {
     'health.show': { paramsTuple?: []; params?: {} }
+    'profile.show': { paramsTuple?: []; params?: {} }
     'session.google_callback': { paramsTuple?: []; params?: {} }
     'integrations.index': { paramsTuple?: []; params?: {} }
     'integrations.show': { paramsTuple: [ParamValue]; params: {'scheduleId': ParamValue} }
-    'profile.show': { paramsTuple?: []; params?: {} }
     'calendars.show': { paramsTuple?: []; params?: {} }
     'calendars.callback': { paramsTuple?: []; params?: {} }
     'notifications.index': { paramsTuple?: []; params?: {} }

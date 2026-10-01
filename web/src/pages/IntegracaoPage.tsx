@@ -66,10 +66,10 @@ export function IntegracaoPage() {
 
   if (!ministry.membership.isAdmin) {
     return (
-      <section>
+      <section className="page">
         <h1>Integrações</h1>
-        <p>Você não pode fazer isso.</p>
-        <p>
+        <p className="empty-state-card">Você não pode fazer isso.</p>
+        <p className="row">
           <Link to="..">Voltar</Link>
         </p>
       </section>
@@ -77,9 +77,11 @@ export function IntegracaoPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Integrações</p>
-      <h1>{ministry.name}</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Tokens de API</h1>
+      </header>
       {error ? <p className="errors">{error}</p> : null}
       {notice ? <p className="notice">{notice}</p> : null}
       {plain ? (
@@ -92,7 +94,7 @@ export function IntegracaoPage() {
           <span>Prefixo {token.prefix}</span>
           {token.revokedAt ? <span>Revogado</span> : <span>Ativo</span>}
           {token.revokedAt ? null : (
-            <button type="button" onClick={() => void revoke()}>
+            <button type="button" className="button-danger-outline" onClick={() => void revoke()}>
               Revogar
             </button>
           )}
@@ -103,7 +105,7 @@ export function IntegracaoPage() {
       <button type="button" onClick={() => void generate()}>
         {token && !token.revokedAt ? 'Gerar outro' : 'Gerar token'}
       </button>
-      <p>
+      <p className="row">
         <Link to="..">Voltar</Link>
       </p>
     </section>

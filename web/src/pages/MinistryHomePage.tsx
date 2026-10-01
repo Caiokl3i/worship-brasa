@@ -6,7 +6,7 @@ import { Icon } from '../components/Icon.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import { BRAZIL_TIMEZONES, type MinistryDetail } from '../lib/ministry.ts'
 import type { NoticeItem, NoticeLists } from '../lib/notice.ts'
-import type { ScheduleLists } from '../lib/schedule.ts'
+import { formatInZone, type ScheduleLists } from '../lib/schedule.ts'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 
 export function MinistryHomePage() {
@@ -110,15 +110,17 @@ export function MinistryHomePage() {
             <div className="ministry-meta-row">
               <span className="meta-stat">
                 <Icon name="calendar" size={14} />
-                <span>{mySchedules.length}</span>
+                <span>
+                  {mySchedules.length} {mySchedules.length === 1 ? 'escala' : 'escalas'}
+                </span>
               </span>
               <span className="meta-stat">
                 <Icon name="music" size={14} />
-                <span>{ministry.musicModuleEnabled ? 'Ativo' : '0'}</span>
+                <span>{ministry.musicModuleEnabled ? 'Música ativa' : 'Sem música'}</span>
               </span>
               <span className="meta-stat">
                 <Icon name="users" size={14} />
-                <span>1</span>
+                <span>{ministry.membership.isAdmin ? 'Administrador' : 'Membro'}</span>
               </span>
             </div>
           </div>
@@ -188,7 +190,7 @@ export function MinistryHomePage() {
                     <Icon name="calendar" size={16} className="item-leading-icon" />
                     <strong>{schedule.title}</strong>
                   </div>
-                  <span className="schedule-time">{schedule.startsAt}</span>
+                  <span className="schedule-time">{formatInZone(schedule.startsAt, ministry.timezone)}</span>
                 </Link>
               </li>
             ))}
@@ -248,7 +250,7 @@ export function MinistryHomePage() {
           </div>
           <form onSubmit={(event) => void save(event)} className="form card settings-card">
             <FieldErrors errors={errors} />
-            {notice ? <p className="notice">{notice}</p> : null}
+            {notice ? <p className="notice-success">{notice}</p> : null}
             <TextField
               label="Nome do ministério"
               name="name"

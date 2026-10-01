@@ -221,14 +221,14 @@ export function RepertorioFormPage() {
   }
 
   if (!ready) {
-    return <p>Carregando…</p>
+    return <p className="page-loading">Carregando…</p>
   }
 
   if (missing) {
     return (
-      <section>
-        <h1>Música não encontrada.</h1>
-        <p>
+      <section className="page">
+        <h1>Música não encontrada</h1>
+        <p className="row">
           <Link to={`/m/${ministry.id}/repertorio`}>Voltar</Link>
         </p>
       </section>
@@ -237,10 +237,10 @@ export function RepertorioFormPage() {
 
   if (!canManage && !songId) {
     return (
-      <section>
+      <section className="page">
         <h1>Repertório</h1>
-        <p>Você não pode fazer isso.</p>
-        <p>
+        <p className="empty-state-card">Você não pode fazer isso.</p>
+        <p className="row">
           <Link to={`/m/${ministry.id}/repertorio`}>Voltar</Link>
         </p>
       </section>
@@ -252,9 +252,11 @@ export function RepertorioFormPage() {
   )
 
   return (
-    <section>
-      <p className="eyebrow">Repertório</p>
-      <h1>{songId ? title || 'Música' : 'Cadastrar música'}</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Repertório</p>
+        <h1>{songId ? title || 'Música' : 'Cadastrar música'}</h1>
+      </header>
       <form onSubmit={(event) => void save(event)} className="form">
         <FieldErrors errors={errors} />
         {notice ? <p className="notice">{notice}</p> : null}
@@ -495,7 +497,7 @@ export function RepertorioFormPage() {
         {canManage ? <button type="submit">Salvar</button> : null}
       </form>
       {canManage && songId ? (
-        <button type="button" onClick={() => void remove()}>
+        <button type="button" className="button-danger-outline" onClick={() => void remove()}>
           Excluir música
         </button>
       ) : null}

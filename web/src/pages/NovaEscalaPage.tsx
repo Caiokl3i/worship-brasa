@@ -81,9 +81,11 @@ export function NovaEscalaPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Escalas</p>
-      <h1>Nova escala</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Escalas</p>
+        <h1>Nova escala</h1>
+      </header>
       <form className="form" onSubmit={(event) => void submit(event)}>
         <FieldErrors errors={errors} />
         <TextField
@@ -218,7 +220,7 @@ export function NovaEscalaPage() {
         ) : null}
         <button type="submit">Criar rascunho</button>
       </form>
-      <p>
+      <p className="row">
         <Link to={`/m/${ministry.id}/escalas`}>Voltar</Link>
       </p>
     </section>

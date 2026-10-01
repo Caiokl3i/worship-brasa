@@ -5,7 +5,7 @@ export function RequireAuth() {
   const { status } = useSession()
 
   if (status === 'carregando') {
-    return <p className="page">Carregando…</p>
+    return <p className="page-loading">Carregando…</p>
   }
 
   if (status === 'anonimo') {
@@ -19,7 +19,7 @@ export function GuestOnly() {
   const { status } = useSession()
 
   if (status === 'carregando') {
-    return <p className="page">Carregando…</p>
+    return <p className="page-loading">Carregando…</p>
   }
 
   if (status === 'dentro') {

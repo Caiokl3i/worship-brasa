@@ -19,6 +19,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   async function refresh() {
     try {
       const me = await api<PublicUser>('/api/eu')
+      if (!me) {
+        setUserState(null)
+        setStatus('anonimo')
+        return
+      }
       setUserState(me)
       setStatus('dentro')
     } catch (error) {

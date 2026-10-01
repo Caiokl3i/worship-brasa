@@ -80,15 +80,15 @@ export function ChatPanel({ path, timeZone }: { path: string; timeZone: string }
   }
 
   return (
-    <div>
+    <div className="chat-panel">
       {notice ? <p className="notice">{notice}</p> : null}
       {hasMore ? (
-        <button type="button" onClick={() => void older()}>
+        <button type="button" className="button-outline" onClick={() => void older()}>
           Mensagens anteriores
         </button>
       ) : null}
-      {messages.length === 0 ? <p>Nenhuma mensagem.</p> : null}
-      <ol className="list">
+      {messages.length === 0 ? <p className="empty-state-card">Nenhuma mensagem.</p> : null}
+      <ol className="list chat-thread">
         {messages.map((message) => (
           <li key={message.id} className="card">
             <strong>{message.author.name}</strong>

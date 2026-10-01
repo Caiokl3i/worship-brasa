@@ -31,9 +31,11 @@ export function ConvitePage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Convite</p>
-      <h1>Entrar no ministério</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Convite</p>
+        <h1>Entrar no ministério</h1>
+      </header>
       <form onSubmit={(event) => void submit(event)} className="form">
         <FieldErrors errors={errors} />
         {notice ? <p className="notice">{notice}</p> : null}
@@ -46,7 +48,7 @@ export function ConvitePage() {
         />
         <button type="submit">Solicitar entrada</button>
       </form>
-      <p>
+      <p className="row">
         <Link to="/ministerios">Voltar</Link>
       </p>
     </section>

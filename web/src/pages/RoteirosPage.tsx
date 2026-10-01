@@ -119,18 +119,22 @@ export function RoteirosPage() {
 
   if (!canManage) {
     return (
-      <section>
+      <section className="page">
         <h1>Roteiros</h1>
-        <p>Você não pode fazer isso.</p>
-        <Link to={`/m/${ministry.id}`}>Voltar</Link>
+        <p className="empty-state-card">Você não pode fazer isso.</p>
+        <p className="row">
+          <Link to={`/m/${ministry.id}`}>Voltar</Link>
+        </p>
       </section>
     )
   }
 
   return (
-    <section>
-      <p className="eyebrow">Ministério</p>
-      <h1>Roteiros</h1>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Modelos de roteiro</h1>
+      </header>
       <p className="row">
         <Link to={`/m/${ministry.id}`}>Voltar</Link>
         <button type="button" onClick={startNew}>

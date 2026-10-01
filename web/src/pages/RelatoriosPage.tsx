@@ -122,30 +122,43 @@ export function RelatoriosPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Ministério</p>
-      <h1>Relatórios</h1>
-      <p>
+    <section className="page page-wide">
+      <header className="page-header">
+        <p className="eyebrow">Ministério</p>
+        <h1>Relatórios</h1>
+      </header>
+      <p className="row">
         <Link to="..">Voltar</Link>
       </p>
-      {notice ? <p>{notice}</p> : null}
+      {notice ? <p className="errors">{notice}</p> : null}
 
       {overview ? (
-        <div className="card">
-          <h2>Este mês</h2>
-          <p>{overview.schedules} escalas</p>
-          <p>{overview.participations} escalações</p>
-          <p>{overview.assignments} atribuições</p>
+        <div className="stat-grid">
           <p>
-            Confirmações: {overview.confirmations.pending} pendentes,{' '}
-            {overview.confirmations.confirmed} confirmadas, {overview.confirmations.declined}{' '}
-            recusadas
+            <span className="overview-line">Escalas</span>
+            {overview.schedules}
           </p>
-          <p>{overview.absences} faltas</p>
+          <p>
+            <span className="overview-line">Escalações</span>
+            {overview.participations}
+          </p>
+          <p>
+            <span className="overview-line">Atribuições</span>
+            {overview.assignments}
+          </p>
+          <p>
+            <span className="overview-line">Faltas</span>
+            {overview.absences}
+          </p>
+          <p>
+            <span className="overview-line">Confirmações</span>
+            {overview.confirmations.pending} pendentes, {overview.confirmations.confirmed} confirmadas,{' '}
+            {overview.confirmations.declined} recusadas
+          </p>
         </div>
       ) : null}
 
-      <form onSubmit={(event) => void applyRange(event)} className="form">
+      <form onSubmit={(event) => void applyRange(event)} className="form toolbar">
         <FieldErrors errors={errors.filter((error) => error.field !== 'month')} />
         <TextField
           label="Início"

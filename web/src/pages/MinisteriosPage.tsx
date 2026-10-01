@@ -60,13 +60,15 @@ export function MinisteriosPage() {
 
   return (
     <div className="dashboard-container">
-      <div className="block-head">
-        <div className="block-title-group">
-          <span className="block-label">Meus Ministérios</span>
-          <span className="count">{list.active.length}</span>
+      <div className="page-header-row">
+        <div>
+          <h1 className="page-title">Ministérios</h1>
+          <p className="eyebrow">
+            {list.active.length} {list.active.length === 1 ? 'ativo' : 'ativos'}
+          </p>
         </div>
-        <Link to="/ministerios/novo" className="button-add-link">
-          <Icon name="plus" size={14} /> Novo Ministério
+        <Link to="/ministerios/novo" className="button-primary-compact">
+          <Icon name="plus" size={16} /> Novo ministério
         </Link>
       </div>
 

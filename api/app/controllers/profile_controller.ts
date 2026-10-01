@@ -12,8 +12,20 @@ const wrongCurrentPassword = {
 }
 
 export default class ProfileController {
-  async show({ auth, response }: HttpContext) {
-    return response.ok(await toPublicUser(auth.getUserOrFail()))
+  async show({ auth, session, response }: HttpContext) {
+    await auth.check()
+    const user = auth.user
+    if (!user || user.deletedAt) {
+      return response.noContent()
+    }
+
+    const version = Number(session.get('auth_version'))
+    if (version !== user.authVersion) {
+      await auth.use('web').logout()
+      return response.noContent()
+    }
+
+    return response.ok(await toPublicUser(user))
   }
 
   async update({ auth, request, response }: HttpContext) {

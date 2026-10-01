@@ -78,11 +78,13 @@ export function MembrosPage() {
   }
 
   return (
-    <section>
-      <h1>Ministério</h1>
-      <p className="eyebrow">{ministry.name}</p>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">{ministry.name}</p>
+        <h1>Ministério</h1>
+      </header>
       <form
-        className="form"
+        className="form toolbar"
         onSubmit={(event) => {
           event.preventDefault()
           void loadMembers(query)
@@ -92,7 +94,7 @@ export function MembrosPage() {
         <button type="submit">Buscar</button>
       </form>
 
-      {members.length === 0 ? <p>Nenhum membro com esse nome.</p> : null}
+      {members.length === 0 ? <p className="empty-state-card">Nenhum membro com esse nome.</p> : null}
       <ul className="list">
         {members.map((member) => (
           <li key={member.membershipId}>
@@ -147,7 +149,7 @@ export function MembrosPage() {
         </section>
       ) : null}
 
-      <p>
+      <p className="row">
         <Link to="..">Voltar</Link>
       </p>
     </section>

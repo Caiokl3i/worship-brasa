@@ -64,14 +64,16 @@ export function PreferenciasNotificacaoPage() {
   }
 
   return (
-    <section>
-      <p className="eyebrow">Conta</p>
-      <h1>Preferências de notificação</h1>
-      <p>
+    <section className="page">
+      <header className="page-header">
+        <p className="eyebrow">Conta</p>
+        <h1>Preferências de notificação</h1>
+      </header>
+      <p className="row">
         <Link to="/notificacoes">Voltar</Link>
       </p>
-      {error ? <p>{error}</p> : null}
-      {notice ? <p>{notice}</p> : null}
+      {error ? <p className="errors">{error}</p> : null}
+      {notice ? <p className="notice-success">{notice}</p> : null}
       <form onSubmit={(event) => void save(event)} className="form">
         {groups.map((group) => (
           <fieldset key={group.id}>
