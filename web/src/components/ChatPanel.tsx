@@ -1,17 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fieldMessage } from './FieldErrors.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import { mergeMessages, type ChatMessageItem, type ChatPage } from '../lib/chat.ts'
-import { formatInZone } from '../lib/schedule.ts'
 
 const REFRESH_MS = 4000
 
-export function ChatPanel({ path, timeZone }: { path: string; timeZone: string }) {
+export function ChatPanel({
+  path,
+  timeZone,
+  membershipId,
+}: {
+  path: string
+  timeZone: string
+  membershipId: string
+}) {
   const [messages, setMessages] = useState<ChatMessageItem[]>([])
   const [hasMore, setHasMore] = useState(false)
   const [body, setBody] = useState('')
   const [errors, setErrors] = useState<FieldError[]>([])
   const [notice, setNotice] = useState('')
+  const threadRef = useRef<HTMLOListElement>(null)
+  const newestId = messages.at(-1)?.id
+
+  useEffect(() => {
+    const thread = threadRef.current
+    if (!thread) {
+      return
+    }
+    thread.scrollTop = thread.scrollHeight
+  }, [newestId])
 
   useEffect(() => {
     let cancelled = false
@@ -87,24 +104,45 @@ export function ChatPanel({ path, timeZone }: { path: string; timeZone: string }
           Mensagens anteriores
         </button>
       ) : null}
-      {messages.length === 0 ? <p className="empty-state-card">Nenhuma mensagem.</p> : null}
-      <ol className="list chat-thread">
-        {messages.map((message) => (
-          <li key={message.id} className="card">
-            <strong>{message.author.name}</strong>
-            <span> {formatInZone(message.createdAt, timeZone)}</span>
-            <p>{message.body}</p>
-          </li>
-        ))}
+      <ol className="chat-thread" ref={threadRef}>
+        {messages.map((message) => {
+          const mine = message.author.membershipId === membershipId
+          const firstName = message.author.name.trim().split(/\s+/)[0] || message.author.name
+          return (
+            <li key={message.id} className={mine ? 'chat-bubble is-mine' : 'chat-bubble'}>
+              <header>
+                <strong>{firstName}</strong>
+                <span>{chatClock(message.createdAt, timeZone)}</span>
+              </header>
+              <p>{message.body}</p>
+            </li>
+          )
+        })}
       </ol>
-      <form className="form" onSubmit={(event) => void send(event)}>
-        <label className="field">
-          <span>Mensagem</span>
-          <textarea name="body" value={body} onChange={(event) => setBody(event.target.value)} />
-          {fieldMessage(errors, 'body') ? <small>{fieldMessage(errors, 'body')}</small> : null}
-        </label>
-        <button type="submit">Enviar</button>
+      <form className="chat-compose" onSubmit={(event) => void send(event)}>
+        <input
+          name="body"
+          value={body}
+          placeholder="Digite aqui..."
+          onChange={(event) => setBody(event.target.value)}
+        />
+        <button type="submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M22 2 11 13" />
+            <path d="m22 2-7 20-4-9-9-4 20-7z" />
+          </svg>
+          Enviar
+        </button>
+        {fieldMessage(errors, 'body') ? <small className="song-error">{fieldMessage(errors, 'body')}</small> : null}
       </form>
     </div>
   )
+}
+
+function chatClock(iso: string, timeZone: string) {
+  return new Intl.DateTimeFormat('pt-BR', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(iso))
 }

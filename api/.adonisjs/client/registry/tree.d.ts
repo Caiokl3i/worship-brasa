@@ -65,6 +65,7 @@ export interface ApiDefinition {
     reject: typeof routes['members.reject']
     update: typeof routes['members.update']
     assignFunctions: typeof routes['members.assign_functions']
+    remove: typeof routes['members.remove']
   }
   ministryFunctions: {
     index: typeof routes['ministry_functions.index']

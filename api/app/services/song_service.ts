@@ -27,6 +27,7 @@ type LinkInput = {
 export type SongInput = {
   title: string
   artist?: string | null
+  notes?: string | null
   bpm?: number | null
   durationSeconds?: number | null
   defaultKey?: string | null
@@ -39,6 +40,7 @@ export type SongInput = {
 type PreparedSong = {
   title: string
   artist: string | null
+  notes: string | null
   bpm: number | null
   durationSeconds: number | null
   defaultKey: string | null
@@ -97,6 +99,7 @@ function prepare(input: SongInput): PreparedSong {
   return {
     title: input.title.trim(),
     artist: blankToNull(input.artist),
+    notes: blankToNull(input.notes),
     bpm: input.bpm ?? null,
     durationSeconds: input.durationSeconds ?? null,
     defaultKey: assertKey('defaultKey', input.defaultKey),
@@ -203,6 +206,7 @@ export default class SongService {
           ministryId: actor.ministryId,
           title: payload.title,
           artist: payload.artist,
+          notes: payload.notes,
           bpm: payload.bpm,
           durationSeconds: payload.durationSeconds,
           defaultKey: payload.defaultKey,
@@ -230,6 +234,7 @@ export default class SongService {
       current.useTransaction(trx)
       current.title = payload.title
       current.artist = payload.artist
+      current.notes = payload.notes
       current.bpm = payload.bpm
       current.durationSeconds = payload.durationSeconds
       current.defaultKey = payload.defaultKey

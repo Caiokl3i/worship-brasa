@@ -42,6 +42,10 @@ export type IconName =
   | 'message'
   | 'eye'
   | 'external'
+  | 'more'
+  | 'alert'
+  | 'type'
+  | 'refresh'
 
 export function Icon({
   name,
@@ -366,6 +370,22 @@ export function Icon({
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       )
+    case 'more':
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="5" r="1.2" fill={color} stroke="none" />
+          <circle cx="12" cy="12" r="1.2" fill={color} stroke="none" />
+          <circle cx="12" cy="19" r="1.2" fill={color} stroke="none" />
+        </svg>
+      )
+    case 'alert':
+      return (
+        <svg {...props}>
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      )
     case 'mail':
       return (
         <svg {...props}>
@@ -378,6 +398,22 @@ export function Icon({
         <svg {...props}>
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
           <circle cx="12" cy="12" r="3" />
+        </svg>
+      )
+    case 'type':
+      return (
+        <svg {...props}>
+          <polyline points="4 7 4 4 20 4 20 7" />
+          <line x1="12" y1="4" x2="12" y2="20" />
+          <line x1="8" y1="20" x2="16" y2="20" />
+        </svg>
+      )
+    case 'refresh':
+      return (
+        <svg {...props}>
+          <polyline points="23 4 23 10 17 10" />
+          <polyline points="1 20 1 14 7 14" />
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
         </svg>
       )
     case 'external':

@@ -511,6 +511,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['assignFunctions']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'members.remove': {
+    methods: ["POST"]
+    pattern: '/api/ministerios/:ministryId/membros/:membershipId/remover'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { ministryId: ParamValue; membershipId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/members_controller').default['remove']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/members_controller').default['remove']>>>
+    }
+  }
   'ministry_functions.index': {
     methods: ["GET","HEAD"]
     pattern: '/api/ministerios/:ministryId/funcoes'

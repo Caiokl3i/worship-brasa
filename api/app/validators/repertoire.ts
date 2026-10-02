@@ -26,6 +26,7 @@ const messages = new SimpleMessagesProvider({
   'name.minLength': 'Informe o nome.',
   'name.maxLength': 'O nome é longo demais.',
   'description.maxLength': 'A descrição é longa demais.',
+  'notes.maxLength': 'As observações passam de 150 caracteres.',
 })
 
 const optionalText = (maxLength: number) =>
@@ -34,6 +35,7 @@ const optionalText = (maxLength: number) =>
 export const saveSongValidator = vine.create({
   title: vine.string().trim().minLength(2).maxLength(160),
   artist: optionalText(160),
+  notes: optionalText(150),
   bpm: vine.number().min(1).max(400).nullable().optional(),
   durationSeconds: vine.number().min(1).max(86400).nullable().optional(),
   defaultKey: optionalText(8),

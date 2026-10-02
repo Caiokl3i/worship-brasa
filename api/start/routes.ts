@@ -92,6 +92,10 @@ router
           MembersController,
           'assignFunctions',
         ])
+        router.post('/ministerios/:ministryId/membros/:membershipId/remover', [
+          MembersController,
+          'remove',
+        ])
 
         router.get('/ministerios/:ministryId/funcoes', [MinistryFunctionsController, 'index'])
         router.post('/ministerios/:ministryId/funcoes', [MinistryFunctionsController, 'store'])

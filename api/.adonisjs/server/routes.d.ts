@@ -46,6 +46,7 @@ export type ScannedRoutes = {
     'members.reject': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'members.update': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'members.assign_functions': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'ministry_functions.index': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.reorder': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
@@ -205,6 +206,7 @@ export type ScannedRoutes = {
     'integrations.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'members.approve': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'members.reject': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
+    'members.remove': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'membershipId': ParamValue} }
     'ministry_functions.store': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.reorder': { paramsTuple: [ParamValue]; params: {'ministryId': ParamValue} }
     'ministry_functions.archive': { paramsTuple: [ParamValue,ParamValue]; params: {'ministryId': ParamValue,'functionId': ParamValue} }

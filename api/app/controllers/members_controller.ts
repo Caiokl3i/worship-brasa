@@ -58,4 +58,9 @@ export default class MembersController {
     await new MemberService().assignFunctions(membership, params.membershipId, payload.functionIds)
     return response.noContent()
   }
+
+  async remove({ membership, params, response }: HttpContext) {
+    await new MemberService().remove(membership, params.membershipId)
+    return response.noContent()
+  }
 }

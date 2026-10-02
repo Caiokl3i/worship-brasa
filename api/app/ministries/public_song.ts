@@ -23,6 +23,7 @@ export function toSongSummary(song: Song) {
     id: song.id,
     title: song.title,
     artist: song.artist,
+    notes: song.notes,
     bpm: song.bpm,
     durationSeconds: song.durationSeconds,
     defaultKey: song.defaultKey,

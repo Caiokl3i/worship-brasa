@@ -51,6 +51,7 @@ export type SongSummary = {
   id: string
   title: string
   artist: string | null
+  notes: string | null
   bpm: number | null
   durationSeconds: number | null
   defaultKey: string | null

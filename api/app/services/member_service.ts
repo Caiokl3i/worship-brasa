@@ -202,6 +202,44 @@ export default class MemberService {
     await target.related('functions').sync(uniqueIds)
   }
 
+  async remove(actor: Membership, membershipId: string) {
+    new MembershipAccessService().assertAdmin(actor)
+
+    if (!isUuid(membershipId)) {
+      throw new RequestNotFoundException()
+    }
+
+    await db.transaction(async (trx) => {
+      const target = await Membership.query({ client: trx })
+        .where('id', membershipId)
+        .where('ministryId', actor.ministryId)
+        .where('status', 'active')
+        .forUpdate()
+        .first()
+
+      if (!target) {
+        throw new RequestNotFoundException()
+      }
+
+      if (target.isAdmin) {
+        const admins = await new MembershipAccessService().lockAdmins(actor.ministryId, trx)
+        if (admins.length <= 1) {
+          throw new FieldException('isAdmin', 'O ministério precisa de um administrador.')
+        }
+      }
+
+      target.useTransaction(trx)
+      target.status = 'left'
+      target.isAdmin = false
+      target.canManageSchedules = false
+      target.canManageRepertoire = false
+      target.canManageFunctions = false
+      target.canEditScheduleSongs = false
+      await target.save()
+      await target.related('functions').detach()
+    })
+  }
+
   async #pendingInMinistry(ministryId: string, membershipId: string) {
     if (!isUuid(membershipId)) {
       throw new RequestNotFoundException()

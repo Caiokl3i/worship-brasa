@@ -225,6 +225,40 @@ test.group('Ministério', (group) => {
       members: [{ name: 'Ana', functions: [{ name: 'Vocal', archived: true }] }],
     })
   })
+
+  test('administrador remove um integrante e o último administrador permanece', async ({
+    client,
+    assert,
+  }) => {
+    await register(client, 'Ana', 'ana@igreja.com')
+    const ministryId = await createMinistry(client, 'Louvor Ágape')
+    const invite = await client.post(`/api/ministerios/${ministryId}/convite`)
+    const code = invite.body().invite.code as string
+
+    await register(client, 'Bia', 'bia@igreja.com')
+    await client.post('/api/convites/entrar').json({ code })
+    await login(client, 'ana@igreja.com')
+    const queue = await client.get(`/api/ministerios/${ministryId}/pedidos`)
+    const biaId = queue.body().requests[0].membershipId as string
+    await client.post(`/api/ministerios/${ministryId}/pedidos/${biaId}/aprovar`)
+
+    const removed = await client.post(`/api/ministerios/${ministryId}/membros/${biaId}/remover`)
+    removed.assertStatus(204)
+
+    const members = await client.get(`/api/ministerios/${ministryId}/membros`)
+    members.assertStatus(200)
+    const names = (members.body().members as Array<{ name: string }>).map((item) => item.name)
+    assert.notInclude(names, 'Bia')
+
+    const anaId = (members.body().members as Array<{ name: string; membershipId: string }>).find(
+      (item) => item.name === 'Ana'
+    )?.membershipId
+    const blocked = await client.post(`/api/ministerios/${ministryId}/membros/${anaId}/remover`)
+    blocked.assertStatus(422)
+    blocked.assertBodyContains({
+      errors: [{ message: 'O ministério precisa de um administrador.' }],
+    })
+  })
 })
 
 function assertUnused(response: { assertStatus: (status: number) => void }) {

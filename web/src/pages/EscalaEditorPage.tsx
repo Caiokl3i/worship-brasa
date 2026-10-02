@@ -159,6 +159,26 @@ function googleCalendarHref(title: string, startsAt: string, endsAt: string | nu
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
+const SCHEDULE_PALETTE = [
+  { id: 'blue-green', name: 'Azul e verde', color: '#3f6fbe' },
+  { id: 'blue', name: 'Azul', color: '#4c94f5' },
+  { id: 'green', name: 'Verde', color: '#3dbe7a' },
+  { id: 'yellow', name: 'Amarelo', color: '#e2b340' },
+  { id: 'orange', name: 'Laranja', color: '#e07a3d' },
+  { id: 'red', name: 'Vermelho', color: '#e05a5a' },
+  { id: 'purple', name: 'Roxo', color: '#8b6adf' },
+  { id: 'pink', name: 'Rosa', color: '#d86aa8' },
+] as const
+
+function initials(name: string) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('')
+}
+
 function BoardArt({ kind }: { kind: 'songs' | 'people' | 'script' }) {
   return (
     <svg className="schedule-board-art" viewBox="0 0 160 160" aria-hidden="true">
@@ -221,6 +241,12 @@ export function EscalaEditorPage() {
   const canEditSongs = canManage || ministry.membership.canEditScheduleSongs
   const [tab, setTab] = useState<Tab>('resumo')
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [paletteId, setPaletteId] = useState('blue-green')
+  const [peopleView, setPeopleView] = useState<'membros' | 'funcoes'>('membros')
+  const [absenceOpen, setAbsenceOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const [missing, setMissing] = useState('')
   const [status, setStatus] = useState<'draft' | 'published'>('draft')
@@ -906,6 +932,13 @@ export function EscalaEditorPage() {
   }
 
   useEffect(() => {
+    const stored = localStorage.getItem(`schedule-palette:${scheduleId}`)
+    if (stored && SCHEDULE_PALETTE.some((item) => item.id === stored)) {
+      setPaletteId(stored)
+    }
+  }, [scheduleId])
+
+  useEffect(() => {
     if (!ready) {
       return
     }
@@ -990,6 +1023,48 @@ export function EscalaEditorPage() {
       }
     : null
   const confirmed = team.filter((member) => member.confirmation === 'confirmed').length
+  const pendingConfirmation =
+    status === 'published' &&
+    confirmationRequired &&
+    team.some((member) => member.confirmation === 'pending')
+  const palette = SCHEDULE_PALETTE.find((item) => item.id === paletteId) ?? SCHEDULE_PALETTE[0]
+  const functionGroups = new Map<string, { name: string; people: string[] }>()
+  for (const member of team) {
+    if (member.functions.length === 0) {
+      const bucket = functionGroups.get('none') ?? { name: 'Sem função', people: [] }
+      bucket.people.push(member.name)
+      functionGroups.set('none', bucket)
+      continue
+    }
+    for (const item of member.functions) {
+      const bucket = functionGroups.get(item.id) ?? { name: item.name, people: [] }
+      bucket.people.push(member.name)
+      functionGroups.set(item.id, bucket)
+    }
+  }
+  const functionCount = [...functionGroups.keys()].filter((id) => id !== 'none').length
+
+  function choosePalette(id: string) {
+    setPaletteId(id)
+    localStorage.setItem(`schedule-palette:${scheduleId}`, id)
+    setPaletteOpen(false)
+  }
+
+  function removeSchedule() {
+    setMenuOpen(false)
+    if (seriesInfo && !seriesInfo.detached) {
+      setScopeChoice('only_this')
+      setReplaceFilled(false)
+      setScopePrompt('delete')
+      return
+    }
+    if (!window.confirm('Excluir esta escala?')) {
+      return
+    }
+    void api(`/api/ministerios/${ministry.id}/escalas/${scheduleId}`, { method: 'DELETE' }).then(() =>
+      navigate(`/m/${ministry.id}/escalas`)
+    )
+  }
 
   return (
     <section className={tab === 'resumo' ? 'page notice-screen schedule-view' : 'page page-wide'}>
@@ -1002,12 +1077,41 @@ export function EscalaEditorPage() {
             <div className="notice-top-title">
               <h1>Escala</h1>
             </div>
-            <span />
+            <div className="schedule-top-more">
+              <button
+                type="button"
+                className="notice-icon-button"
+                aria-label="Mais opções"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((open) => !open)}
+              >
+                <Icon name="more" size={18} />
+              </button>
+              {menuOpen ? (
+                <div className="member-menu" role="menu">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setMenuOpen(false)
+                      setTab('dados')
+                    }}
+                  >
+                    Editar
+                  </button>
+                  {canManage ? (
+                    <button type="button" role="menuitem" className="is-danger" onClick={removeSchedule}>
+                      Excluir
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           </header>
           <FieldErrors errors={errors} />
           {notice ? <p className="notice">{notice}</p> : null}
           {hero ? (
-            <button type="button" className="schedule-hero" onClick={() => setTab('dados')}>
+            <div className="schedule-hero" style={{ background: palette.color }}>
               <span className="schedule-hero-date">
                 <strong>{hero.day}</strong>
                 <span>{hero.month.charAt(0).toUpperCase() + hero.month.slice(1)}</span>
@@ -1021,9 +1125,23 @@ export function EscalaEditorPage() {
                   {status === 'draft' ? ' • RASCUNHO' : ''}
                 </span>
               </span>
-            </button>
+            </div>
           ) : null}
           <div className="schedule-view-actions">
+            {pendingConfirmation ? (
+              <button
+                type="button"
+                className="is-pending"
+                onClick={() => setConfirmOpen((open) => !open)}
+              >
+                <Icon name="bell" size={14} /> Confirmação pendente
+              </button>
+            ) : null}
+            {canManage ? (
+              <button type="button" onClick={() => setAbsenceOpen((open) => !open)}>
+                <Icon name="user-check" size={14} /> Registrar faltas
+              </button>
+            ) : null}
             <button type="button" onClick={() => setShareOpen((open) => !open)}>
               <Icon name="external" size={14} /> Compartilhar
             </button>
@@ -1036,6 +1154,35 @@ export function EscalaEditorPage() {
               <Icon name="clock" size={14} /> Histórico
             </button>
           </div>
+          {confirmOpen && mine && status === 'published' && confirmationRequired ? (
+            <div className="schedule-inline-panel">
+              <span>{confirmationLabel(mine.confirmation) || 'Pendente'}</span>
+              <button type="button" onClick={() => void confirmAttendance('confirmed')}>
+                Confirmar
+              </button>
+              <button type="button" className="button-danger-outline" onClick={() => void confirmAttendance('declined')}>
+                Não participarei
+              </button>
+            </div>
+          ) : null}
+          {absenceOpen ? (
+            <div className="schedule-history">
+              {team.length === 0 ? <p>Nenhum participante nesta escala.</p> : null}
+              <ul>
+                {team.map((member) => (
+                  <li key={member.membershipId}>
+                    <span>
+                      {member.name}
+                      {member.absent ? ' · Falta' : ''}
+                    </span>
+                    <button type="button" onClick={() => void toggleAbsence(member)}>
+                      {member.absent ? 'Desmarcar falta' : 'Marcar falta'}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           {historyOpen ? (
             <div className="schedule-history">
               {changes.length === 0 ? <p>Nenhuma alteração registrada.</p> : null}
@@ -1048,70 +1195,132 @@ export function EscalaEditorPage() {
               </ul>
             </div>
           ) : null}
-          {mine && status === 'published' && confirmationRequired ? (
-            <div className="row">
-              <span>{confirmationLabel(mine.confirmation) || 'Pendente'}</span>
-              <button type="button" onClick={() => void confirmAttendance('confirmed')}>
-                Confirmar
-              </button>
-              <button type="button" className="button-danger-outline" onClick={() => void confirmAttendance('declined')}>
-                Não participarei
-              </button>
+          <div className="schedule-overview">
+            <div className="schedule-overview-stack">
+              <section className="schedule-panel">
+                <h2>Observações</h2>
+                <p>{notes.trim() || 'Observação'}</p>
+              </section>
+              {ministry.musicModuleEnabled ? (
+                <section className="schedule-panel schedule-songs">
+                  <h2>Músicas</h2>
+                  {canEditSongs ? (
+                    <button type="button" className="schedule-board-edit" onClick={() => setTab('musicas')}>
+                      <Icon name="pencil" size={14} /> Alterar músicas
+                    </button>
+                  ) : null}
+                  {songs.length === 0 ? (
+                    <>
+                      <BoardArt kind="songs" />
+                      <p>Nenhuma música adicionada.</p>
+                    </>
+                  ) : (
+                    <ul>
+                      {songs.map((song, index) => (
+                        <li key={`${song.songId}-${index}`}>{song.title}</li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              ) : null}
             </div>
-          ) : null}
-          <div className="schedule-board">
-            {ministry.musicModuleEnabled ? (
-              <button type="button" className="schedule-board-card" onClick={() => setTab('musicas')}>
-                <header>
-                  <span>Músicas</span>
-                  <span>{songs.length}</span>
-                </header>
-                {canEditSongs ? (
-                  <span className="schedule-board-edit">
-                    <Icon name="pencil" size={14} /> Alterar músicas
+            <div className="schedule-overview-stack">
+              <div className="schedule-palette">
+                <button
+                  type="button"
+                  aria-expanded={paletteOpen}
+                  onClick={() => setPaletteOpen((open) => !open)}
+                >
+                  <Icon name="user" size={16} />
+                  <span>
+                    <small>Paleta de cores</small>
+                    <strong>{palette.name}</strong>
                   </span>
-                ) : null}
-                {songs.length === 0 ? (
-                  <>
-                    <BoardArt kind="songs" />
-                    <p>Nenhuma música adicionada.</p>
-                  </>
-                ) : (
+                  <Icon name="chevron-right" size={16} className="schedule-palette-chevron" />
+                </button>
+                {paletteOpen ? (
                   <ul>
-                    {songs.map((song, index) => (
-                      <li key={`${song.songId}-${index}`}>{song.title}</li>
+                    {SCHEDULE_PALETTE.map((item) => (
+                      <li key={item.id}>
+                        <button type="button" onClick={() => choosePalette(item.id)}>
+                          <span className="schedule-swatch" style={{ background: item.color }} />
+                          {item.name}
+                          {item.id === paletteId ? <Icon name="check" size={14} /> : null}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              <section className="schedule-panel schedule-people-card">
+                <h2>
+                  Participantes
+                  <span>
+                    {confirmed}/{team.length}
+                  </span>
+                </h2>
+                <div className="schedule-participant-switch">
+                  <button
+                    type="button"
+                    aria-selected={peopleView === 'membros'}
+                    onClick={() => setPeopleView('membros')}
+                  >
+                    <Icon name="users" size={14} /> Membros
+                  </button>
+                  <button
+                    type="button"
+                    aria-selected={peopleView === 'funcoes'}
+                    onClick={() => setPeopleView('funcoes')}
+                  >
+                    <Icon name="sliders" size={14} /> Funções ({functionCount})
+                  </button>
+                  {canManage ? (
+                    <button type="button" onClick={() => setTab('equipe')}>
+                      <Icon name="pencil" size={14} /> Alterar Participantes
+                    </button>
+                  ) : null}
+                </div>
+                {team.length === 0 ? <p>Nenhum membro adicionado.</p> : null}
+                {peopleView === 'membros' ? (
+                  <ul>
+                    {team.map((member) => (
+                      <li key={member.membershipId}>
+                        <span className="member-avatar" aria-hidden="true">
+                          {initials(member.name)}
+                        </span>
+                        <span>
+                          <strong>{member.name}</strong>
+                          <em>
+                            {member.functions.length > 0
+                              ? member.functions.map((item) => item.name).join(', ')
+                              : 'Nenhuma função atribuída.'}
+                            {member.absent ? ' · Falta' : ''}
+                          </em>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ul className="schedule-function-groups">
+                    {[...functionGroups.values()].map((group) => (
+                      <li key={group.name}>
+                        <strong>{group.name}</strong>
+                        <em>{group.people.join(', ')}</em>
+                      </li>
                     ))}
                   </ul>
                 )}
-              </button>
-            ) : null}
-            <button type="button" className="schedule-board-card" onClick={() => setTab('equipe')}>
-              <header>
-                <span>Participantes</span>
-                <span>
-                  {confirmed}/{team.length}
-                </span>
-              </header>
-              {team.length === 0 ? (
-                <>
-                  <BoardArt kind="people" />
-                  <p>Nenhum membro adicionado.</p>
-                </>
-              ) : (
-                <ul>
-                  {team.map((member) => (
-                    <li key={member.membershipId}>
-                      {member.functions[0] ? functionIcon(member.functions[0].name) : '👤'} {member.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </button>
-            <button type="button" className="schedule-board-card" onClick={() => setTab('roteiro')}>
-              <header>
-                <span>Roteiro</span>
-                <span>{scriptItems.length}</span>
-              </header>
+              </section>
+            </div>
+            <section className="schedule-panel schedule-script">
+              <h2>
+                Roteiro
+                {canManage ? (
+                  <button type="button" aria-label="Abrir roteiro" onClick={() => setTab('roteiro')}>
+                    <Icon name="more" size={16} />
+                  </button>
+                ) : null}
+              </h2>
               {scriptItems.length === 0 ? (
                 <>
                   <BoardArt kind="script" />
@@ -1124,7 +1333,7 @@ export function EscalaEditorPage() {
                   ))}
                 </ul>
               )}
-            </button>
+            </section>
           </div>
           <button type="button" className="schedule-comments" onClick={() => setTab('chat')}>
             <Icon name="message" size={16} /> Comentários ({commentCount})
@@ -1542,6 +1751,7 @@ export function EscalaEditorPage() {
         <ChatPanel
           path={`/api/ministerios/${ministry.id}/escalas/${scheduleId}/chat`}
           timeZone={ministry.timezone}
+          membershipId={ministry.membership.id}
         />
       ) : null}
 

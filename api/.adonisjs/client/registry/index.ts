@@ -258,6 +258,12 @@ const routes = {
     tokens: [{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":0,"val":"membros","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":1,"val":"membershipId","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/funcoes","type":0,"val":"funcoes","end":""}],
     types: placeholder as Registry['members.assign_functions']['types'],
   },
+  'members.remove': {
+    methods: ["POST"],
+    pattern: '/api/ministerios/:ministryId/membros/:membershipId/remover',
+    tokens: [{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":0,"val":"api","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":0,"val":"ministerios","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":1,"val":"ministryId","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":0,"val":"membros","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":1,"val":"membershipId","end":""},{"old":"/api/ministerios/:ministryId/membros/:membershipId/remover","type":0,"val":"remover","end":""}],
+    types: placeholder as Registry['members.remove']['types'],
+  },
   'ministry_functions.index': {
     methods: ["GET","HEAD"],
     pattern: '/api/ministerios/:ministryId/funcoes',

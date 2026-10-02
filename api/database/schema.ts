@@ -883,6 +883,7 @@ export class SongSchema extends BaseModel {
     'folderId',
     'id',
     'ministryId',
+    'notes',
     'title',
     'updatedAt',
   ] as const
@@ -907,6 +908,8 @@ export class SongSchema extends BaseModel {
   declare id: string
   @column()
   declare ministryId: string
+  @column()
+  declare notes: string | null
   @column()
   declare title: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })

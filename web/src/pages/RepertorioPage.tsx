@@ -1,24 +1,54 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FieldErrors } from '../components/FieldErrors.tsx'
+import { Icon } from '../components/Icon.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
-import {
-  formatDuration,
-  type ClassificationItem,
-  type FolderItem,
-  type SongSummary,
-} from '../lib/repertoire.ts'
+import { type ClassificationItem, type FolderItem, type SongSummary } from '../lib/repertoire.ts'
 import { downloadCsv } from '../lib/spreadsheet.ts'
+
+type CatalogTab = 'musicas' | 'pastas' | 'artistas'
+
+const KEY_COLORS: Record<string, string> = {
+  C: '#e85d4c',
+  'C#': '#e85d4c',
+  D: '#3d9a6a',
+  Eb: '#3d9a6a',
+  E: '#e85d4c',
+  F: '#3d9a6a',
+  'F#': '#d4a017',
+  G: '#e85d4c',
+  Ab: '#3d9a6a',
+  A: '#3d9a6a',
+  Bb: '#e85d4c',
+  B: '#3d9a6a',
+}
+
+function coverHue(title: string) {
+  let hash = 0
+  for (const char of title) {
+    hash = (hash + char.charCodeAt(0) * 17) % 360
+  }
+  return hash
+}
+
+function songLine(song: SongSummary) {
+  const label = song.classification?.name || song.folder?.name || ''
+  const key = song.defaultKey ? `Tom: ${song.defaultKey}` : ''
+  return [label, key].filter(Boolean).join(', ')
+}
 
 export function RepertorioPage() {
   const { ministry } = useMinistry()
   const canManage = ministry.membership.isAdmin || ministry.membership.canManageRepertoire
+  const [tab, setTab] = useState<CatalogTab>('musicas')
   const [draft, setDraft] = useState('')
   const [query, setQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [folderId, setFolderId] = useState('')
-  const [classificationId, setClassificationId] = useState('')
+  const [artistName, setArtistName] = useState('')
   const [songs, setSongs] = useState<SongSummary[] | null>(null)
   const [folders, setFolders] = useState<FolderItem[]>([])
   const [classifications, setClassifications] = useState<ClassificationItem[]>([])
@@ -31,20 +61,9 @@ export function RepertorioPage() {
   }> | null>(null)
   const [sheetError, setSheetError] = useState('')
 
-  async function loadCatalog(term = query, folder = folderId, classification = classificationId) {
-    const params = new URLSearchParams()
-    if (term) {
-      params.set('q', term)
-    }
-    if (folder) {
-      params.set('folderId', folder)
-    }
-    if (classification) {
-      params.set('classificationId', classification)
-    }
-    const suffix = params.toString() ? `?${params.toString()}` : ''
+  async function loadCatalog() {
     const [songBody, folderBody, classificationBody] = await Promise.all([
-      api<{ songs: SongSummary[] }>(`/api/ministerios/${ministry.id}/musicas${suffix}`),
+      api<{ songs: SongSummary[] }>(`/api/ministerios/${ministry.id}/musicas`),
       api<{ folders: FolderItem[] }>(`/api/ministerios/${ministry.id}/pastas`),
       api<{ classifications: ClassificationItem[] }>(
         `/api/ministerios/${ministry.id}/classificacoes`
@@ -56,83 +75,104 @@ export function RepertorioPage() {
   }
 
   useEffect(() => {
-    void loadCatalog('', '', '')
+    void loadCatalog()
   }, [ministry.id])
 
-  const emptyCatalog = songs?.length === 0 && !query && !folderId && !classificationId
+  const artists = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const song of songs ?? []) {
+      const name = song.artist?.trim() || 'Sem artista'
+      counts.set(name, (counts.get(name) ?? 0) + 1)
+    }
+    return [...counts.entries()].sort((left, right) => left[0].localeCompare(right[0], 'pt'))
+  }, [songs])
+
+  const visibleSongs = (songs ?? []).filter((song) => {
+    if (folderId && song.folder?.id !== folderId) {
+      return false
+    }
+    if (artistName && (song.artist?.trim() || 'Sem artista') !== artistName) {
+      return false
+    }
+    if (query) {
+      const haystack = `${song.title} ${song.artist ?? ''}`.toLocaleLowerCase('pt')
+      if (!haystack.includes(query.toLocaleLowerCase('pt'))) {
+        return false
+      }
+    }
+    return true
+  })
+
+  const activeFolder = folders.find((folder) => folder.id === folderId)
+  const emptyCatalog = songs?.length === 0
 
   return (
-    <section className="page">
-      <header className="page-header-row">
-        <div>
-          <p className="eyebrow">{ministry.name}</p>
+    <section className="page repertoire-screen">
+      <header className="repertoire-top">
+        <span />
+        <div className="repertoire-heading">
           <h1>Repertório</h1>
+          <p>{ministry.name}</p>
         </div>
-        {canManage ? (
-          <Link className="button-primary-compact" to={`/m/${ministry.id}/repertorio/nova`}>
-            Cadastrar música
-          </Link>
-        ) : null}
+        <div className="repertoire-actions">
+          <button
+            type="button"
+            className="notice-icon-button"
+            aria-label={searchOpen ? 'Fechar busca' : 'Buscar'}
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen((open) => !open)}
+          >
+            <Icon name={searchOpen ? 'x' : 'search'} size={18} />
+          </button>
+          {canManage ? (
+            <button
+              type="button"
+              className="notice-icon-button"
+              aria-label="Mais opções"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <Icon name="more" size={18} />
+            </button>
+          ) : null}
+        </div>
       </header>
 
-      <form
-        className="form toolbar"
-        onSubmit={(event) => {
-          event.preventDefault()
-          setQuery(draft)
-          void loadCatalog(draft, folderId, classificationId)
-        }}
-      >
-        <TextField
-          label="Buscar por título ou artista"
-          name="q"
-          value={draft}
-          onChange={setDraft}
-        />
-        <label className="field">
-          <span>Pasta</span>
-          <select
-            name="folderId"
-            value={folderId}
-            onChange={(event) => {
-              setFolderId(event.target.value)
-              void loadCatalog(query, event.target.value, classificationId)
-            }}
-          >
-            <option value="">Todas</option>
-            {folders.map((folder) => (
-              <option key={folder.id} value={folder.id}>
-                {folder.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          <span>Classificação</span>
-          <select
-            name="classificationId"
-            value={classificationId}
-            onChange={(event) => {
-              setClassificationId(event.target.value)
-              void loadCatalog(query, folderId, event.target.value)
-            }}
-          >
-            <option value="">Todas</option>
-            {classifications
-              .filter((item) => !item.archived)
-              .map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-          </select>
-        </label>
-        <button type="submit">Buscar</button>
-      </form>
-
-      {canManage ? (
+      <div className="repertoire-column">
+      {searchOpen ? (
         <form
-          className="form"
+          className="repertoire-search"
+          onSubmit={(event) => {
+            event.preventDefault()
+            setQuery(draft.trim())
+            setTab('musicas')
+          }}
+        >
+          <input
+            name="q"
+            value={draft}
+            autoFocus
+            placeholder="Buscar por título ou artista"
+            onChange={(event) => setDraft(event.target.value)}
+          />
+        </form>
+      ) : null}
+
+      <div className="repertoire-segment" role="tablist">
+        <button type="button" role="tab" aria-selected={tab === 'musicas'} onClick={() => setTab('musicas')}>
+          Músicas ({songs?.length ?? 0})
+        </button>
+        <button type="button" role="tab" aria-selected={tab === 'pastas'} onClick={() => setTab('pastas')}>
+          Pastas ({folders.length})
+        </button>
+        <button type="button" role="tab" aria-selected={tab === 'artistas'} onClick={() => setTab('artistas')}>
+          Artistas ({artists.length})
+        </button>
+      </div>
+
+      {menuOpen && canManage ? (
+        <form
+          className="form repertoire-menu"
           onSubmit={(event) => {
             event.preventDefault()
             setSheetError('')
@@ -219,48 +259,159 @@ export function RepertorioPage() {
         </form>
       ) : null}
 
-      {songs === null ? <p className="page-loading">Carregando…</p> : null}
-      {emptyCatalog ? (
-        <p className="empty-state-card empty-state-large">
-          Ainda não há músicas neste repertório.
-        </p>
-      ) : null}
-      {songs && songs.length === 0 && !emptyCatalog ? (
-        <p className="empty-state-card">Nenhuma música encontrada.</p>
+      {!menuOpen && tab === 'musicas' ? (
+        <>
+          {activeFolder || artistName || query ? (
+            <p className="repertoire-filter">
+              <span>{activeFolder ? activeFolder.name : artistName || `“${query}”`}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setFolderId('')
+                  setArtistName('')
+                  setQuery('')
+                  setDraft('')
+                }}
+              >
+                Limpar
+              </button>
+            </p>
+          ) : null}
+          {songs === null ? <p className="page-loading">Carregando…</p> : null}
+          {emptyCatalog ? (
+            <p className="repertoire-empty">Ainda não há músicas neste repertório.</p>
+          ) : null}
+          {songs && visibleSongs.length === 0 && !emptyCatalog ? (
+            <p className="repertoire-empty">Nenhuma música encontrada.</p>
+          ) : null}
+          {visibleSongs.length > 0 ? (
+            <ul className="repertoire-list">
+              {visibleSongs.map((song) => {
+                const line = songLine(song)
+                const tone = song.defaultKey?.replace(/m$/, '') ?? ''
+                return (
+                  <li key={song.id}>
+                    <Link to={`/m/${ministry.id}/repertorio/${song.id}`} className="repertoire-row">
+                      <span
+                        className="repertoire-cover"
+                        style={{ background: `hsl(${coverHue(song.title)} 32% 32%)` }}
+                        aria-hidden="true"
+                      >
+                        {song.title.slice(0, 1).toLocaleUpperCase('pt')}
+                      </span>
+                      <span className="repertoire-copy">
+                        <strong>{song.title}</strong>
+                        {song.artist ? <span>{song.artist}</span> : null}
+                        {line ? <em>{line}</em> : null}
+                      </span>
+                      <span className="repertoire-marks">
+                        <Icon
+                          name="alert"
+                          size={14}
+                          color={song.bpm ? '#e0a23a' : 'var(--muted)'}
+                        />
+                        <Icon name="music" size={14} color="var(--brand)" />
+                        <span
+                          className="repertoire-flag"
+                          style={{ background: KEY_COLORS[tone] ?? 'var(--muted)' }}
+                          title={song.defaultKey ? `Tom ${song.defaultKey}` : 'Sem tom'}
+                        />
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : null}
+        </>
       ) : null}
 
-      {songs && songs.length > 0 ? (
-        <ul className="list">
-          {songs.map((song) => (
-            <li key={song.id} className="card">
-              <Link to={`/m/${ministry.id}/repertorio/${song.id}`}>
-                <strong>{song.title}</strong>
-              </Link>
-              <span>
-                {[song.artist, song.defaultKey, formatDuration(song.durationSeconds)]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </span>
-              <span>
-                {[song.folder?.name, song.classification?.name].filter(Boolean).join(' · ')}
-              </span>
-            </li>
-          ))}
-        </ul>
+      {!menuOpen && tab === 'pastas' ? (
+        folders.length === 0 ? (
+          <p className="repertoire-empty">Nenhuma pasta.</p>
+        ) : (
+          <ul className="repertoire-list">
+            {folders.map((folder) => {
+              const count = (songs ?? []).filter((song) => song.folder?.id === folder.id).length
+              return (
+                <li key={folder.id}>
+                  <button
+                    type="button"
+                    className="repertoire-row"
+                    onClick={() => {
+                      setFolderId(folder.id)
+                      setArtistName('')
+                      setTab('musicas')
+                    }}
+                  >
+                    <span className="repertoire-cover repertoire-cover-plain" aria-hidden="true">
+                      <Icon name="archive" size={16} />
+                    </span>
+                    <span className="repertoire-copy">
+                      <strong>{folder.name}</strong>
+                      <span>
+                        {count} {count === 1 ? 'música' : 'músicas'}
+                      </span>
+                    </span>
+                    <Icon name="chevron-right" size={16} />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )
       ) : null}
 
-      {canManage ? (
-        <CatalogSettings
-          ministryId={ministry.id}
-          folders={folders}
-          classifications={classifications}
-          onChanged={() => void loadCatalog()}
-        />
+      {!menuOpen && tab === 'artistas' ? (
+        artists.length === 0 ? (
+          <p className="repertoire-empty">Nenhum artista.</p>
+        ) : (
+          <ul className="repertoire-list">
+            {artists.map(([name, count]) => (
+              <li key={name}>
+                <button
+                  type="button"
+                  className="repertoire-row"
+                  onClick={() => {
+                    setArtistName(name)
+                    setFolderId('')
+                    setTab('musicas')
+                  }}
+                >
+                  <span className="repertoire-cover repertoire-cover-plain" aria-hidden="true">
+                    {name.slice(0, 1).toLocaleUpperCase('pt')}
+                  </span>
+                  <span className="repertoire-copy">
+                    <strong>{name}</strong>
+                    <span>
+                      {count} {count === 1 ? 'música' : 'músicas'}
+                    </span>
+                  </span>
+                  <Icon name="chevron-right" size={16} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )
       ) : null}
 
-      <p className="row">
-        <Link to={`/m/${ministry.id}`}>Voltar</Link>
-      </p>
+      {menuOpen && canManage ? (
+        <>
+          <CatalogSettings
+            ministryId={ministry.id}
+            folders={folders}
+            classifications={classifications}
+            onChanged={() => void loadCatalog()}
+          />
+        </>
+      ) : null}
+      </div>
+
+      {canManage && tab === 'musicas' && !menuOpen ? (
+        <Link className="notice-add" to={`/m/${ministry.id}/repertorio/nova`}>
+          <Icon name="plus" size={16} color="#ffffff" /> Música
+        </Link>
+      ) : null}
     </section>
   )
 }
