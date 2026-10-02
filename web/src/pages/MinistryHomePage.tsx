@@ -4,10 +4,66 @@ import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
-import { BRAZIL_TIMEZONES, type MinistryDetail } from '../lib/ministry.ts'
+import { BRAZIL_TIMEZONES, type MinistryDetail, type MinistryList, type MinistrySummary } from '../lib/ministry.ts'
 import type { NoticeItem, NoticeLists } from '../lib/notice.ts'
-import { formatInZone, type ScheduleLists } from '../lib/schedule.ts'
+import type { ScheduleLists } from '../lib/schedule.ts'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
+
+function zonedDateKey(iso: string, timeZone: string) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(iso))
+}
+
+function relativeDay(iso: string, timeZone: string) {
+  const today = zonedDateKey(new Date().toISOString(), timeZone)
+  const that = zonedDateKey(iso, timeZone)
+  const diff = Math.round((Date.parse(that) - Date.parse(today)) / 86400000)
+  if (diff === 0) {
+    return 'hoje'
+  }
+  if (diff === 1) {
+    return 'amanhã'
+  }
+  if (diff === -1) {
+    return 'ontem'
+  }
+  if (diff > 1 && diff < 7) {
+    return `daqui a ${diff} dias`
+  }
+  if (diff >= 7 && diff < 14) {
+    return 'daqui a 1 semana'
+  }
+  if (diff >= 14 && diff < 21) {
+    return 'daqui a 2 semanas'
+  }
+  if (diff >= 21) {
+    return `daqui a ${Math.round(diff / 7)} semanas`
+  }
+  return ''
+}
+
+function scheduleFace(iso: string, timeZone: string) {
+  const date = new Date(iso)
+  const day = new Intl.DateTimeFormat('pt-BR', { timeZone, day: 'numeric' }).format(date)
+  const month = new Intl.DateTimeFormat('pt-BR', { timeZone, month: 'long' }).format(date)
+  const weekday = new Intl.DateTimeFormat('pt-BR', { timeZone, weekday: 'long' }).format(date).split('-')[0]
+  const time = new Intl.DateTimeFormat('pt-BR', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(date)
+  const label = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
+  return {
+    when: `${day} ${label(month)}`,
+    line: `${label(weekday)}, ${time}`,
+    relative: relativeDay(iso, timeZone),
+  }
+}
 
 export function MinistryHomePage() {
   const navigate = useNavigate()
@@ -21,6 +77,7 @@ export function MinistryHomePage() {
   const [pinnedNotices, setPinnedNotices] = useState<NoticeItem[]>([])
   const [noticeTotal, setNoticeTotal] = useState(0)
   const [mySchedules, setMySchedules] = useState<ScheduleLists['upcoming']>([])
+  const [ministries, setMinistries] = useState<MinistrySummary[]>([])
 
   useEffect(() => {
     setName(ministry.name)
@@ -41,6 +98,12 @@ export function MinistryHomePage() {
         setMySchedules(body.upcoming || [])
       }
     }).catch(() => {})
+
+    void api<MinistryList>('/api/ministerios').then((body) => {
+      if (!cancelled) {
+        setMinistries(body.active)
+      }
+    })
 
     return () => {
       cancelled = true
@@ -90,45 +153,39 @@ export function MinistryHomePage() {
   const capitalizedMonth = currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1)
 
   return (
-    <div className="dashboard-container">
-      {/* 1. SEÇÃO MINISTÉRIOS */}
+    <div className="dashboard-container home-dashboard">
       <section className="dashboard-section">
         <div className="block-head">
           <div className="block-title-group">
             <span className="block-label">Ministérios</span>
-            <span className="count">1</span>
+            <span className="count">{ministries.length || 1}</span>
           </div>
           <Link to="/ministerios" className="block-action">
-            Ver todos <Icon name="chevron-right" size={14} />
+            Adicionar <Icon name="plus" size={14} />
           </Link>
         </div>
-
-        <div className="ministry-active-card">
-          <div className="ministry-avatar" style={{ backgroundColor: ministry.color || '#2b4678' }}>
-            <span>{ministry.name.slice(0, 2).toUpperCase()}</span>
-          </div>
-          <div className="ministry-details">
-            <h3 className="ministry-title">{ministry.name}</h3>
-            <div className="ministry-meta-row">
-              <span className="meta-stat">
-                <Icon name="calendar" size={14} />
-                <span>
-                  {mySchedules.length} {mySchedules.length === 1 ? 'escala' : 'escalas'}
-                </span>
-              </span>
-              <span className="meta-stat">
-                <Icon name="music" size={14} />
-                <span>{ministry.musicModuleEnabled ? 'Música ativa' : 'Sem música'}</span>
-              </span>
-              <span className="meta-stat">
-                <Icon name="users" size={14} />
-                <span>{ministry.membership.isAdmin ? 'Administrador' : 'Membro'}</span>
-              </span>
-            </div>
-          </div>
-          <div className="ministry-check-badge" title="Ministério ativo">
-            <Icon name="check" size={14} color="#ffffff" />
-          </div>
+        <p className="block-subtitle">Toque para selecionar o ministério</p>
+        <div className="home-rail">
+          {(ministries.length > 0 ? ministries : [ministry]).map((item) => {
+            const current = item.id === ministry.id
+            return (
+              <Link
+                key={item.id}
+                to={`/m/${item.id}`}
+                className={current ? 'home-ministry is-current' : 'home-ministry'}
+                style={{ background: item.color || '#2b4678' }}
+              >
+                <strong>{item.name}</strong>
+                {current ? (
+                  <span className="home-ministry-check" aria-label="Ministério selecionado">
+                    <Icon name="check" size={12} color="#ffffff" />
+                  </span>
+                ) : (
+                  <Icon name="chevron-right" size={16} />
+                )}
+              </Link>
+            )
+          })}
         </div>
       </section>
 
@@ -153,19 +210,17 @@ export function MinistryHomePage() {
             <span>Lista vazia.</span>
           </div>
         ) : (
-          <ul className="dashboard-card-list">
+          <div className="home-rail">
             {pinnedNotices.map((item) => (
-              <li key={item.id}>
-                <Link to={`/m/${ministry.id}/avisos?aviso=${item.id}`} className="card dashboard-item-card">
-                  <div className="card-header-line">
-                    <Icon name="megaphone" size={16} className="item-leading-icon" />
-                    <strong>{item.title}</strong>
-                  </div>
-                  <p className="card-snippet">{item.body}</p>
-                </Link>
-              </li>
+              <Link key={item.id} to={`/m/${ministry.id}/avisos?aviso=${item.id}`} className="home-slide card">
+                <div className="card-header-line">
+                  <Icon name="megaphone" size={16} className="item-leading-icon" />
+                  <strong>{item.title}</strong>
+                </div>
+                <p className="card-snippet">{item.body}</p>
+              </Link>
             ))}
-          </ul>
+          </div>
         )}
       </section>
 
@@ -177,7 +232,7 @@ export function MinistryHomePage() {
             <span className="count">{mySchedules.length}</span>
           </div>
           <Link to={`/m/${ministry.id}/escalas`} className="block-action">
-            Ver todas <Icon name="chevron-right" size={14} />
+            Ver todos <Icon name="chevron-right" size={14} />
           </Link>
         </div>
         <p className="block-subtitle">Próximas</p>
@@ -188,19 +243,24 @@ export function MinistryHomePage() {
             <span>Lista vazia.</span>
           </div>
         ) : (
-          <ul className="dashboard-card-list">
-            {mySchedules.map((schedule) => (
-              <li key={schedule.id} className="card dashboard-item-card">
-                <Link to={`/m/${ministry.id}/escalas/${schedule.id}`} className="schedule-card-link">
-                  <div className="card-header-line">
-                    <Icon name="calendar" size={16} className="item-leading-icon" />
+          <div className="home-rail">
+            {mySchedules.map((schedule) => {
+              const face = scheduleFace(schedule.startsAt, ministry.timezone)
+              return (
+                <Link key={schedule.id} to={`/m/${ministry.id}/escalas/${schedule.id}`} className="home-slide card home-schedule">
+                  <span className="home-schedule-top">
                     <strong>{schedule.title}</strong>
-                  </div>
-                  <span className="schedule-time">{formatInZone(schedule.startsAt, ministry.timezone)}</span>
+                    <span className="home-schedule-date">{face.when}</span>
+                  </span>
+                  <span>
+                    {face.line}
+                    {face.relative ? ` · ${face.relative}` : ''}
+                  </span>
+                  {schedule.status === 'draft' ? <em>Rascunho</em> : null}
                 </Link>
-              </li>
-            ))}
-          </ul>
+              )
+            })}
+          </div>
         )}
       </section>
 
@@ -223,14 +283,14 @@ export function MinistryHomePage() {
             <span>Lista vazia.</span>
           </div>
         ) : (
-          <ul className="dashboard-card-list">
+          <div className="home-rail">
             {ministry.birthdays.map((person) => (
-              <li key={person} className="card birthday-card">
+              <div key={person} className="home-slide card home-birthday">
                 <Icon name="cake" size={18} className="item-leading-icon" />
                 <span>{person}</span>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </section>
 
@@ -241,8 +301,8 @@ export function MinistryHomePage() {
             <Icon name="music" size={20} />
           </div>
           <div className="promo-content">
-            <h4 className="promo-title">Repertório Musical</h4>
-            <p className="promo-description">Explore cifras, letras e arranjos da equipe no LouveApp.</p>
+            <h4 className="promo-title">Mais tocadas</h4>
+            <p className="promo-description">Confira o que está em alta no LouveApp.</p>
           </div>
           <Icon name="chevron-right" size={20} className="promo-arrow" />
         </Link>

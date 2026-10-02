@@ -380,19 +380,29 @@ export function NovaEscalaPage() {
         <ul className="member-pick-list">
           {listed.map((member) => {
             const person = draftPerson(member.membershipId)
-            const profile = member.functions.filter((item) => !item.archived).map((item) => item.name)
-            const assigned = person?.functionIds.map(functionName).filter(Boolean) ?? []
+            const ownFunctions = member.functions.filter((item) => !item.archived)
+            const profile = ownFunctions.map((item) => item.name)
+            const opened = openAssign === member.membershipId
             return (
               <li key={member.membershipId} className="member-pick-card">
                 <div className="member-pick-main">
-                  <span className="member-avatar" aria-hidden="true">
-                    {initials(member.name)}
-                  </span>
-                  <span>
-                    <strong>{member.name}</strong>
-                    <em>{profile.length > 0 ? profile.join(', ') : 'Nenhuma função selecionada.'}</em>
-                    {member.everScheduled === false ? <small>Nunca escalado</small> : null}
-                  </span>
+                  <button
+                    type="button"
+                    className="member-pick-open"
+                    aria-expanded={opened}
+                    onClick={() =>
+                      setOpenAssign((current) => (current === member.membershipId ? null : member.membershipId))
+                    }
+                  >
+                    <span className="member-avatar" aria-hidden="true">
+                      {initials(member.name)}
+                    </span>
+                    <span>
+                      <strong>{member.name}</strong>
+                      <em>{profile.length > 0 ? profile.join(', ') : 'Nenhuma função selecionada.'}</em>
+                      {member.everScheduled === false ? <small>Nunca escalado</small> : null}
+                    </span>
+                  </button>
                   <button
                     type="button"
                     className="setup-switch"
@@ -402,28 +412,23 @@ export function NovaEscalaPage() {
                     onClick={() => toggleMember(member)}
                   />
                 </div>
-                <button
-                  type="button"
-                  className="member-assign"
-                  onClick={() =>
-                    setOpenAssign((current) => (current === member.membershipId ? null : member.membershipId))
-                  }
-                >
-                  {assigned.length > 0 ? assigned.join(', ') : 'Nenhuma função atribuída.'}
-                </button>
-                {openAssign === member.membershipId ? (
-                  <div className="schedule-function-picks">
-                    {functions.map((item) => (
-                      <label key={item.id}>
-                        <input
-                          type="checkbox"
-                          checked={person?.functionIds.includes(item.id) ?? false}
-                          onChange={() => toggleDraftFunction(member, item.id)}
-                        />
-                        {functionIcon(item.name)} {item.name}
-                      </label>
-                    ))}
-                  </div>
+                {opened ? (
+                  ownFunctions.length > 0 ? (
+                    <div className="schedule-function-picks">
+                      {ownFunctions.map((item) => (
+                        <label key={item.id}>
+                          <input
+                            type="checkbox"
+                            checked={person?.functionIds.includes(item.id) ?? false}
+                            onChange={() => toggleDraftFunction(member, item.id)}
+                          />
+                          {functionIcon(item.name)} {item.name}
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="member-assign">Nenhuma função atribuída.</p>
+                  )
                 ) : null}
               </li>
             )

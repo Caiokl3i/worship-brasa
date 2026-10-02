@@ -5,12 +5,14 @@ import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { ScriptEditor } from '../components/ScriptEditor.tsx'
 import { SharePanel } from '../components/SharePanel.tsx'
 import { SuggestPanel } from '../components/SuggestPanel.tsx'
+import { Icon } from '../components/Icon.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import type { Proposal } from '../lib/generation.ts'
 import { functionIcon } from '../lib/function_icon.ts'
 import type { MemberItem, MinistryFunctionItem } from '../lib/ministry.ts'
+import type { ChatPage } from '../lib/chat.ts'
 import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire.ts'
 import { manualsForSave } from '../lib/script.ts'
 import {
@@ -26,7 +28,7 @@ import {
   type ScriptTemplateView,
 } from '../lib/schedule.ts'
 
-type Tab = 'dados' | 'equipe' | 'musicas' | 'roteiro' | 'chat'
+type Tab = 'resumo' | 'dados' | 'equipe' | 'musicas' | 'roteiro' | 'chat'
 
 type TeamMember = {
   membershipId: string
@@ -101,6 +103,93 @@ function seriesPhrase(series: ScheduleSeries) {
   return 'Faz parte da série diária.'
 }
 
+function zonedDateKey(iso: string, timeZone: string) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(iso))
+}
+
+function relativeLabel(iso: string, timeZone: string) {
+  const today = zonedDateKey(new Date().toISOString(), timeZone)
+  const that = zonedDateKey(iso, timeZone)
+  const diff = Math.round((Date.parse(that) - Date.parse(today)) / 86400000)
+  if (diff === 0) {
+    return 'Hoje'
+  }
+  if (diff === 1) {
+    return 'Amanhã'
+  }
+  if (diff === -1) {
+    return 'Ontem'
+  }
+  if (diff > 1 && diff < 7) {
+    return `daqui a ${diff} dias`
+  }
+  if (diff >= 7 && diff < 14) {
+    return 'daqui a 1 semana'
+  }
+  if (diff >= 14 && diff < 21) {
+    return 'daqui a 2 semanas'
+  }
+  if (diff >= 21) {
+    return `daqui a ${Math.round(diff / 7)} semanas`
+  }
+  if (diff < -1 && diff > -7) {
+    return `há ${Math.abs(diff)} dias`
+  }
+  return ''
+}
+
+function googleStamp(iso: string) {
+  return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+}
+
+function googleCalendarHref(title: string, startsAt: string, endsAt: string | null, notes: string) {
+  const start = new Date(startsAt)
+  const end = endsAt ? new Date(endsAt) : new Date(start.getTime() + 60 * 60 * 1000)
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: title || 'Escala',
+    dates: `${googleStamp(start.toISOString())}/${googleStamp(end.toISOString())}`,
+    details: notes,
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
+function BoardArt({ kind }: { kind: 'songs' | 'people' | 'script' }) {
+  return (
+    <svg className="schedule-board-art" viewBox="0 0 160 160" aria-hidden="true">
+      <circle cx="80" cy="80" r="62" />
+      {kind === 'songs' ? (
+        <>
+          <circle cx="80" cy="58" r="10" />
+          <path d="M74 70v28M86 70v22c6 2 12 0 12-6" />
+          <path d="M62 108c8 8 28 8 36 0" />
+          <path d="M108 48c6 4 8 10 4 16M112 42c8 6 10 16 4 24" />
+        </>
+      ) : null}
+      {kind === 'people' ? (
+        <>
+          <circle cx="62" cy="78" r="8" />
+          <path d="M56 90c2 16 8 28 8 28M70 90c-2 16-6 24-4 28M48 118h28" />
+          <circle cx="108" cy="86" r="16" />
+          <path d="M96 104c8 10 20 12 28 6" />
+        </>
+      ) : null}
+      {kind === 'script' ? (
+        <>
+          <rect x="58" y="48" width="44" height="64" rx="6" />
+          <path d="M68 66h24M68 78h24M68 90h16" />
+          <circle cx="104" cy="100" r="12" />
+        </>
+      ) : null}
+    </svg>
+  )
+}
+
 function writtenDate(iso: string | null, timeZone: string) {
   if (!iso) {
     return 'esta data'
@@ -130,7 +219,9 @@ export function EscalaEditorPage() {
   const { ministry } = useMinistry()
   const canManage = ministry.membership.isAdmin || ministry.membership.canManageSchedules
   const canEditSongs = canManage || ministry.membership.canEditScheduleSongs
-  const [tab, setTab] = useState<Tab>('dados')
+  const [tab, setTab] = useState<Tab>('resumo')
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [commentCount, setCommentCount] = useState(0)
   const [missing, setMissing] = useState('')
   const [status, setStatus] = useState<'draft' | 'published'>('draft')
   const [version, setVersion] = useState(1)
@@ -815,6 +906,27 @@ export function EscalaEditorPage() {
   }
 
   useEffect(() => {
+    if (!ready) {
+      return
+    }
+    let cancelled = false
+    void api<ChatPage>(`/api/ministerios/${ministry.id}/escalas/${scheduleId}/chat`)
+      .then((page) => {
+        if (!cancelled) {
+          setCommentCount(page.messages.length)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCommentCount(0)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [ready, ministry.id, scheduleId, tab])
+
+  useEffect(() => {
     if (tab !== 'musicas' || !ministry.musicModuleEnabled) {
       return
     }
@@ -856,8 +968,174 @@ export function EscalaEditorPage() {
     conflictLabels(member.conflicts).map((label) => `${member.name}: ${label}`)
   )
 
+  const hero = startsAtIso
+    ? {
+        day: new Intl.DateTimeFormat('pt-BR', { timeZone: ministry.timezone, day: 'numeric' }).format(
+          new Date(startsAtIso)
+        ),
+        month: new Intl.DateTimeFormat('pt-BR', { timeZone: ministry.timezone, month: 'short' })
+          .format(new Date(startsAtIso))
+          .replace('.', ''),
+        time: new Intl.DateTimeFormat('pt-BR', {
+          timeZone: ministry.timezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          hourCycle: 'h23',
+        }).format(new Date(startsAtIso)),
+        weekday: new Intl.DateTimeFormat('pt-BR', { timeZone: ministry.timezone, weekday: 'long' })
+          .format(new Date(startsAtIso))
+          .split('-')[0]
+          .toUpperCase(),
+        relative: relativeLabel(startsAtIso, ministry.timezone).toUpperCase(),
+      }
+    : null
+  const confirmed = team.filter((member) => member.confirmation === 'confirmed').length
+
   return (
-    <section className="page page-wide">
+    <section className={tab === 'resumo' ? 'page notice-screen schedule-view' : 'page page-wide'}>
+      {tab === 'resumo' ? (
+        <>
+          <header className="notice-top">
+            <Link className="notice-icon-button" to={`/m/${ministry.id}/escalas`} aria-label="Voltar">
+              <Icon name="chevron-right" size={20} className="notice-back-icon" />
+            </Link>
+            <div className="notice-top-title">
+              <h1>Escala</h1>
+            </div>
+            <span />
+          </header>
+          <FieldErrors errors={errors} />
+          {notice ? <p className="notice">{notice}</p> : null}
+          {hero ? (
+            <button type="button" className="schedule-hero" onClick={() => setTab('dados')}>
+              <span className="schedule-hero-date">
+                <strong>{hero.day}</strong>
+                <span>{hero.month.charAt(0).toUpperCase() + hero.month.slice(1)}</span>
+                <em>{hero.time}</em>
+              </span>
+              <span className="schedule-hero-copy">
+                <strong>{title || 'Escala'}</strong>
+                <span>
+                  {hero.weekday}
+                  {hero.relative ? ` • ${hero.relative}` : ''}
+                  {status === 'draft' ? ' • RASCUNHO' : ''}
+                </span>
+              </span>
+            </button>
+          ) : null}
+          <div className="schedule-view-actions">
+            <button type="button" onClick={() => setShareOpen((open) => !open)}>
+              <Icon name="external" size={14} /> Compartilhar
+            </button>
+            {startsAtIso ? (
+              <a href={googleCalendarHref(title, startsAtIso, endsAtIso, notes)} target="_blank" rel="noreferrer">
+                <Icon name="calendar" size={14} /> Google Agenda
+              </a>
+            ) : null}
+            <button type="button" onClick={() => setHistoryOpen((open) => !open)}>
+              <Icon name="clock" size={14} /> Histórico
+            </button>
+          </div>
+          {historyOpen ? (
+            <div className="schedule-history">
+              {changes.length === 0 ? <p>Nenhuma alteração registrada.</p> : null}
+              <ul>
+                {changes.map((change) => (
+                  <li key={change.id}>
+                    {change.name}: {change.summary}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {mine && status === 'published' && confirmationRequired ? (
+            <div className="row">
+              <span>{confirmationLabel(mine.confirmation) || 'Pendente'}</span>
+              <button type="button" onClick={() => void confirmAttendance('confirmed')}>
+                Confirmar
+              </button>
+              <button type="button" className="button-danger-outline" onClick={() => void confirmAttendance('declined')}>
+                Não participarei
+              </button>
+            </div>
+          ) : null}
+          <div className="schedule-board">
+            {ministry.musicModuleEnabled ? (
+              <button type="button" className="schedule-board-card" onClick={() => setTab('musicas')}>
+                <header>
+                  <span>Músicas</span>
+                  <span>{songs.length}</span>
+                </header>
+                {canEditSongs ? (
+                  <span className="schedule-board-edit">
+                    <Icon name="pencil" size={14} /> Alterar músicas
+                  </span>
+                ) : null}
+                {songs.length === 0 ? (
+                  <>
+                    <BoardArt kind="songs" />
+                    <p>Nenhuma música adicionada.</p>
+                  </>
+                ) : (
+                  <ul>
+                    {songs.map((song, index) => (
+                      <li key={`${song.songId}-${index}`}>{song.title}</li>
+                    ))}
+                  </ul>
+                )}
+              </button>
+            ) : null}
+            <button type="button" className="schedule-board-card" onClick={() => setTab('equipe')}>
+              <header>
+                <span>Participantes</span>
+                <span>
+                  {confirmed}/{team.length}
+                </span>
+              </header>
+              {team.length === 0 ? (
+                <>
+                  <BoardArt kind="people" />
+                  <p>Nenhum membro adicionado.</p>
+                </>
+              ) : (
+                <ul>
+                  {team.map((member) => (
+                    <li key={member.membershipId}>
+                      {member.functions[0] ? functionIcon(member.functions[0].name) : '👤'} {member.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </button>
+            <button type="button" className="schedule-board-card" onClick={() => setTab('roteiro')}>
+              <header>
+                <span>Roteiro</span>
+                <span>{scriptItems.length}</span>
+              </header>
+              {scriptItems.length === 0 ? (
+                <>
+                  <BoardArt kind="script" />
+                  <p>Nenhum item adicionado ao roteiro.</p>
+                </>
+              ) : (
+                <ul>
+                  {scriptItems.map((item) => (
+                    <li key={item.id}>{item.title}</li>
+                  ))}
+                </ul>
+              )}
+            </button>
+          </div>
+          <button type="button" className="schedule-comments" onClick={() => setTab('chat')}>
+            <Icon name="message" size={16} /> Comentários ({commentCount})
+          </button>
+        </>
+      ) : null}
+      {tab !== 'resumo' ? (
+        <>
+      <button type="button" className="schedule-view-back" onClick={() => setTab('resumo')}>
+        Voltar à escala
+      </button>
       <header className="page-header">
         <p className="eyebrow">Escalas</p>
         <h1>{title || 'Escala'}</h1>
@@ -1320,6 +1598,8 @@ export function EscalaEditorPage() {
           ) : null}
         </div>
       ) : null}
+        </>
+      ) : null}
 
       {scopePrompt ? (
         <form
@@ -1429,7 +1709,7 @@ export function EscalaEditorPage() {
         />
       ) : null}
 
-      <div className="row">
+      {tab !== 'resumo' ? <div className="row">
         <button type="button" onClick={() => setShareOpen((open) => !open)}>
           Compartilhar
         </button>
@@ -1490,7 +1770,7 @@ export function EscalaEditorPage() {
           </button>
         ) : null}
         <Link to={`/m/${ministry.id}/escalas`}>Voltar</Link>
-      </div>
+      </div> : null}
     </section>
   )
 }

@@ -39,6 +39,7 @@ export type IconName =
   | 'bell'
   | 'lock'
   | 'mail'
+  | 'message'
   | 'eye'
   | 'external'
 
@@ -357,6 +358,12 @@ export function Icon({
         <svg {...props}>
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      )
+    case 'message':
+      return (
+        <svg {...props}>
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       )
     case 'mail':
