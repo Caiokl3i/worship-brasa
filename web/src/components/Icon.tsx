@@ -18,12 +18,22 @@ export type IconName =
   | 'calendar'
   | 'music'
   | 'users'
+  | 'user'
+  | 'user-check'
   | 'check'
   | 'cake'
   | 'clock'
   | 'search'
   | 'filter'
   | 'plus'
+  | 'enter'
+  | 'x'
+  | 'grip'
+  | 'pencil'
+  | 'sliders'
+  | 'megaphone'
+  | 'archive'
+  | 'info'
   | 'moon'
   | 'sun'
   | 'bell'
@@ -186,6 +196,21 @@ export function Icon({
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       )
+    case 'user':
+      return (
+        <svg {...props}>
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      )
+    case 'user-check':
+      return (
+        <svg {...props}>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <polyline points="16 11 18 13 22 9" />
+        </svg>
+      )
     case 'check':
       return (
         <svg {...props}>
@@ -227,6 +252,77 @@ export function Icon({
         <svg {...props}>
           <line x1="12" y1="5" x2="12" y2="19" />
           <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      )
+    case 'enter':
+      return (
+        <svg {...props}>
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+      )
+    case 'x':
+      return (
+        <svg {...props}>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      )
+    case 'grip':
+      return (
+        <svg {...props}>
+          <circle cx="9" cy="6" r="1" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="6" r="1" fill="currentColor" stroke="none" />
+          <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="12" r="1" fill="currentColor" stroke="none" />
+          <circle cx="9" cy="18" r="1" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="18" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      )
+    case 'pencil':
+      return (
+        <svg {...props}>
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+        </svg>
+      )
+    case 'megaphone':
+      return (
+        <svg {...props}>
+          <path d="M11 6 6 9H3v6h3l5 3V6z" />
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+        </svg>
+      )
+    case 'archive':
+      return (
+        <svg {...props}>
+          <polyline points="21 8 21 21 3 21 3 8" />
+          <rect x="1" y="3" width="22" height="5" />
+          <line x1="10" y1="12" x2="14" y2="12" />
+        </svg>
+      )
+    case 'info':
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+      )
+    case 'sliders':
+      return (
+        <svg {...props}>
+          <line x1="4" y1="21" x2="4" y2="14" />
+          <line x1="4" y1="10" x2="4" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12" y2="3" />
+          <line x1="20" y1="21" x2="20" y2="16" />
+          <line x1="20" y1="12" x2="20" y2="3" />
+          <line x1="1" y1="14" x2="7" y2="14" />
+          <line x1="9" y1="8" x2="15" y2="8" />
+          <line x1="17" y1="16" x2="23" y2="16" />
         </svg>
       )
     case 'moon':

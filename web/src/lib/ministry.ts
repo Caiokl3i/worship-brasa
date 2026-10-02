@@ -77,6 +77,7 @@ export type MemberItem = {
   name: string
   isAdmin: boolean
   functions: Array<{ id: string; name: string; archived: boolean }>
+  everScheduled?: boolean
   canManageSchedules?: boolean
   canManageRepertoire?: boolean
   canManageFunctions?: boolean

@@ -19,6 +19,7 @@ export function MinistryHomePage() {
   const [notice, setNotice] = useState('')
   const [leaveError, setLeaveError] = useState('')
   const [pinnedNotices, setPinnedNotices] = useState<NoticeItem[]>([])
+  const [noticeTotal, setNoticeTotal] = useState(0)
   const [mySchedules, setMySchedules] = useState<ScheduleLists['upcoming']>([])
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export function MinistryHomePage() {
     void api<NoticeLists>(`/api/ministerios/${ministry.id}/avisos`).then((body) => {
       if (!cancelled) {
         setPinnedNotices(body.pinned)
+        setNoticeTotal(body.notices.length)
       }
     })
     void api<ScheduleLists>(`/api/ministerios/${ministry.id}/escalas`).then((body) => {
@@ -135,7 +137,9 @@ export function MinistryHomePage() {
         <div className="block-head">
           <div className="block-title-group">
             <span className="block-label">Avisos</span>
-            <span className="count">{pinnedNotices.length}</span>
+            <span className="count">
+              {pinnedNotices.length}/{noticeTotal}
+            </span>
           </div>
           <Link to={`/m/${ministry.id}/avisos`} className="block-action">
             Ver todos <Icon name="chevron-right" size={14} />
@@ -145,18 +149,20 @@ export function MinistryHomePage() {
 
         {pinnedNotices.length === 0 ? (
           <div className="empty-state-card">
-            <Icon name="announcements" size={20} className="empty-icon" />
+            <Icon name="megaphone" size={20} className="empty-icon" />
             <span>Lista vazia.</span>
           </div>
         ) : (
           <ul className="dashboard-card-list">
             {pinnedNotices.map((item) => (
-              <li key={item.id} className="card dashboard-item-card">
-                <div className="card-header-line">
-                  <Icon name="announcements" size={16} className="item-leading-icon" />
-                  <strong>{item.title}</strong>
-                </div>
-                <p className="card-snippet">{item.body}</p>
+              <li key={item.id}>
+                <Link to={`/m/${ministry.id}/avisos?aviso=${item.id}`} className="card dashboard-item-card">
+                  <div className="card-header-line">
+                    <Icon name="megaphone" size={16} className="item-leading-icon" />
+                    <strong>{item.title}</strong>
+                  </div>
+                  <p className="card-snippet">{item.body}</p>
+                </Link>
               </li>
             ))}
           </ul>

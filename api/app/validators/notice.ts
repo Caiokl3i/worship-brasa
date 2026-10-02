@@ -20,5 +20,6 @@ export const saveNoticeValidator = vine.create({
     .date({ formats: ['YYYY-MM-DD'] })
     .nullable()
     .optional(),
+  notify: vine.boolean().optional(),
 })
 saveNoticeValidator.messagesProvider = messages

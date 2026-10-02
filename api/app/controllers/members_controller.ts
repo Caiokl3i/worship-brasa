@@ -6,10 +6,17 @@ import { toMember } from '#ministries/public_ministry'
 export default class MembersController {
   async index({ membership, request, response }: HttpContext) {
     const term = String(request.input('q', '')).trim().slice(0, 120)
-    const members = await new MemberService().list(membership, term)
+    const service = new MemberService()
+    const [members, scheduled] = await Promise.all([
+      service.list(membership, term),
+      service.everScheduledIds(membership.ministryId),
+    ])
 
     return response.ok({
-      members: members.map((member) => toMember(member, membership.isAdmin)),
+      members: members.map((member) => ({
+        ...toMember(member, membership.isAdmin),
+        everScheduled: scheduled.has(member.id),
+      })),
     })
   }
 

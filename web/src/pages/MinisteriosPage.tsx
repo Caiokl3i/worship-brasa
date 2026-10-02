@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FieldErrors, fieldMessage } from '../components/FieldErrors.tsx'
 import { TextField } from '../components/TextField.tsx'
 import { Icon } from '../components/Icon.tsx'
@@ -7,10 +7,13 @@ import { api, ApiError, type FieldError } from '../lib/api.ts'
 import type { MinistryList } from '../lib/ministry.ts'
 
 export function MinisteriosPage() {
+  const navigate = useNavigate()
   const [list, setList] = useState<MinistryList | null>(null)
   const [code, setCode] = useState('')
   const [errors, setErrors] = useState<FieldError[]>([])
   const [notice, setNotice] = useState('')
+  const [chooserOpen, setChooserOpen] = useState(false)
+  const [chooserStep, setChooserStep] = useState<'choice' | 'join'>('choice')
 
   async function load() {
     const body = await api<MinistryList>('/api/ministerios')
@@ -20,6 +23,32 @@ export function MinisteriosPage() {
   useEffect(() => {
     void load()
   }, [])
+
+  useEffect(() => {
+    if (!chooserOpen) {
+      return
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setChooserOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [chooserOpen])
+
+  function openChooser() {
+    setChooserStep('choice')
+    setErrors([])
+    setNotice('')
+    setCode('')
+    setChooserOpen(true)
+  }
 
   async function enter(event: React.FormEvent) {
     event.preventDefault()
@@ -67,9 +96,9 @@ export function MinisteriosPage() {
             {list.active.length} {list.active.length === 1 ? 'ativo' : 'ativos'}
           </p>
         </div>
-        <Link to="/ministerios/novo" className="button-primary-compact">
+        <button type="button" className="button-primary-compact" onClick={openChooser}>
           <Icon name="plus" size={16} /> Novo ministério
-        </Link>
+        </button>
       </div>
 
       {empty ? (
@@ -146,6 +175,96 @@ export function MinisteriosPage() {
           </div>
         </form>
       </section>
+
+      {chooserOpen ? (
+        <div className="add-ministry-layer">
+          <button
+            type="button"
+            className="add-ministry-close"
+            aria-label="Fechar"
+            onClick={() => setChooserOpen(false)}
+          >
+            <Icon name="x" size={22} />
+          </button>
+          <div
+            className="add-ministry-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-ministry-title"
+          >
+            {chooserStep === 'choice' ? (
+              <>
+                <h2 id="add-ministry-title" className="add-ministry-title">
+                  Adicionar ministério
+                </h2>
+                <p className="add-ministry-subtitle">Selecione uma opção para continuar:</p>
+                <div className="add-ministry-options">
+                  <button
+                    type="button"
+                    className="add-ministry-option"
+                    onClick={() => {
+                      setErrors([])
+                      setNotice('')
+                      setChooserStep('join')
+                    }}
+                  >
+                    <span className="add-ministry-option-icon">
+                      <Icon name="enter" size={18} />
+                    </span>
+                    <span className="add-ministry-option-copy">
+                      <strong>Ingressar em um ministério</strong>
+                      <span>Entre com o código de convite de um ministério.</span>
+                    </span>
+                    <Icon name="chevron-right" size={18} className="add-ministry-option-chevron" />
+                  </button>
+                  <button
+                    type="button"
+                    className="add-ministry-option"
+                    onClick={() => navigate('/ministerios/novo')}
+                  >
+                    <span className="add-ministry-option-icon">
+                      <Icon name="plus" size={18} />
+                    </span>
+                    <span className="add-ministry-option-copy">
+                      <strong>Cadastrar novo ministério</strong>
+                      <span>Crie um novo ministério para começar a organizar sua equipe.</span>
+                    </span>
+                    <Icon name="chevron-right" size={18} className="add-ministry-option-chevron" />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 id="add-ministry-title" className="add-ministry-title">
+                  Ingressar em um ministério
+                </h2>
+                <p className="add-ministry-subtitle">
+                  Digite o código de convite recebido da liderança.
+                </p>
+                <form onSubmit={(event) => void enter(event)} className="add-ministry-join">
+                  <FieldErrors errors={errors} />
+                  {notice ? <p className="notice-success">{notice}</p> : null}
+                  <TextField
+                    label="Código de convite"
+                    name="chooser-code"
+                    value={code}
+                    onChange={setCode}
+                    message={fieldMessage(errors, 'code')}
+                  />
+                  <div className="add-ministry-join-actions">
+                    <button type="button" className="button-outline" onClick={() => setChooserStep('choice')}>
+                      Voltar
+                    </button>
+                    <button type="submit" className="button-primary">
+                      Solicitar entrada
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

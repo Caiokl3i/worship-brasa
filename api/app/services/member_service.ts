@@ -49,6 +49,16 @@ export default class MemberService {
     return members.sort((left, right) => left.user.name.localeCompare(right.user.name, 'pt'))
   }
 
+  async everScheduledIds(ministryId: string) {
+    const rows = await db
+      .from('schedule_participants')
+      .innerJoin('schedules', 'schedules.id', 'schedule_participants.schedule_id')
+      .where('schedules.ministry_id', ministryId)
+      .whereNull('schedules.deleted_at')
+      .distinct('schedule_participants.membership_id')
+    return new Set(rows.map((row) => String(row.membership_id)))
+  }
+
   async pending(actor: Membership) {
     new MembershipAccessService().assertAdmin(actor)
 

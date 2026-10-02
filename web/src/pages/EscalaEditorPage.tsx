@@ -9,6 +9,7 @@ import { TextField } from '../components/TextField.tsx'
 import { useMinistry } from '../layouts/MinistryLayout.tsx'
 import { api, ApiError, type FieldError } from '../lib/api.ts'
 import type { Proposal } from '../lib/generation.ts'
+import { functionIcon } from '../lib/function_icon.ts'
 import type { MemberItem, MinistryFunctionItem } from '../lib/ministry.ts'
 import type { SongDetail, SongSummary, SongVersionItem } from '../lib/repertoire.ts'
 import { manualsForSave } from '../lib/script.ts'
@@ -150,6 +151,7 @@ export function EscalaEditorPage() {
   const [pickedFunctions, setPickedFunctions] = useState<string[]>([])
   const [songQuery, setSongQuery] = useState('')
   const [songHits, setSongHits] = useState<SongSummary[]>([])
+  const [repertoireEmpty, setRepertoireEmpty] = useState(false)
   const [errors, setErrors] = useState<FieldError[]>([])
   const [notice, setNotice] = useState('')
   const [ready, setReady] = useState(false)
@@ -812,6 +814,22 @@ export function EscalaEditorPage() {
     )
   }
 
+  useEffect(() => {
+    if (tab !== 'musicas' || !ministry.musicModuleEnabled) {
+      return
+    }
+    let cancelled = false
+    void api<{ songs: SongSummary[] }>(`/api/ministerios/${ministry.id}/musicas`).then((body) => {
+      if (!cancelled) {
+        setSongHits(body.songs)
+        setRepertoireEmpty(body.songs.length === 0)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [tab, ministry.id, ministry.musicModuleEnabled])
+
   if (missing) {
     return (
       <section className="page">
@@ -878,10 +896,10 @@ export function EscalaEditorPage() {
       {mine?.absent ? <p className="notice notice-warning">Falta</p> : null}
       <div className="tabs" role="tablist">
         <button type="button" aria-selected={tab === 'dados'} onClick={() => setTab('dados')}>
-          Dados
+          Detalhes
         </button>
         <button type="button" aria-selected={tab === 'equipe'} onClick={() => setTab('equipe')}>
-          Equipe
+          Participantes
         </button>
         {ministry.musicModuleEnabled ? (
           <button type="button" aria-selected={tab === 'musicas'} onClick={() => setTab('musicas')}>
@@ -968,9 +986,18 @@ export function EscalaEditorPage() {
           {team.length === 0 ? <p>Ninguém na equipe.</p> : null}
           <ul className="list">
             {team.map((member) => (
-              <li key={member.membershipId} className="card">
-                <strong>{member.name}</strong>
-                <span>{member.functions.map((item) => item.name).join(', ')}</span>
+              <li key={member.membershipId} className="card schedule-person">
+                <span className="schedule-person-icon" aria-hidden="true">
+                  {member.functions[0] ? functionIcon(member.functions[0].name) : '👤'}
+                </span>
+                <span className="schedule-person-copy">
+                  <strong>{member.name}</strong>
+                  <em>
+                    {member.functions.length > 0
+                      ? member.functions.map((item) => item.name).join(', ')
+                      : 'Nenhuma função atribuída.'}
+                  </em>
+                </span>
                 {confirmationLabel(member.confirmation) ? (
                   <span className="badge">{confirmationLabel(member.confirmation)}</span>
                 ) : null}
@@ -1027,7 +1054,7 @@ export function EscalaEditorPage() {
                           )
                         }
                       />{' '}
-                      {item.name}
+                      {functionIcon(item.name)} {item.name}
                     </label>
                   ))}
               </div>
@@ -1064,7 +1091,17 @@ export function EscalaEditorPage() {
 
       {tab === 'musicas' ? (
         <div className="form">
-          {songs.length === 0 ? <p>Nenhuma música nesta escala.</p> : null}
+          {songs.length === 0 ? (
+            <div className="schedule-song-empty">
+              <p>Para adicionar uma música, busque no repertório.</p>
+              {repertoireEmpty ? (
+                <p>
+                  O repertório está vazio.{' '}
+                  <Link to={`/m/${ministry.id}/repertorio/nova`}>Cadastre a música no repertório</Link>.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <ol className="list">
             {songs.map((song, index) => (
               <li key={`${song.songId}-${index}`} className="card">
@@ -1205,6 +1242,9 @@ export function EscalaEditorPage() {
               <ul className="list">
                 {songHits.map((song) => (
                   <li key={song.id} className="card">
+                    <span className="schedule-person-icon" aria-hidden="true">
+                      🎵
+                    </span>
                     <span>
                       {song.title}
                       {song.artist ? ` — ${song.artist}` : ''}

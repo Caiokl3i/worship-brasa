@@ -11,6 +11,7 @@ type NoticeInput = {
   body: string
   pinned: boolean
   expiresAt?: DateTime | null
+  notify?: boolean
 }
 
 function expiryDate(expiresAt: DateTime | null) {
@@ -79,7 +80,9 @@ export default class NoticeService {
       pinned: input.pinned,
       expiresAt: input.expiresAt ?? null,
     })
-    await new NotificationService().notifyNotice(actor, notice.title, notice.body)
+    if (input.notify !== false) {
+      await new NotificationService().notifyNotice(actor, notice.title, notice.body)
+    }
     return withAuthor(notice)
   }
 
@@ -91,7 +94,9 @@ export default class NoticeService {
     notice.pinned = input.pinned
     notice.expiresAt = input.expiresAt ?? null
     await notice.save()
-    await new NotificationService().notifyNotice(actor, notice.title, notice.body)
+    if (input.notify !== false) {
+      await new NotificationService().notifyNotice(actor, notice.title, notice.body)
+    }
     return withAuthor(notice)
   }
 
